@@ -1,0 +1,396 @@
+{
+  "nodes": [
+    {
+      "layerId": 1,
+      "layerReason": "",
+      "id": "n-ds99mrs",
+      "label": "県庁",
+      "group": "g-command",
+      "x": 478.3671875,
+      "y": 10.39453125
+    },
+    {
+      "layerId": 1,
+      "layerReason": "",
+      "id": "n-98jlmhr",
+      "label": "C県A保健所",
+      "group": "g-command",
+      "x": 476.40234375,
+      "y": 87.74609375
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-k41zr9w",
+      "label": "DHEAT",
+      "group": "g-section",
+      "x": 713.96875,
+      "y": 251.20703125
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-qyjkp6x",
+      "label": "地域災害医療コーディネーター",
+      "group": "g-command",
+      "x": 224.984375,
+      "y": 208.25
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-rc9o8zj",
+      "label": "DMAT",
+      "group": "g-section",
+      "x": 30.7890625,
+      "y": 207.1015625
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-ciohw4a",
+      "label": "JMAT",
+      "group": "g-section",
+      "x": 227.53125,
+      "y": 407.875
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-f0mf5s2",
+      "label": "DPAT",
+      "group": "g-section",
+      "x": 369.5703125,
+      "y": 453.78125
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-f2j1q23",
+      "label": "C県看護協会",
+      "group": "g-section",
+      "x": 83.25,
+      "y": 388.40234375
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-5xclpni",
+      "label": "DMAT",
+      "group": "g-section",
+      "x": 0,
+      "y": 456.453125
+    },
+    {
+      "layerId": 4,
+      "layerReason": "",
+      "id": "n-c66xabn",
+      "label": "避難所",
+      "group": "g-team",
+      "x": 546.15625,
+      "y": 632.296875
+    },
+    {
+      "layerId": 4,
+      "layerReason": "",
+      "id": "n-mynzs9x",
+      "label": "医療機関",
+      "group": "g-team",
+      "x": 313.51953125,
+      "y": 628.32421875
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-ro2pij1",
+      "label": "市町村保健センター",
+      "group": "g-team",
+      "x": 883.01953125,
+      "y": 253.296875
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-wi0ye6m",
+      "label": "地域包括支援センター",
+      "group": "g-unit",
+      "x": 631.765625,
+      "y": 464.453125
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-hdtj6lg",
+      "label": "JRAT",
+      "group": "g-section",
+      "x": 962,
+      "y": 418.1953125
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-rhlf3sp",
+      "label": "DWAT",
+      "group": "g-section",
+      "x": 819.3046875,
+      "y": 419.78125
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-h7hil4z",
+      "label": "歯科医師会",
+      "group": "g-unit",
+      "x": 320.2421875,
+      "y": 299.71875
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-tjsk6bh",
+      "label": "AB薬剤師会",
+      "group": "g-unit",
+      "x": 463.171875,
+      "y": 275.5078125
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-5xzlyvp",
+      "label": "医師会",
+      "group": "g-unit",
+      "x": 448.51171875,
+      "y": 210.359375
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-wraqdnx",
+      "label": "W民間団体",
+      "group": "g-unit",
+      "x": 596.4765625,
+      "y": 388.96875
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-xno7tw6",
+      "label": "C県栄養士会",
+      "group": "g-unit",
+      "x": 461.05859375,
+      "y": 392.0625
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-jjprzvx",
+      "from": "n-ds99mrs",
+      "to": "n-98jlmhr",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-aia0sgk",
+      "from": "n-98jlmhr",
+      "to": "n-k41zr9w",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-6wj8yp0",
+      "from": "n-98jlmhr",
+      "to": "n-qyjkp6x",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-9qyzzvg",
+      "from": "n-rc9o8zj",
+      "to": "n-f2j1q23",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-4gkexvp",
+      "from": "n-rc9o8zj",
+      "to": "n-ciohw4a",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-vza3unj",
+      "from": "n-rc9o8zj",
+      "to": "n-f0mf5s2",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-pxogs4u",
+      "from": "n-98jlmhr",
+      "to": "n-rc9o8zj",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-yzrk0hi",
+      "from": "n-rc9o8zj",
+      "to": "n-5xclpni",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-0i4fzxt",
+      "from": "n-f2j1q23",
+      "to": "n-mynzs9x",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-542s4gv",
+      "from": "n-f2j1q23",
+      "to": "n-c66xabn",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-fm9b409",
+      "from": "n-f0mf5s2",
+      "to": "n-c66xabn",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-b69czmj",
+      "from": "n-5xclpni",
+      "to": "n-mynzs9x",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-193nlci",
+      "from": "n-5xclpni",
+      "to": "n-c66xabn",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-oqgpt52",
+      "from": "n-ciohw4a",
+      "to": "n-c66xabn",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-4g7ehyr",
+      "from": "n-98jlmhr",
+      "to": "n-ro2pij1",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-r8jg9cr",
+      "from": "n-ro2pij1",
+      "to": "n-wi0ye6m",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-kjk8dpd",
+      "from": "n-wi0ye6m",
+      "to": "n-c66xabn",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-jrcatdr",
+      "from": "n-ro2pij1",
+      "to": "n-rhlf3sp",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-301uoh6",
+      "from": "n-ro2pij1",
+      "to": "n-hdtj6lg",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-wq3xgb2",
+      "from": "n-rhlf3sp",
+      "to": "n-c66xabn",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-rnp0a6f",
+      "from": "n-hdtj6lg",
+      "to": "n-c66xabn",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-duob136",
+      "from": "n-wraqdnx",
+      "to": "n-c66xabn",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-13ita3k",
+      "from": "n-98jlmhr",
+      "to": "n-wraqdnx",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-k8abkm7",
+      "from": "n-xno7tw6",
+      "to": "n-c66xabn",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-d7rqpmy",
+      "from": "n-h7hil4z",
+      "to": "n-qyjkp6x",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-65z3q51",
+      "from": "n-tjsk6bh",
+      "to": "n-qyjkp6x",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-r7xd4ku",
+      "from": "n-5xzlyvp",
+      "to": "n-qyjkp6x",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-by880xt",
+      "from": "n-rc9o8zj",
+      "to": "n-xno7tw6",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-ssrmb5u",
+      "from": "n-rc9o8zj",
+      "to": "n-qyjkp6x",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-6vva9zi",
+      "from": "n-k41zr9w",
+      "to": "n-rc9o8zj",
+      "label": "連携協力",
+      "bidirectional": true
+    }
+  ]
+}

@@ -1,0 +1,2610 @@
+{
+  "exportedAt": "2026-03-22T13:21:45.166Z",
+  "scenarioId": "s1-1",
+  "nodes": [
+    {
+      "layerId": 1,
+      "layerReason": "",
+      "id": "n-pd06uet",
+      "label": "県庁",
+      "group": "g-command",
+      "x": 476.44921875,
+      "y": 14.375
+    },
+    {
+      "layerId": 1,
+      "layerReason": "",
+      "id": "n-wxy4a06",
+      "label": "C県A保健所",
+      "group": "g-command",
+      "x": 410.50390625,
+      "y": 119.5625
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-615ppvs",
+      "label": "地域災害医療コーディネーター",
+      "group": "g-command",
+      "x": 953.9140625,
+      "y": 270.51171875
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-frj1omn",
+      "label": "DMAT",
+      "group": "g-section",
+      "x": 862.44921875,
+      "y": 216.515625
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-d3x4msu",
+      "label": "DHEAT",
+      "group": "g-section",
+      "x": 424.90234375,
+      "y": 388.0703125
+    },
+    {
+      "layerId": 4,
+      "layerReason": "",
+      "id": "n-h5zix45",
+      "label": "避難所",
+      "group": "g-team",
+      "x": 343.43359375,
+      "y": 614.8203125
+    },
+    {
+      "layerId": 4,
+      "layerReason": "",
+      "id": "n-j99q0a3",
+      "label": "医療機関",
+      "group": "g-team",
+      "x": 771.453125,
+      "y": 635.21484375
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-q24h85w",
+      "label": "医師会",
+      "group": "g-unit",
+      "x": 50.37109375,
+      "y": 230.671875
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-nhnoixh",
+      "label": "市町村保健センター",
+      "group": "g-team",
+      "x": 305.7890625,
+      "y": 422.61328125
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-94s4fsu",
+      "label": "DPAT",
+      "group": "g-section",
+      "x": 669.140625,
+      "y": 444.7890625
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-aowh2ll",
+      "label": "C県看護協会",
+      "group": "g-section",
+      "x": 962,
+      "y": 477.12109375
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-i04ekzi",
+      "label": "W民間団体",
+      "group": "g-unit",
+      "x": 107.60546875,
+      "y": 479.9296875
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-b468lju",
+      "label": "DMAT",
+      "group": "g-section",
+      "x": 814.61328125,
+      "y": 433.59375
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-gp2vmm9",
+      "label": "JMAT",
+      "group": "g-section",
+      "x": 550.88671875,
+      "y": 410.8125
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-g9y7ull",
+      "label": "JRAT",
+      "group": "g-section",
+      "x": 714.95703125,
+      "y": 382.60546875
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-oxuunl3",
+      "label": "歯科医師会",
+      "group": "g-unit",
+      "x": 146.80078125,
+      "y": 282.50390625
+    },
+    {
+      "layerId": 2,
+      "layerReason": "",
+      "id": "n-sdxuu20",
+      "label": "AB薬剤師会",
+      "group": "g-unit",
+      "x": 1.703125,
+      "y": 292.2890625
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-vab1t0k",
+      "label": "C県栄養士会",
+      "group": "g-unit",
+      "x": 0,
+      "y": 509.640625
+    },
+    {
+      "layerId": 3,
+      "layerReason": "",
+      "id": "n-5uvuptu",
+      "label": "地域包括支援センター",
+      "group": "g-unit",
+      "x": 38.55859375,
+      "y": 401.8515625
+    },
+    {
+      "id": "n-ns8gc00",
+      "label": "DWAT",
+      "group": "g-section",
+      "x": 962,
+      "y": 405.83203125,
+      "layerId": 3,
+      "layerReason": ""
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-4xdobpl",
+      "from": "n-pd06uet",
+      "to": "n-wxy4a06",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-smeul41",
+      "from": "n-wxy4a06",
+      "to": "n-pd06uet",
+      "label": "情報伝達",
+      "bidirectional": false
+    },
+    {
+      "id": "e-ohj80ie",
+      "from": "n-d3x4msu",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-p852tee",
+      "from": "n-94s4fsu",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-8majmtj",
+      "from": "n-aowh2ll",
+      "to": "n-j99q0a3",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-kg4fn3i",
+      "from": "n-i04ekzi",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-59vrd0v",
+      "from": "n-frj1omn",
+      "to": "n-b468lju",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-kb7goir",
+      "from": "n-b468lju",
+      "to": "n-frj1omn",
+      "label": "情報伝達",
+      "bidirectional": false
+    },
+    {
+      "id": "e-68nyg6q",
+      "from": "n-b468lju",
+      "to": "n-j99q0a3",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-rysma7f",
+      "from": "n-b468lju",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-2yfiowg",
+      "from": "n-frj1omn",
+      "to": "n-615ppvs",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-dy5knml",
+      "from": "n-nhnoixh",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-mppbu81",
+      "from": "n-nhnoixh",
+      "to": "n-wxy4a06",
+      "label": "情報伝達",
+      "bidirectional": false
+    },
+    {
+      "id": "e-b5lhtb2",
+      "from": "n-wxy4a06",
+      "to": "n-nhnoixh",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-pdpi75q",
+      "from": "n-vab1t0k",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-n18qoox",
+      "from": "n-gp2vmm9",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-dfd641g",
+      "from": "n-g9y7ull",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-6yslg9l",
+      "from": "n-ns8gc00",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-i8n58qm",
+      "from": "n-pd06uet",
+      "to": "n-ns8gc00",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-ndt5msy",
+      "from": "n-ns8gc00",
+      "to": "n-pd06uet",
+      "label": "情報伝達",
+      "bidirectional": false
+    },
+    {
+      "id": "e-dwfdqhn",
+      "from": "n-g9y7ull",
+      "to": "n-pd06uet",
+      "label": "情報伝達",
+      "bidirectional": false
+    },
+    {
+      "id": "e-6qt5s36",
+      "from": "n-pd06uet",
+      "to": "n-g9y7ull",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-s27hffq",
+      "from": "n-wxy4a06",
+      "to": "n-q24h85w",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-32xv2f5",
+      "from": "n-wxy4a06",
+      "to": "n-oxuunl3",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-cpljw72",
+      "from": "n-q24h85w",
+      "to": "n-frj1omn",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-ssxm0se",
+      "from": "n-q24h85w",
+      "to": "n-j99q0a3",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-zxvrdyi",
+      "from": "n-q24h85w",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-518hj1v",
+      "from": "n-oxuunl3",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-z6zykte",
+      "from": "n-oxuunl3",
+      "to": "n-j99q0a3",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-r736a2k",
+      "from": "n-wxy4a06",
+      "to": "n-d3x4msu",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-lny7z44",
+      "from": "n-sdxuu20",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-f842qdy",
+      "from": "n-wxy4a06",
+      "to": "n-sdxuu20",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-ktk287i",
+      "from": "n-5uvuptu",
+      "to": "n-h5zix45",
+      "label": "支援",
+      "bidirectional": false
+    },
+    {
+      "id": "e-bogtyz1",
+      "from": "n-wxy4a06",
+      "to": "n-615ppvs",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-2snq0yz",
+      "from": "n-wxy4a06",
+      "to": "n-frj1omn",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-07xj1zs",
+      "from": "n-wxy4a06",
+      "to": "n-94s4fsu",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-cc4c7lg",
+      "from": "n-gp2vmm9",
+      "to": "n-wxy4a06",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-tynkss5",
+      "from": "n-wxy4a06",
+      "to": "n-aowh2ll",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-kgm9qu7",
+      "from": "n-pd06uet",
+      "to": "n-aowh2ll",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-qf7qmae",
+      "from": "n-aowh2ll",
+      "to": "n-pd06uet",
+      "label": "情報伝達",
+      "bidirectional": false
+    },
+    {
+      "id": "e-32t5pin",
+      "from": "n-vab1t0k",
+      "to": "n-wxy4a06",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-rmjpuq7",
+      "from": "n-pd06uet",
+      "to": "n-vab1t0k",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-tdfhy7g",
+      "from": "n-vab1t0k",
+      "to": "n-pd06uet",
+      "label": "情報伝達",
+      "bidirectional": false
+    },
+    {
+      "id": "e-flz1q2b",
+      "from": "n-wxy4a06",
+      "to": "n-i04ekzi",
+      "label": "指示命令",
+      "bidirectional": false
+    },
+    {
+      "id": "e-m9odcfb",
+      "from": "n-i04ekzi",
+      "to": "n-wxy4a06",
+      "label": "情報伝達",
+      "bidirectional": false
+    },
+    {
+      "id": "e-58491zp",
+      "from": "n-ns8gc00",
+      "to": "n-wxy4a06",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-ftp4iep",
+      "from": "n-g9y7ull",
+      "to": "n-wxy4a06",
+      "label": "連携協力",
+      "bidirectional": true
+    },
+    {
+      "id": "e-z1tjbw3",
+      "from": "n-d3x4msu",
+      "to": "n-pd06uet",
+      "label": "情報伝達",
+      "bidirectional": false
+    },
+    {
+      "id": "e-008ds8p",
+      "from": "n-wxy4a06",
+      "to": "n-5uvuptu",
+      "label": "連携協力",
+      "bidirectional": true
+    }
+  ],
+  "answers": {
+    "q1": "",
+    "q2": ""
+  },
+  "scores": null,
+  "operationLog": [
+    {
+      "ts": "2026-03-22T09:45:02.248Z",
+      "type": "INIT",
+      "detail": {
+        "scenarioId": "s1-1"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:46:54.616Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "県庁",
+        "group": "g-command"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:46:56.031Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "C県A保健所",
+        "group": "g-command"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:46:57.114Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "地域災害医療コーディネーター",
+        "group": "g-command"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:46:58.066Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "DMAT",
+        "group": "g-section"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:46:58.982Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "DHEAT",
+        "group": "g-section"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:01.714Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:04.915Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-wxy4a06",
+        "label": "C県A保健所",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:06.279Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:08.747Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-wxy4a06",
+        "label": "C県A保健所",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:12.181Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-pd06uet",
+        "label": "県庁",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:13.864Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-wxy4a06",
+        "label": "C県A保健所",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:17.429Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "県庁",
+        "to": "C県A保健所",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:20.313Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "県庁",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:22.313Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:25.279Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "地域災害医療コーディネーター",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:28.296Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "地域災害医療コーディネーター",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:30.231Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-d3x4msu",
+        "label": "DHEAT",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:33.380Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DHEAT",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:36.763Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DHEAT",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:41.346Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-frj1omn",
+        "label": "DMAT",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:42.746Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-frj1omn",
+        "label": "DMAT",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:46.496Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DMAT",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:49.263Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DMAT",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:52.714Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-d3x4msu",
+        "label": "DHEAT",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:47:55.767Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "DPAT",
+        "group": "g-section"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:12.079Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DHEAT",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:15.262Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DHEAT",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:21.129Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DMAT",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:24.296Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DMAT",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:33.367Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "避難所",
+        "group": "g-team"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:35.212Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-h5zix45",
+        "label": "避難所",
+        "layerId": 4
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:39.962Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DHEAT",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:41.847Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-47hdwag",
+        "label": "DPAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:43.968Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "医療機関",
+        "group": "g-team"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:46.112Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-j99q0a3",
+        "label": "医療機関",
+        "layerId": 4
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:48.962Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DMAT",
+        "to": "医療機関",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:52.501Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "医師会",
+        "group": "g-unit"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:48:55.846Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-q24h85w",
+        "label": "医師会",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:49:01.995Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "医師会",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T09:49:12.730Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-q24h85w",
+        "label": "医師会",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:49:14.663Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-q24h85w",
+        "label": "医師会",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:49:19.929Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "医師会",
+        "label": "連携協力"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:49:23.945Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "医師会",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:49:35.012Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "医師会",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:49:39.329Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:49:42.753Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "市町村保健センター",
+        "group": "g-team"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:49:45.629Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-nhnoixh",
+        "label": "市町村保健センター",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:49:50.579Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-nhnoixh",
+        "label": "市町村保健センター",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:00.183Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "DPAT",
+        "group": "g-section"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:03.979Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-94s4fsu",
+        "label": "DPAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:06.312Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DPAT",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:09.112Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DPAT",
+        "to": "医療機関",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:15.529Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-94s4fsu",
+        "label": "DPAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:19.895Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DPAT",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:24.345Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DPAT",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:31.784Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "C県看護協会",
+        "group": "g-section"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:36.662Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-aowh2ll",
+        "label": "C県看護協会",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:38.829Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-aowh2ll",
+        "label": "C県看護協会",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:43.445Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県看護協会",
+        "to": "医療機関",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:50:47.063Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T09:51:04.451Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "W民間団体",
+        "group": "g-unit"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:51:09.512Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-i04ekzi",
+        "label": "W民間団体",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:51:11.611Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "W民間団体",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:51:16.411Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "W民間団体",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:51:22.411Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "W民間団体",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:51:44.968Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "DMAT",
+        "group": "g-section"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:51:47.311Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-b468lju",
+        "label": "DMAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:51:51.911Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "DMAT",
+        "to": "医療機関",
+        "label": "支援"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:51:55.944Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DMAT",
+        "to": "DMAT",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:51:59.594Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DMAT",
+        "to": "DMAT",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:02.994Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DMAT",
+        "to": "医療機関",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:07.027Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DMAT",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:28.718Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "JMAT",
+        "group": "g-section"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:32.878Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-gp2vmm9",
+        "label": "JMAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:40.111Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-47hdwag",
+        "label": "DPAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:41.944Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-47hdwag",
+        "label": "DPAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:46.660Z",
+      "type": "DELETE_NODE",
+      "detail": {
+        "id": "n-47hdwag",
+        "label": "DPAT"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:50.984Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "JRAT",
+        "group": "g-section"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:55.243Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-g9y7ull",
+        "label": "JRAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:56.644Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-g9y7ull",
+        "label": "JRAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:52:58.911Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-gp2vmm9",
+        "label": "JMAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:53:01.161Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-g9y7ull",
+        "label": "JRAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:53:21.493Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:53:25.094Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:53:30.476Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DMAT",
+        "to": "地域災害医療コーディネーター",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T09:53:58.551Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "歯科医師会",
+        "group": "g-unit"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:54:01.344Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-oxuunl3",
+        "label": "歯科医師会",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:54:33.534Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "AB薬剤師会",
+        "group": "g-unit"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:54:36.927Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-sdxuu20",
+        "label": "AB薬剤師会",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T09:54:44.069Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "C県栄養士会",
+        "group": "g-unit"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:54:46.660Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-vab1t0k",
+        "label": "C県栄養士会",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T09:54:52.167Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "地域包括支援センター",
+        "group": "g-unit"
+      }
+    },
+    {
+      "ts": "2026-03-22T09:54:57.860Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-5uvuptu",
+        "label": "地域包括支援センター",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:07:39.542Z",
+      "type": "IMPORT",
+      "detail": {
+        "nodeCount": 19
+      }
+    },
+    {
+      "ts": "2026-03-22T12:07:58.055Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-nhnoixh",
+        "label": "市町村保健センター",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:00.855Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "市町村保健センター",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:06.754Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "市町村保健センター",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:14.670Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "市町村保健センター",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:25.221Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県栄養士会",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:30.938Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-gp2vmm9",
+        "label": "JMAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:33.021Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "JMAT",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:35.270Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-g9y7ull",
+        "label": "JRAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:37.104Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "JRAT",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:41.830Z",
+      "type": "ADD_NODE",
+      "detail": {
+        "label": "DWAT",
+        "group": "g-section"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:45.805Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-ns8gc00",
+        "label": "DWAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:48.588Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DWAT",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:53.270Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "県庁",
+        "to": "DWAT",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:08:57.770Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DWAT",
+        "to": "県庁",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:09:05.803Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "JRAT",
+        "to": "県庁",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:09:12.388Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-g9y7ull",
+        "label": "JRAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:09:20.653Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "県庁",
+        "to": "JRAT",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:09:32.788Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:19:54.147Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "医師会",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:19:58.947Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-wxy4a06",
+        "label": "C県A保健所",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:20:03.263Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-wxy4a06",
+        "label": "C県A保健所",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:20:07.697Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "医師会",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:20:17.014Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "歯科医師会",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:20:19.131Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-wxy4a06",
+        "label": "C県A保健所",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:20:31.347Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "医師会",
+        "to": "DMAT",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:20:47.880Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "医師会",
+        "to": "医療機関",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:20:54.847Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "医師会",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:20:59.447Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "歯科医師会",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:21:02.797Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "歯科医師会",
+        "to": "医療機関",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:21:22.063Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-oxuunl3",
+        "label": "歯科医師会",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T12:21:31.546Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "医師会",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:21:47.396Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-wxy4a06",
+        "label": "C県A保健所",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:21:53.663Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DMAT",
+        "label": "連携協力"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:22:02.746Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DMAT",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:22:15.512Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DHEAT",
+        "label": "連携協力"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:22:24.779Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DHEAT",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:22:39.330Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-wxy4a06",
+        "label": "C県A保健所",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:22:44.030Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-wxy4a06",
+        "label": "C県A保健所",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:22:54.164Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-wxy4a06",
+        "label": "C県A保健所",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:23:31.331Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "AB薬剤師会",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:23:38.997Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "AB薬剤師会",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:24:03.364Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:26:20.962Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "JMAT",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:26:25.046Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "JMAT",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:26:29.531Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:29:56.594Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "地域包括支援センター",
+        "to": "避難所",
+        "label": "支援",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:30:03.094Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "地域包括支援センター",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:30:51.743Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "C県栄養士会",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:30:55.560Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県栄養士会",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:31:07.426Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "C県看護協会",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:31:10.910Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県看護協会",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:31:38.827Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:35:25.559Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:37:41.242Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:42:10.987Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T12:42:12.288Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T12:42:15.770Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:42:30.904Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:42:34.437Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "地域災害医療コーディネーター",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:42:36.604Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T12:42:47.921Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:42:53.187Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "地域災害医療コーディネーター",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:42:56.820Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "地域災害医療コーディネーター",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:42:58.538Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-615ppvs",
+        "label": "地域災害医療コーディネーター",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T12:43:19.254Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-frj1omn",
+        "label": "DMAT",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:43:23.220Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DMAT",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:43:34.537Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-frj1omn",
+        "label": "DMAT",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:43:40.954Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-frj1omn",
+        "label": "DMAT",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T12:43:44.503Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "DMAT",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:43:48.302Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DMAT",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:43:52.971Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:44:36.886Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "DPAT",
+        "to": "医療機関",
+        "label": "支援"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:44:42.769Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DPAT",
+        "to": "市町村保健センター",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:44:49.452Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DPAT",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:44:52.802Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "DPAT",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:44:57.185Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "DPAT",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:45:19.369Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-gp2vmm9",
+        "label": "JMAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:45:23.035Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "JMAT",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:45:26.702Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "JMAT",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:45:31.935Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "JMAT",
+        "to": "C県A保健所",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:45:40.503Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:46:03.952Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-aowh2ll",
+        "label": "C県看護協会",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:46:07.385Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "C県看護協会",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:46:10.835Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県看護協会",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:46:15.884Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "C県看護協会",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:46:22.151Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "県庁",
+        "to": "C県看護協会",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:46:28.151Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県看護協会",
+        "to": "県庁",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:46:31.202Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-aowh2ll",
+        "label": "C県看護協会",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:46:37.086Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:46:52.502Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-vab1t0k",
+        "label": "C県栄養士会",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:46:56.834Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "C県栄養士会",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:47:01.818Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県栄養士会",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:47:06.584Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県栄養士会",
+        "to": "C県A保健所",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:47:11.384Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "県庁",
+        "to": "C県栄養士会",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:47:15.467Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県栄養士会",
+        "to": "県庁",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:47:18.419Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:47:45.852Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-i04ekzi",
+        "label": "W民間団体",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:47:50.284Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "W民間団体",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:47:54.767Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "W民間団体",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:47:59.867Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "W民間団体",
+        "to": "C県A保健所",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:48:36.436Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:49:55.117Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "W民間団体",
+        "to": "C県A保健所",
+        "label": "連携協力"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:49:59.251Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "W民間団体",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:50:02.617Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "W民間団体",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:50:58.667Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DWAT",
+        "to": "C県A保健所",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:51:01.827Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-ns8gc00",
+        "label": "DWAT",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T12:51:05.785Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-ns8gc00",
+        "label": "DWAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:51:53.834Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-ns8gc00",
+        "label": "DWAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:51:55.499Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-ns8gc00",
+        "label": "DWAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:51:57.468Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-ns8gc00",
+        "label": "DWAT",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T12:52:01.583Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "DWAT",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T12:52:06.083Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DWAT",
+        "to": "C県A保健所",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:52:08.184Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-ns8gc00",
+        "label": "DWAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:52:33.366Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "JRAT",
+        "to": "C県A保健所",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T12:52:37.535Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T12:59:11.463Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-d3x4msu",
+        "label": "DHEAT",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T12:59:16.345Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "DHEAT",
+        "to": "県庁",
+        "label": "情報伝達",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T12:59:20.931Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-d3x4msu",
+        "label": "DHEAT",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T12:59:35.847Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-d3x4msu",
+        "label": "DHEAT",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T12:59:39.562Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "DHEAT",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T13:00:08.712Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "DPAT",
+        "to": "市町村保健センター",
+        "label": "連携協力"
+      }
+    },
+    {
+      "ts": "2026-03-22T13:00:11.413Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T13:00:44.578Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-i04ekzi",
+        "label": "W民間団体",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T13:00:48.296Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-5uvuptu",
+        "label": "地域包括支援センター",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T13:00:56.778Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "地域包括支援センター",
+        "label": "指示命令",
+        "bidirectional": false
+      }
+    },
+    {
+      "ts": "2026-03-22T13:01:00.480Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T13:01:07.312Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-5uvuptu",
+        "label": "地域包括支援センター",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T13:01:11.412Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "地域包括支援センター",
+        "label": "指示命令"
+      }
+    },
+    {
+      "ts": "2026-03-22T13:01:15.927Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-5uvuptu",
+        "label": "地域包括支援センター",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T13:01:18.028Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-5uvuptu",
+        "label": "地域包括支援センター",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T13:01:27.997Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-5uvuptu",
+        "label": "地域包括支援センター",
+        "layerId": 1
+      }
+    },
+    {
+      "ts": "2026-03-22T13:01:31.111Z",
+      "type": "DELETE_EDGE",
+      "detail": {
+        "from": "地域包括支援センター",
+        "to": "C県A保健所",
+        "label": "情報伝達"
+      }
+    },
+    {
+      "ts": "2026-03-22T13:01:40.561Z",
+      "type": "ADD_EDGE",
+      "detail": {
+        "from": "C県A保健所",
+        "to": "地域包括支援センター",
+        "label": "連携協力",
+        "bidirectional": true
+      }
+    },
+    {
+      "ts": "2026-03-22T13:01:42.829Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-5uvuptu",
+        "label": "地域包括支援センター",
+        "layerId": 3
+      }
+    },
+    {
+      "ts": "2026-03-22T13:01:45.430Z",
+      "type": "EXPORT",
+      "detail": {}
+    },
+    {
+      "ts": "2026-03-22T13:11:31.540Z",
+      "type": "MOVE_NODE",
+      "detail": {
+        "id": "n-frj1omn",
+        "label": "DMAT",
+        "layerId": 2
+      }
+    },
+    {
+      "ts": "2026-03-22T13:16:23.156Z",
+      "type": "EXPORT",
+      "detail": {}
+    }
+  ]
+}

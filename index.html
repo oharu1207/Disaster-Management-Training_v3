@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ICS学習支援システム ― 行政保健師のための健康危機管理</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="header-left">
+    <div class="logo">ICS <span>学習支援システム</span></div>
+    <div class="phase-track">
+      <div class="phase-step active" data-phase="0"><span class="step-num">1</span><span class="step-label">オリエン<br>テーション</span></div>
+      <span class="phase-arrow">›</span>
+      <div class="phase-step" data-phase="1"><span class="step-num">2</span><span class="step-label">マップ構築<br>（急性期）</span></div>
+      <span class="phase-arrow">›</span>
+      <div class="phase-step" data-phase="2"><span class="step-num">3</span><span class="step-label">比較・分析<br>（急性期）</span></div>
+      <span class="phase-arrow">›</span>
+      <div class="phase-step" data-phase="3"><span class="step-num">4</span><span class="step-label">復旧期<br>準備</span></div>
+      <span class="phase-arrow">›</span>
+      <div class="phase-step" data-phase="4"><span class="step-num">5</span><span class="step-label">復旧期<br>マップ</span></div>
+      <span class="phase-arrow">›</span>
+      <div class="phase-step" data-phase="5"><span class="step-num">6</span><span class="step-label">シーケンス<br>図構築</span></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button id="btnExport" class="btn-primary">📥 JSON保存</button>
+    <button id="btnImport" class="btn-secondary">📤 JSON読込</button>
+    <button id="btnReset" class="btn-danger">初期化</button>
+  </div>
+</header>
+
+<!-- ===== PHASE 0 ===== -->
+<div id="phase-0" class="phase-view active">
+  <div class="orient-grid">
+    <div>
+      <div class="o-card">
+        <div class="scenario-badge">急性期</div>
+        <h2 class="scenario-title">医療救護活動の<br>組織構造を可視化せよ</h2>
+        <div class="info-block">
+          <div class="tag-label tag-disaster">🌧 災害概要</div>
+          <p>X年7月4日未明、大規模な線状降水帯が発生。午前4時50分に<strong>大雨特別警報</strong>を発表。A県X川が氾濫し、B保健所管内が甚大な被害。避難所43か所・最大避難者1807名・孤立集落も発生。</p>
+          <p>B保健所では通信不通・職員参集困難の中で初動対応が開始。発災翌日、<strong>「B地域災害医療対策会議」</strong>が立ち上がった。</p>
+          <p style="font-size:11px;color:var(--text-muted)">なお、復旧期には管内医療機関の機能は概ね回復したものとする。</p>
+        </div>
+        <div class="info-block problem">
+          <div class="tag-label tag-problem">⚠ 現場の問題点</div>
+          <ul>
+            <li>避難所ごとに状況が異なる</li>
+            <li>支援チームごとに様式が違う</li>
+            <li>情報の集約先が曖昧</li>
+            <li>市町村保健師が疲弊している</li>
+            <li>孤立集落の情報が不十分</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <div class="tag-label tag-task">📋 課題（B保健所保健師として）</div>
+          <p>急性期の医療救護体制を、コンセプトマップで表現せよ。</p>
+          <ol style="padding-left:18px;margin-top:5px;">
+            <li>中心となる主体を明示すること</li>
+            <li>各主体間の関係をラベル付き矢印で示すこと</li>
+            <li>支援対象を構造の中に位置づけること</li>
+          </ol>
+        </div>
+        <div class="info-block">
+          <div class="tag-label tag-task">❓ 考察の問い</div>
+          <p><strong>① 情報が最も集まる主体はどこか？</strong></p>
+          <p><strong>② その理由を組織構造の観点から100字以内で説明せよ。</strong></p>
+        </div>
+      </div>
+      <div class="o-card">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:10px;">💡 ICS基本原則</h3>
+        <div class="ics-grid">
+          <div class="ics-principle"><span class="ico">🎯</span><div><strong>指揮統一</strong><p>1人の現場指揮官の下に収束</p></div></div>
+          <div class="ics-principle"><span class="ico">📊</span><div><strong>情報一元化</strong><p>全情報は1か所に集約</p></div></div>
+          <div class="ics-principle"><span class="ico">🔧</span><div><strong>モジュール展開</strong><p>必要に応じて部門を拡大縮小</p></div></div>
+          <div class="ics-principle"><span class="ico">📡</span><div><strong>管理限界</strong><p>1人が管理するのは3〜7組織</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="o-card">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:10px;">組織名一覧</h3>
+        <div class="member-grid">
+          <div class="member-chip" aria-label="県庁：広域指揮・県全体の災害対応方針を決定する行政機関">
+            <div class="mchip-main"><span class="ico">🏛</span>県庁</div>
+            <span class="mchip-desc">広域指揮・県全体の災害対応方針を決定する行政機関</span>
+          </div>
+          <div class="member-chip" aria-label="C県A保健所：地域の現地指揮拠点・支援チームの受入・調整を担う">
+            <div class="mchip-main"><span class="ico">🏥</span>C県A保健所</div>
+            <span class="mchip-desc">地域の現地指揮拠点・支援チームの受入・調整を担う</span>
+          </div>
+          <div class="member-chip" aria-label="地域災害医療コーディネーター：医療資源の配分と機関間調整を専門的に支援する">
+            <div class="mchip-main"><span class="ico">🩺</span>地域災害医療コーディネーター</div>
+            <span class="mchip-desc">医療資源の配分と機関間調整を専門的に支援する</span>
+          </div>
+          <div class="member-chip" aria-label="DMAT：災害急性期に派遣される専門的医療チーム">
+            <div class="mchip-main"><span class="ico">🚑</span>DMAT</div>
+            <span class="mchip-desc">災害急性期に派遣される専門的医療チーム</span>
+          </div>
+          <div class="member-chip" aria-label="DHEAT：保健医療調整・情報収集を担う都道府県チーム">
+            <div class="mchip-main"><span class="ico">📋</span>DHEAT</div>
+            <span class="mchip-desc">保健医療調整・情報収集を担う都道府県チーム</span>
+          </div>
+          <div class="member-chip" aria-label="DPAT：被災者・支援者のこころのケアを担う専門チーム">
+            <div class="mchip-main"><span class="ico">🧠</span>DPAT</div>
+            <span class="mchip-desc">被災者・支援者のこころのケアを担う専門チーム</span>
+          </div>
+          <div class="member-chip" aria-label="DWAT：要介護者・障害者等への福祉的支援を担うチーム">
+            <div class="mchip-main"><span class="ico">💧</span>DWAT</div>
+            <span class="mchip-desc">要介護者・障害者等への福祉的支援を担うチーム</span>
+          </div>
+          <div class="member-chip" aria-label="JMAT：日本医師会が派遣する医療救護チーム">
+            <div class="mchip-main"><span class="ico">🏥</span>JMAT</div>
+            <span class="mchip-desc">日本医師会が派遣する医療救護チーム</span>
+          </div>
+          <div class="member-chip" aria-label="JRAT：生活不活発病予防・リハビリ支援を担うチーム">
+            <div class="mchip-main"><span class="ico">🔧</span>JRAT</div>
+            <span class="mchip-desc">生活不活発病予防・リハビリ支援を担うチーム</span>
+          </div>
+          <div class="member-chip" aria-label="C県看護協会：県内看護職の派遣・調整を担う職能団体">
+            <div class="mchip-main"><span class="ico">💉</span>C県看護協会</div>
+            <span class="mchip-desc">県内看護職の派遣・調整を担う職能団体</span>
+          </div>
+          <div class="member-chip" aria-label="医師会：地域医療を担う医師の職能団体">
+            <div class="mchip-main"><span class="ico">👨‍⚕️</span>医師会</div>
+            <span class="mchip-desc">地域医療を担う医師の職能団体</span>
+          </div>
+          <div class="member-chip" aria-label="歯科医師会：口腔ケア・身元確認等を担う歯科医師の職能団体">
+            <div class="mchip-main"><span class="ico">🦷</span>歯科医師会</div>
+            <span class="mchip-desc">口腔ケア・身元確認等を担う歯科医師の職能団体</span>
+          </div>
+          <div class="member-chip" aria-label="AB薬剤師会：薬剤管理・服薬支援を担う薬剤師の職能団体">
+            <div class="mchip-main"><span class="ico">💊</span>AB薬剤師会</div>
+            <span class="mchip-desc">薬剤管理・服薬支援を担う薬剤師の職能団体</span>
+          </div>
+          <div class="member-chip" aria-label="C県栄養士会：避難所等での栄養管理・食支援を担う職能団体">
+            <div class="mchip-main"><span class="ico">🥗</span>C県栄養士会</div>
+            <span class="mchip-desc">避難所等での栄養管理・食支援を担う職能団体</span>
+          </div>
+          <div class="member-chip" aria-label="地域包括支援センター：高齢者・要支援者の生活支援ニーズを把握する機関">
+            <div class="mchip-main"><span class="ico">🤝</span>地域包括支援センター</div>
+            <span class="mchip-desc">高齢者・要支援者の生活支援ニーズを把握する機関</span>
+          </div>
+          <div class="member-chip" aria-label="W民間団体：行政を補完するボランティア・NPO等の民間支援組織">
+            <div class="mchip-main"><span class="ico">🏢</span>W民間団体</div>
+            <span class="mchip-desc">行政を補完するボランティア・NPO等の民間支援組織</span>
+          </div>
+          <div class="member-chip" aria-label="市町村保健センター：住民に最も近い保健活動の実施主体">
+            <div class="mchip-main"><span class="ico">🏘</span>市町村保健センター</div>
+            <span class="mchip-desc">住民に最も近い保健活動の実施主体</span>
+          </div>
+          <div class="member-chip g-team" aria-label="避難所：被災住民が生活する拠点・保健医療支援の主要な活動場所">
+            <div class="mchip-main"><span class="ico">🏘</span>避難所</div>
+            <span class="mchip-desc">被災住民が生活する拠点・保健医療支援の主要な活動場所</span>
+          </div>
+          <div class="member-chip g-team" aria-label="医療機関：急性期における傷病者受入・医療救護の実施場所">
+            <div class="mchip-main"><span class="ico">🏥</span>医療機関</div>
+            <span class="mchip-desc">急性期における傷病者受入・医療救護の実施場所</span>
+          </div>
+        </div>
+      </div>
+      <div class="o-card" style="margin-top:14px;">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:10px;">🗺 矢印の種類と意味</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;font-size:13px;">
+          <div style="background:var(--bg3);padding:10px 12px;border-radius:9px;display:flex;gap:8px;align-items:center;"><span style="color:#ff6b6b;font-size:18px;line-height:1">→</span><span><strong style="color:#ff6b6b">指示命令</strong><br><span style="font-size:11px;color:var(--text-muted)">命令・指示（一方向）</span></span></div>
+          <div style="background:var(--bg3);padding:10px 12px;border-radius:9px;display:flex;gap:8px;align-items:center;"><span style="color:#4d8fff;font-size:18px;line-height:1">→</span><span><strong style="color:#4d8fff">情報伝達</strong><br><span style="font-size:11px;color:var(--text-muted)">情報の流れ（一方向）</span></span></div>
+          <div style="background:var(--bg3);padding:10px 12px;border-radius:9px;display:flex;gap:8px;align-items:center;"><span style="color:#3dcf8a;font-size:18px;line-height:1">⇄</span><span><strong style="color:#3dcf8a">連携協力</strong><br><span style="font-size:11px;color:var(--text-muted)">双方向・協力関係</span></span></div>
+        </div>
+      </div>
+      <div class="hint-box">
+        <strong>💡 操作のヒント</strong>
+        「誰が中心か」を決め → 「縦（指揮・報告）」→ 「横（調整・連携）」→ 「支援対象」の順で組み立てましょう。
+        矢印はノードの右側の <strong style="color:var(--accent)">→</strong> ボタンから引けます。
+      </div>
+      <div class="start-btn-wrap">
+        <button id="btnStartMap" class="btn-start">コンセプトマップ構築を開始する →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PHASE 1 ===== -->
+<div id="phase-1" class="phase-view">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="map-sidebar">
+
+    <div class="sb-block">
+      <div class="scenario-badge">急性期</div>
+      <div style="font-weight:700;font-size:14px;line-height:1.5;margin-top:7px;">医療救護活動の組織構造を<br>コンセプトマップで表現せよ</div>
+    </div>
+
+    <!-- PALETTE -->
+    <div class="sb-block" style="flex:1;min-height:0;display:flex;flex-direction:column;">
+      <div class="sb-title">🏛 機関パレット — クリックでキャンバスに追加</div>
+      <div class="palette" id="palette-acute" style="flex:1;overflow-y:auto;"></div>
+    </div>
+
+
+  </div><!-- /map-sidebar -->
+
+  <!-- CANVAS -->
+  <div class="canvas-col">
+    <div class="canvas-toolbar">
+      <span class="canvas-stat" id="canvasStat-acute">ノード: 0 ／ 矢印: 0</span>
+      <div id="arrowModeHint-acute" class="arrow-mode-hint" style="display:none;">
+        ✦ 矢印モード ― 接続先のノードをクリック（Escでキャンセル）
+      </div>
+    </div>
+    <div class="canvasWrap" id="canvasWrap-acute">
+      <div id="layerBands-acute" class="phase-layer-bands">
+        <div class="layer-band" data-layer="1">
+          <span class="layer-label">指揮 Command</span>
+          <span class="layer-concept">指示命令の起点</span>
+        </div>
+        <div class="layer-band" data-layer="2">
+          <span class="layer-label">調整・統制 Section</span>
+          <span class="layer-concept">情報集約・組織間調整</span>
+        </div>
+        <div class="layer-band" data-layer="3">
+          <span class="layer-label">実働 Branch / Group</span>
+          <span class="layer-concept">現場活動チーム</span>
+        </div>
+        <div class="layer-band" data-layer="4">
+          <span class="layer-label">支援対象</span>
+          <span class="layer-concept">活動の対象となる機関・住民</span>
+        </div>
+      </div>
+      <svg id="svgLayer-acute" class="phase-svg-layer">
+        <defs>
+          <marker id="arrow-blue-acute"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4d8fff"/></marker>
+          <marker id="arrow-red-acute"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b6b"/></marker>
+          <marker id="arrow-green-acute"  viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#66ffaa"/></marker>
+          <marker id="arrow-yellow-acute" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ffd166"/></marker>
+          <marker id="arrow-teal-acute"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3dcf8a"/></marker>
+          <marker id="arrow-purple-acute" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/></marker>
+        </defs>
+      </svg>
+      <div id="canvas-acute" class="phase-canvas"></div>
+    </div>
+  </div><!-- /canvas-col -->
+
+</div><!-- /phase-1 -->
+
+<!-- PHASE 2: 比較・分析（急性期） -->
+<div id="phase-2" class="phase-view">
+
+  <!-- 左カラム：学習者の理想マップ -->
+  <div class="compare-col" id="compareColIdeal">
+    <div class="compare-col-header">
+      <span class="compare-col-title">📐 あなたの理想マップ</span>
+      <span class="compare-col-stat" id="canvasStat-ideal">ノード: 0 ／ 矢印: 0</span>
+    </div>
+    <div class="canvasWrap" id="canvasWrap-ideal">
+      <div class="phase-layer-bands">
+        <div class="layer-band" data-layer="1">
+          <span class="layer-label">指揮 Command</span>
+          <span class="layer-concept">指示命令の起点</span>
+        </div>
+        <div class="layer-band" data-layer="2">
+          <span class="layer-label">調整・統制 Section</span>
+          <span class="layer-concept">情報集約・組織間調整</span>
+        </div>
+        <div class="layer-band" data-layer="3">
+          <span class="layer-label">実働 Branch / Group</span>
+          <span class="layer-concept">現場活動チーム</span>
+        </div>
+        <div class="layer-band" data-layer="4">
+          <span class="layer-label">支援対象</span>
+          <span class="layer-concept">活動の対象となる機関・住民</span>
+        </div>
+      </div>
+      <svg id="svgLayer-ideal" class="phase-svg-layer">
+        <defs>
+          <marker id="arrow-red-ideal"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b6b"/></marker>
+          <marker id="arrow-blue-ideal"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4d8fff"/></marker>
+          <marker id="arrow-teal-ideal"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3dcf8a"/></marker>
+          <marker id="arrow-purple-ideal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/></marker>
+        </defs>
+      </svg>
+      <div id="canvas-ideal" class="phase-canvas"></div>
+    </div>
+  </div>
+
+  <!-- 右カラム：急性期実際マップ -->
+  <div class="compare-col" id="compareColActual">
+    <div class="compare-col-header">
+      <span class="compare-col-title">📋 急性期 実際マップ</span>
+      <span class="compare-col-stat" id="canvasStat-actual">ノード: 0 ／ 矢印: 0</span>
+    </div>
+    <div class="canvasWrap" id="canvasWrap-actual">
+      <div class="phase-layer-bands">
+        <div class="layer-band" data-layer="1">
+          <span class="layer-label">指揮 Command</span>
+          <span class="layer-concept">指示命令の起点</span>
+        </div>
+        <div class="layer-band" data-layer="2">
+          <span class="layer-label">調整・統制 Section</span>
+          <span class="layer-concept">情報集約・組織間調整</span>
+        </div>
+        <div class="layer-band" data-layer="3">
+          <span class="layer-label">実働 Branch / Group</span>
+          <span class="layer-concept">現場活動チーム</span>
+        </div>
+        <div class="layer-band" data-layer="4">
+          <span class="layer-label">支援対象</span>
+          <span class="layer-concept">活動の対象となる機関・住民</span>
+        </div>
+      </div>
+      <svg id="svgLayer-actual" class="phase-svg-layer">
+        <defs>
+          <marker id="arrow-red-actual"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b6b"/></marker>
+          <marker id="arrow-blue-actual"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4d8fff"/></marker>
+          <marker id="arrow-teal-actual"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3dcf8a"/></marker>
+          <marker id="arrow-purple-actual" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/></marker>
+        </defs>
+      </svg>
+      <div id="canvas-actual" class="phase-canvas"></div>
+    </div>
+  </div>
+
+  <!-- 記述問題パネル（下段・横断） -->
+  <div class="compare-qa-panel" id="compareQaPanel">
+    <div class="compare-qa-inner">
+      <div class="compare-qa-block">
+        <label class="compare-qa-label">
+          問2.	報告書から作成した実際の組織構造のコンセプトマップを見て，あなたの理想マップと実際マップの最も重要と思う構造的差異を1つ挙げて説明せよ．（100字以内）
+        </label>
+        <textarea id="p3q1Answer" rows="2"
+          placeholder="例）理想マップではA→BにCMDが存在するが，実際マップでは…"></textarea>
+        <div class="char-count"><span id="p3q1CharCount">0</span> / 100 字</div>
+      </div>
+      <div class="compare-qa-block">
+        <label class="compare-qa-label">
+          問3.	問2で指摘した構造的差異は、ICS原則のうちどの違反か選択し，選んだ理由を1文で述べよ．（100字以内）
+        </label>
+        <div class="ics-radio-group" id="p3q2RadioGroup">
+          <label class="ics-radio-item">
+            <input type="radio" name="p3q2principle" value="Unity of Command">
+            <span class="ics-radio-label">Unity of Command <span class="ics-radio-sub">指揮一元化</span></span>
+          </label>
+          <label class="ics-radio-item">
+            <input type="radio" name="p3q2principle" value="Unified Command">
+            <span class="ics-radio-label">Unified Command <span class="ics-radio-sub">統合指揮</span></span>
+          </label>
+          <label class="ics-radio-item">
+            <input type="radio" name="p3q2principle" value="Span of Control">
+            <span class="ics-radio-label">Span of Control <span class="ics-radio-sub">統制範囲</span></span>
+          </label>
+          <label class="ics-radio-item">
+            <input type="radio" name="p3q2principle" value="Modular Organization">
+            <span class="ics-radio-label">Modular Organization <span class="ics-radio-sub">組立型組織</span></span>
+          </label>
+          <label class="ics-radio-item">
+            <input type="radio" name="p3q2principle" value="Communications">
+            <span class="ics-radio-label">Communications <span class="ics-radio-sub">コミュニケーション</span></span>
+          </label>
+        </div>
+        <textarea id="p3q2Answer" rows="2"
+          placeholder="例）DWATが県庁直轄となったことで…"></textarea>
+        <div class="char-count"><span id="p3q2CharCount">0</span> / 100 字</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /phase-2 -->
+<!-- ===== PHASE 5: 復旧期準備 ===== -->
+<div id="phase-5" class="phase-view">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="map-sidebar">
+    <div class="sb-block">
+      <div class="scenario-badge">復旧期 準備</div>
+      <div style="font-size:13px;line-height:1.6;margin-top:8px;color:#fff;">
+       急性期の理想的な組織体制から，<strong style="color:#fff;">復旧期には不要になるノード</strong>をクリックして選んでください。
+      </div>
+    </div>
+    <div class="sb-block" id="p5RemovalBlock" style="flex:1;min-height:0;overflow-y:auto;">
+      <div class="sb-title">🗑 削除候補ノード</div>
+      <div id="p5RemovalList"><span style="color:var(--text-muted);font-size:12px;">（まだ選択されていません）</span></div>
+    </div>
+    <div class="sb-block">
+      <button id="btnToPhase6" class="btn-primary full" disabled
+              onclick="goToPhase6()">復旧期マップへ進む →</button>
+      <div id="btnToPhase6Hint" class="p5-hint">不要なノードを1つ以上選択してください</div>
+    </div>
+  </div><!-- /map-sidebar -->
+
+  <!-- CANVAS (read-only) -->
+  <div class="canvas-col">
+    <div class="canvas-toolbar">
+      <span class="canvas-stat" id="canvasStat-p5">読み取り専用 — ノードをクリックして削除候補に選択</span>
+    </div>
+    <div class="canvasWrap" id="canvasWrap-p5">
+      <div class="phase-layer-bands">
+        <div class="layer-band" data-layer="1">
+          <span class="layer-label">指揮 Command</span>
+          <span class="layer-concept">指示命令の起点</span>
+        </div>
+        <div class="layer-band" data-layer="2">
+          <span class="layer-label">調整・統制 Section</span>
+          <span class="layer-concept">情報集約・組織間調整</span>
+        </div>
+        <div class="layer-band" data-layer="3">
+          <span class="layer-label">実働 Branch / Group</span>
+          <span class="layer-concept">現場活動チーム</span>
+        </div>
+        <div class="layer-band" data-layer="4">
+          <span class="layer-label">支援対象</span>
+          <span class="layer-concept">活動の対象となる機関・住民</span>
+        </div>
+      </div>
+      <svg id="svgLayer-p5" class="phase-svg-layer">
+        <defs>
+          <marker id="arrow-blue-p5"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4d8fff"/></marker>
+          <marker id="arrow-red-p5"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b6b"/></marker>
+          <marker id="arrow-green-p5"  viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#66ffaa"/></marker>
+          <marker id="arrow-yellow-p5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ffd166"/></marker>
+          <marker id="arrow-teal-p5"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3dcf8a"/></marker>
+          <marker id="arrow-purple-p5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/></marker>
+        </defs>
+      </svg>
+      <div id="canvas-p5" class="phase-canvas"></div>
+    </div>
+  </div><!-- /canvas-col -->
+
+</div><!-- /phase-5 -->
+
+<!-- ===== PHASE 6: 復旧期マップ構築 ===== -->
+<div id="phase-6" class="phase-view">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="map-sidebar">
+    <div class="sb-block">
+      <div class="scenario-badge">復旧期</div>
+      <div style="font-weight:700;font-size:14px;line-height:1.5;margin-top:7px;">復旧期の理想的な組織構造を<br>完成させてください</div>
+      <div style="font-size:12px;color:#fff;margin-top:6px;">急性期のマップから不要なノードを除いた状態が初期配置です。パレットから新たなノードを追加し、矢印で関係を構築してください。</div>
+    </div>
+    <div class="sb-block" style="flex:1;min-height:0;display:flex;flex-direction:column;">
+      <div class="sb-title">🔧 追加可能なノード</div>
+      <div class="palette" id="palette-p6" style="flex:1;overflow-y:auto;"></div>
+    </div>
+  </div><!-- /map-sidebar -->
+
+  <!-- CANVAS -->
+  <div class="canvas-col">
+    <div class="canvas-toolbar">
+      <span class="canvas-stat" id="canvasStat-p6">ノード: 0 ／ 矢印: 0</span>
+      <div id="arrowModeHint-p6" class="arrow-mode-hint" style="display:none;">
+        ✦ 矢印モード ― 接続先のノードをクリック（Escでキャンセル）
+      </div>
+    </div>
+    <div class="canvasWrap" id="canvasWrap-p6">
+      <div class="phase-layer-bands">
+        <div class="layer-band" data-layer="1">
+          <span class="layer-label">指揮 Command</span>
+          <span class="layer-concept">指示命令の起点</span>
+        </div>
+        <div class="layer-band" data-layer="2">
+          <span class="layer-label">調整・統制 Section</span>
+          <span class="layer-concept">情報集約・組織間調整</span>
+        </div>
+        <div class="layer-band" data-layer="3">
+          <span class="layer-label">実働 Branch / Group</span>
+          <span class="layer-concept">現場活動チーム</span>
+        </div>
+        <div class="layer-band" data-layer="4">
+          <span class="layer-label">支援対象</span>
+          <span class="layer-concept">活動の対象となる機関・住民</span>
+        </div>
+      </div>
+      <svg id="svgLayer-p6" class="phase-svg-layer">
+        <defs>
+          <marker id="arrow-blue-p6"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4d8fff"/></marker>
+          <marker id="arrow-red-p6"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b6b"/></marker>
+          <marker id="arrow-green-p6"  viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#66ffaa"/></marker>
+          <marker id="arrow-yellow-p6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ffd166"/></marker>
+          <marker id="arrow-teal-p6"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3dcf8a"/></marker>
+          <marker id="arrow-purple-p6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/></marker>
+        </defs>
+      </svg>
+      <div id="canvas-p6" class="phase-canvas"></div>
+    </div>
+  </div><!-- /canvas-col -->
+
+</div><!-- /phase-6 -->
+
+<div id="phase-3" class="phase-view">
+  <div class="coming-soon">
+    <div class="cs-icon">📈</div>
+    <h2>シーケンス図構築</h2>
+    <p>横断連携・時系列判断変化の可視化フェーズです。</p>
+    <button class="btn-secondary" onclick="switchPhase(1)">← フェーズ2へ戻る</button>
+  </div>
+</div>
+
+<script src="./app.js"></script>
+</body>
+</html>
