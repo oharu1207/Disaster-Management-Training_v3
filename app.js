@@ -22,20 +22,23 @@
     ORIENTATION:   0,   // オリエンテーション
     ACUTE_MAP:     1,   // マップ構築（急性期）
     ACUTE_COMPARE: 2,   // 比較・分析（急性期）
-    RECOVERY_PREP: 3,   // 復旧期準備
-    RECOVERY_MAP:  4,   // 復旧期マップ
-    SEQUENCE:      5,   // シーケンス図構築
+    ACUTE_RECORD:  3,   // 対応検証記録レビュー（急性期） // [ADDED]
+    RECOVERY_PREP: 4,   // 復旧期準備 // [CHANGED]
+    RECOVERY_MAP:  5,   // 復旧期マップ // [CHANGED]
+    SEQUENCE:      6,   // シーケンス図構築 // [CHANGED]
   };
 
   // フェーズ番号 → 対応する .phase-view の HTML id
   // DOM 順ではなく id で直接参照するため、並び替えに強い。
+  // [CHANGED] キー（数値）を PHASE 定数に合わせて更新。値（DOM id 文字列）は変更しない。
   const PHASE_VIEW_ID = {
     [PHASE.ORIENTATION]:   "phase-0",
     [PHASE.ACUTE_MAP]:     "phase-1",
     [PHASE.ACUTE_COMPARE]: "phase-2",
-    [PHASE.RECOVERY_PREP]: "phase-5",
-    [PHASE.RECOVERY_MAP]:  "phase-6",
-    [PHASE.SEQUENCE]:      "phase-3",
+    [PHASE.ACUTE_RECORD]:  "phase-acuteRecord", // [ADDED]
+    [PHASE.RECOVERY_PREP]: "phase-5",   // key: 3→4 [CHANGED]
+    [PHASE.RECOVERY_MAP]:  "phase-6",   // key: 4→5 [CHANGED]
+    [PHASE.SEQUENCE]:      "phase-3",   // key: 5→6 [CHANGED]
   };
 
   // === ノード一覧（Excelノート_.xlsx より） ===
@@ -140,6 +143,53 @@
     },
   };
 
+  // ================================================================
+  // ACUTE_RECORD_CONTENT — 対応検証記録フェーズのデータ定義 [ADDED]
+  // 抜粋・問の増減・文言修正はここだけで完結する。
+  // ================================================================
+  const ACUTE_RECORD_CONTENT = {
+    title: "対応検証記録（急性期 課題抜粋）",
+    excerpts: [
+      {
+        id: "R1",
+        text: "県庁との情報共有については、県庁における窓口が統一されておらず、県庁の各課から同じような内容の確認が幾度となくあり、保健所が把握していない問題への対応依頼等があり、保健所は混乱することがあった。"
+      },
+      {
+        id: "R2",
+        text: "県庁本部で、県庁と支援団体間だけで決められていた被災地支援活動などがあった。そういった活動の中には、保健所が現場ですでに取り組んでいた活動もあり、二重になってしまうこともあった。"
+      },
+      {
+        id: "R3",
+        text: "「参加者が多いと、会議時間が長くなってしまう」「会議では情報共有はできたが、具体的な支援団体の配置や活動における役割分担などにまで話が及ぶことはあまりなかった」"
+      },
+      {
+        id: "R4",
+        text: "DHEATを派遣するにあたり、保健所側の要望も聞いて欲しい。必ずしもプッシュ型である必要はあまりないのではないか。"
+      },
+      {
+        id: "R5",
+        text: "「県庁保健医療調整本部‐保健所現地保健医療調整本部との連携は、かなり薄かったと言わざるを得なかった。保健所には県庁本部の動きはまったく伝わってこなかった。」「情報網が遮断されたこともあって、保健所の全体的な活動を本庁に伝える手段もなく、本庁から聞かれることもなかった。」"
+      }
+    ],
+    questions: [
+      {
+        id: "q4",
+        kind: "singleChoice",
+        label: "問4．問3で指摘したICS原則違反は，対応検証記録の何番と対応するか1つ示せ。",
+        optionsSource: "excerpts",
+        required: true
+      },
+      {
+        id: "q5",
+        kind: "textarea",
+        label: "問5．問2・問3での指摘を踏まえつつ、あなたの考える組織構造上の問題が対応失敗をどのように引き起こしたか説明せよ。",
+        placeholder: "例）保健所が…という構造的問題があったため、…という失敗が生じた。",
+        maxLength: 200,
+        required: true
+      }
+    ]
+  };
+
   // === レイヤー定義 ===
   const LAYER_NAMES = ["", "指揮（Command）", "調整・統制（Section）", "実働（Branch/Group）", "支援対象"];
   const GROUP_EXPECTED_LAYERS = {
@@ -206,6 +256,7 @@
                 selectedNodeId:null, selectedEdgeId:null },
     p6:       { nodes:[], edges:[], answers:{q1:"",q2:""}, log:[],
                 selectedNodeId:null, selectedEdgeId:null },
+    acuteRecord: { answers: { q4: "", q5: "" } }, // [ADDED]
   };
 
   function savePhaseData(key) {
@@ -369,6 +420,21 @@
         if (radio) radio.checked = true;
       }
       showToast("ノードをダブルクリックすると接続関係をハイライトできます", 3500);
+      return;
+    }
+
+    // ── 対応検証記録（急性期） ─────────────────────────────────────────── [ADDED]
+    if (p === PHASE.ACUTE_RECORD) {
+      // 前提チェック：ACUTE_COMPARE が未完了なら戻す
+      if (phaseData.acute.nodes.length === 0) {
+        showToast("先に急性期の比較・分析を完了してください", 3000);
+        state.phase = prevPhase;
+        activatePhaseView(prevPhase);
+        updatePhaseSteps(prevPhase);
+        return;
+      }
+      renderAcuteRecordView();
+      restoreAcuteRecordAnswers();
       return;
     }
 
@@ -1215,7 +1281,7 @@
     if (activePhaseKey && !MAP_PHASE_CONFIG[state.phase]?.isReadOnly)
       savePhaseData(activePhaseKey);
     return {
-      version: 2,
+      version: 3, // [CHANGED] 2 → 3
       exportedAt: new Date().toISOString(),
       scenarioId: SCENARIO.id,
       acute: {
@@ -1231,6 +1297,10 @@
         operationLog: phaseData.p6.log,
       },
       phase5Data: window.phase5Data,
+      // [ADDED]
+      acuteRecord: {
+        answers: phaseData.acuteRecord.answers,
+      },
     };
   }
 
@@ -1268,8 +1338,8 @@
           const obj = JSON.parse(fr.result);
           let hasConflict = false;
 
-          if (obj.version === 2 && obj.acute && obj.recovery) {
-            // v2: 両フェーズを復元
+          if (obj.version === 3 && obj.acute && obj.recovery) { // [CHANGED] v3 対応
+            // v3: 全フェーズを復元
             const loadPhase = (src) => ({
               nodes: (src.nodes || []).map(n => ({ layerId: null, layerReason: "", isInitial: false, ...n })),
               edges: src.edges || [],
@@ -1279,6 +1349,13 @@
             });
             phaseData.acute    = loadPhase(obj.acute);
             phaseData.recovery = loadPhase(obj.recovery);
+            // [ADDED] acuteRecord の復元
+            phaseData.acuteRecord = {
+              answers: {
+                q4: obj.acuteRecord?.answers?.q4 || "",
+                q5: obj.acuteRecord?.answers?.q5 || "",
+              }
+            };
             // phase5Data の復元（同一ラベルのノードを補完）
             if (obj.phase5Data?.removals) {
               const restoredRemovals = [];
@@ -1310,6 +1387,42 @@
             }
             if (validateEdgeConflicts(phaseData.acute.edges) ||
                 validateEdgeConflicts(phaseData.recovery.edges)) hasConflict = true;
+          } else if (obj.version === 2 && obj.acute && obj.recovery) { // [ADDED] v2 後方互換
+            const loadPhaseV2 = (src) => ({
+              nodes: (src.nodes || []).map(n => ({ layerId: null, layerReason: "", isInitial: false, ...n })),
+              edges: src.edges || [],
+              answers: { q1: "", q2: "", p3q1: "", p3q2: "", p3q2sel: "", ...(src.answers || {}) },
+              log: src.operationLog || [],
+              selectedNodeId: null, selectedEdgeId: null,
+            });
+            phaseData.acute    = loadPhaseV2(obj.acute);
+            phaseData.recovery = loadPhaseV2(obj.recovery);
+            // v2 には acuteRecord がないため空で補完
+            phaseData.acuteRecord = { answers: { q4: "", q5: "" } };
+            if (obj.phase5Data?.removals) {
+              const restoredRemovals = [];
+              const seenLabels = new Set();
+              for (const r of obj.phase5Data.removals) {
+                if (seenLabels.has(r.label)) continue;
+                seenLabels.add(r.label);
+                const sameLabel = (window.idealMapAcute?.nodes || []).filter(n => n.label === r.label);
+                if (sameLabel.length > 0) {
+                  sameLabel.forEach(n => {
+                    restoredRemovals.push({ nodeId: n.id, label: n.label, reason: r.reason || "" });
+                  });
+                } else {
+                  restoredRemovals.push(r);
+                }
+              }
+              window.phase5Data = { removals: restoredRemovals };
+            }
+            phaseData.p6 = loadPhaseV2(obj.recovery);
+            phase6Initialized = phaseData.p6.nodes.length > 0;
+            if (phase6Initialized) {
+              phase6RemovalSignature = getRemovalSignature();
+            }
+            if (validateEdgeConflicts(phaseData.acute.edges) ||
+                validateEdgeConflicts(phaseData.recovery.edges)) hasConflict = true;
           } else if (Array.isArray(obj.nodes) && Array.isArray(obj.edges)) {
             // v1 legacy: 急性期に読み込む
             phaseData.acute = {
@@ -1319,6 +1432,8 @@
               log: obj.operationLog || [],
               selectedNodeId: null, selectedEdgeId: null,
             };
+            // v1 には acuteRecord がないため空で補完 [ADDED]
+            phaseData.acuteRecord = { answers: { q4: "", q5: "" } };
             if (validateEdgeConflicts(phaseData.acute.edges)) hasConflict = true;
           } else {
             throw new Error();
@@ -1347,6 +1462,13 @@
   }
 
   function resetAll() {
+    // [ADDED] 対応検証記録：問4・問5 の回答をクリア
+    if (state.phase === PHASE.ACUTE_RECORD) {
+      if (!confirm("問4・問5 の回答をリセットしますか？")) return;
+      phaseData.acuteRecord.answers = { q4: "", q5: "" };
+      renderAcuteRecordView();   // フォームを再描画してリセット状態に戻す
+      return;
+    }
     // 復旧期準備：削除候補リストのみクリア
     if (state.phase === PHASE.RECOVERY_PREP) {
       if (!confirm("削除候補の選択をすべてリセットしますか？")) return;
@@ -1732,6 +1854,162 @@
   }
 
   // ================================================================
+  // ACUTE_RECORD フェーズ レンダラー [ADDED]
+  // ================================================================
+
+  /**
+   * 問4 用ラジオ選択肢 HTML を返す（excerpts 配列から自動生成）
+   * @param {Object} q - ACUTE_RECORD_CONTENT.questions の問オブジェクト
+   * @param {Array}  excerpts - ACUTE_RECORD_CONTENT.excerpts
+   * @returns {string} HTML 文字列
+   */
+  function renderSingleChoiceQuestion(q, excerpts) {
+    const options = excerpts.map(ex => `
+      <label class="ics-radio-item">
+        <input type="radio" name="arQ4" value="${esc(ex.id)}">
+        <span class="ics-radio-label">${esc(ex.id)}</span>
+      </label>
+    `).join("");
+    return `
+      <div class="ar-question-block" id="arQBlock-${esc(q.id)}">
+        <div class="compare-qa-label">${esc(q.label)}</div>
+        <div class="ics-radio-group" id="arQ4RadioGroup">
+          ${options}
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * 問5 用テキストエリア HTML を返す
+   * @param {Object} q - ACUTE_RECORD_CONTENT.questions の問オブジェクト
+   * @returns {string} HTML 文字列
+   */
+  function renderTextareaQuestion(q) {
+    return `
+      <div class="ar-question-block" id="arQBlock-${esc(q.id)}">
+        <div class="compare-qa-label">${esc(q.label)}</div>
+        <textarea id="arQ5Answer" rows="3"
+          placeholder="${esc(q.placeholder || "")}"
+          maxlength="${q.maxLength || 500}"></textarea>
+        <div class="char-count"><span id="arQ5CharCount">0</span> / ${q.maxLength || 500} 字</div>
+      </div>
+    `;
+  }
+
+  /**
+   * ACUTE_RECORD フェーズの画面を描画し、フォームイベントを attach する。
+   * wireEvents() には追加しない（DOM が動的生成のため）。
+   */
+  function renderAcuteRecordView() {
+    const excerptList = $("arExcerptList");
+    const questionArea = $("arQuestionArea");
+    if (!excerptList || !questionArea) return;
+
+    const { excerpts, questions } = ACUTE_RECORD_CONTENT;
+
+    // (a) 抜粋エリア描画
+    excerptList.innerHTML = excerpts.map(ex => `
+      <div class="ar-excerpt-card" data-id="${esc(ex.id)}" id="arCard-${esc(ex.id)}">
+        <span class="ar-excerpt-num">${esc(ex.id)}</span>
+        <div class="ar-excerpt-text">${esc(ex.text)}</div>
+      </div>
+    `).join("");
+
+    // (b) 設問エリア描画
+    questionArea.innerHTML = questions.map(q => {
+      if (q.kind === "singleChoice") return renderSingleChoiceQuestion(q, excerpts);
+      if (q.kind === "textarea")     return renderTextareaQuestion(q);
+      return "";
+    }).join("");
+
+    // (c) イベント attach — q4 ラジオ
+    questionArea.querySelectorAll('input[name="arQ4"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        phaseData.acuteRecord.answers.q4 = radio.value;
+        // 抜粋カードのハイライト連動
+        excerptList.querySelectorAll(".ar-excerpt-card").forEach(card => {
+          card.classList.toggle("selected", card.dataset.id === radio.value);
+        });
+      });
+    });
+
+    // (c) イベント attach — q5 テキストエリア（文字数カウント付き）
+    const q5ta = $("arQ5Answer");
+    if (q5ta) {
+      q5ta.addEventListener("input", () => {
+        const len = q5ta.value.length;
+        const cc  = $("arQ5CharCount");
+        if (cc) {
+          cc.textContent = len;
+          const max = ACUTE_RECORD_CONTENT.questions.find(q => q.id === "q5")?.maxLength || 200;
+          cc.parentElement.className =
+            "char-count" + (len > max ? " over" : len >= max * 0.9 ? " warn" : "");
+          if (len > max) {
+            q5ta.classList.add("over");
+          } else {
+            q5ta.classList.remove("over");
+          }
+        }
+        phaseData.acuteRecord.answers.q5 = q5ta.value;
+      });
+    }
+
+    // 「復旧期準備へ進む」ボタン（バリデーション付き）
+    const btnToRecoveryPrep = $("btnToRecoveryPrep");
+    if (btnToRecoveryPrep) {
+      // 重複イベント防止のためクローン置き換え
+      const fresh = btnToRecoveryPrep.cloneNode(true);
+      btnToRecoveryPrep.replaceWith(fresh);
+      fresh.addEventListener("click", () => {
+        const { q4, q5 } = phaseData.acuteRecord.answers;
+        if (!q4) {
+          showToast("問4で対応検証記録の番号を選択してください", 3000);
+          return;
+        }
+        if (!q5) {
+          if (!confirm("問5が未入力です。このまま進みますか？")) return;
+        }
+        switchPhase(PHASE.RECOVERY_PREP);
+      });
+    }
+  }
+
+  /**
+   * phaseData.acuteRecord.answers の値を各フォーム要素に復元する。
+   * renderAcuteRecordView() の DOM 生成後に呼ぶこと。
+   */
+  function restoreAcuteRecordAnswers() {
+    const { q4, q5 } = phaseData.acuteRecord.answers;
+    const excerptList = $("arExcerptList");
+
+    // q4 復元
+    if (q4) {
+      const radio = document.querySelector(`input[name="arQ4"][value="${q4}"]`);
+      if (radio) {
+        radio.checked = true;
+        // カードハイライト
+        excerptList?.querySelectorAll(".ar-excerpt-card").forEach(card => {
+          card.classList.toggle("selected", card.dataset.id === q4);
+        });
+      }
+    }
+
+    // q5 復元
+    const q5ta = $("arQ5Answer");
+    if (q5ta && q5) {
+      q5ta.value = q5;
+      const cc = $("arQ5CharCount");
+      if (cc) {
+        cc.textContent = q5.length;
+        const max = ACUTE_RECORD_CONTENT.questions.find(q => q.id === "q5")?.maxLength || 200;
+        cc.parentElement.className =
+          "char-count" + (q5.length > max ? " over" : q5.length >= max * 0.9 ? " warn" : "");
+      }
+    }
+  }
+
+  // ================================================================
   // RENDER ALL
   // ================================================================
   function renderAll() {
@@ -1750,6 +2028,16 @@
     $("btnExport")?.addEventListener("click", exportJSON);
     $("btnImport")?.addEventListener("click", importJSON);
     $("btnReset")?.addEventListener("click", resetAll);
+
+    // [ADDED] 「問4・5へ進む」ボタン（ACUTE_COMPARE → ACUTE_RECORD）
+    $("btnToAcuteRecord")?.addEventListener("click", () => {
+      const ans = phaseData.acute.answers;
+      const allFilled = ans.p3q1 && ans.p3q2sel && ans.p3q2;
+      if (!allFilled) {
+        if (!confirm("未入力の設問があります。続けますか？")) return;
+      }
+      switchPhase(PHASE.ACUTE_RECORD);
+    });
 
     // Phase3 記述問題パネル
     const p3q1 = $("p3q1Answer");

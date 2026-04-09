@@ -12,6 +12,7 @@
 <header class="app-header">
   <div class="header-left">
     <div class="logo">ICS <span>学習支援システム</span></div>
+    <!-- [CHANGED] ステップ7個に更新。data-phase は PHASE 定数値に合わせて変更 -->
     <div class="phase-track">
       <div class="phase-step active" data-phase="0"><span class="step-num">1</span><span class="step-label">オリエン<br>テーション</span></div>
       <span class="phase-arrow">›</span>
@@ -19,11 +20,17 @@
       <span class="phase-arrow">›</span>
       <div class="phase-step" data-phase="2"><span class="step-num">3</span><span class="step-label">比較・分析<br>（急性期）</span></div>
       <span class="phase-arrow">›</span>
-      <div class="phase-step" data-phase="3"><span class="step-num">4</span><span class="step-label">復旧期<br>準備</span></div>
+      <!-- [ADDED] 新ステップ: PHASE.ACUTE_RECORD = 3 -->
+      <div class="phase-step" data-phase="3"><span class="step-num">4</span><span class="step-label">対応検証<br>記録</span></div>
       <span class="phase-arrow">›</span>
-      <div class="phase-step" data-phase="4"><span class="step-num">5</span><span class="step-label">復旧期<br>マップ</span></div>
+      <!-- [CHANGED] data-phase 3→4 -->
+      <div class="phase-step" data-phase="4"><span class="step-num">5</span><span class="step-label">復旧期<br>準備</span></div>
       <span class="phase-arrow">›</span>
-      <div class="phase-step" data-phase="5"><span class="step-num">6</span><span class="step-label">シーケンス<br>図構築</span></div>
+      <!-- [CHANGED] data-phase 4→5 -->
+      <div class="phase-step" data-phase="5"><span class="step-num">6</span><span class="step-label">復旧期<br>マップ</span></div>
+      <span class="phase-arrow">›</span>
+      <!-- [CHANGED] data-phase 5→6 -->
+      <div class="phase-step" data-phase="6"><span class="step-num">7</span><span class="step-label">シーケンス<br>図構築</span></div>
     </div>
   </div>
   <div class="header-right">
@@ -364,10 +371,49 @@
           placeholder="例）DWATが県庁直轄となったことで…"></textarea>
         <div class="char-count"><span id="p3q2CharCount">0</span> / 100 字</div>
       </div>
+      <!-- [ADDED] 問4・5へ進む ボタン -->
+      <div class="compare-qa-block compare-qa-block--nav">
+        <button id="btnToAcuteRecord" class="btn-primary">問4・5へ進む →</button>
+      </div>
     </div>
   </div>
 
 </div><!-- /phase-2 -->
+
+<!-- ===== PHASE ACUTE_RECORD: 対応検証記録レビュー ===== --> <!-- [ADDED] -->
+<div id="phase-acuteRecord" class="phase-view">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="map-sidebar ar-sidebar">
+    <div class="sb-block">
+      <div class="scenario-badge">急性期 対応検証</div>
+      <div style="font-size:13px;line-height:1.6;margin-top:8px;color:#fff;">
+        対応検証記録の抜粋を読んだ上で問4・問5に回答してください。
+      </div>
+    </div>
+    <div class="sb-block">
+      <div class="sb-title">💡 ICS原則 リマインダー</div>
+      <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
+        問3で選んだ原則（Unity of Command / Unified Command / Span of Control / Modular Organization / Communications）が、右の抜粋のどの事例に対応するか確認してください。
+      </div>
+    </div>
+    <div class="sb-block" style="margin-top:auto;">
+      <button id="btnToRecoveryPrep" class="btn-primary full">復旧期準備へ進む →</button>
+    </div>
+  </div><!-- /ar-sidebar -->
+
+  <!-- RIGHT MAIN AREA -->
+  <div class="canvas-col ar-main-col">
+    <!-- 抜粋エリア -->
+    <div class="ar-section-header">📄 対応検証記録（急性期 課題抜粋）</div>
+    <div id="arExcerptList" class="ar-excerpt-list"></div>
+    <!-- 設問エリア -->
+    <div class="ar-section-header" style="margin-top:16px;">✏️ 設問</div>
+    <div id="arQuestionArea" class="ar-question-area"></div>
+  </div><!-- /ar-main-col -->
+
+</div><!-- /phase-acuteRecord -->
+
 <!-- ===== PHASE 5: 復旧期準備 ===== -->
 <div id="phase-5" class="phase-view">
 
