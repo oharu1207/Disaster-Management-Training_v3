@@ -46,20 +46,20 @@
     { label: "県庁",                      group: "g-command", icon: "🏛" },
     { label: "C県A保健所",               group: "g-command", icon: "🏥" },
     { label: "地域災害医療コーディネーター", group: "g-command", icon: "🩺" },
-    { label: "DMAT",                     group: "g-section", icon: "🚑" },
+    { label: "DMAT",                     group: "g-unit",    icon: "🚑" },  // [CHANGED] g-section→g-unit
     { label: "DHEAT",                    group: "g-section", icon: "📋" },
-    { label: "DPAT",                     group: "g-section", icon: "🧠" },
-    { label: "DWAT",                     group: "g-section", icon: "💧" },
-    { label: "JMAT",                     group: "g-section", icon: "🏥" },
-    { label: "JRAT",                     group: "g-section", icon: "🔧" },
-    { label: "C県看護協会",              group: "g-section", icon: "💉" },
+    { label: "DPAT",                     group: "g-unit",    icon: "🧠" },  // [CHANGED] g-section→g-unit
+    { label: "DWAT",                     group: "g-unit",    icon: "💧" },  // [CHANGED] g-section→g-unit
+    { label: "JMAT",                     group: "g-unit",    icon: "🏥" },  // [CHANGED] g-section→g-unit
+    { label: "JRAT",                     group: "g-unit",    icon: "🔧" },  // [CHANGED] g-section→g-unit
+    { label: "C県看護協会",              group: "g-unit",    icon: "💉" },  // [CHANGED] g-section→g-unit
     { label: "医師会",                   group: "g-unit",    icon: "👨‍⚕️" },
     { label: "歯科医師会",               group: "g-unit",    icon: "🦷" },
     { label: "AB薬剤師会",               group: "g-unit",    icon: "💊" },
     { label: "C県栄養士会",              group: "g-unit",    icon: "🥗" },
     { label: "地域包括支援センター",      group: "g-unit",    icon: "🤝" },
     { label: "W民間団体",                group: "g-unit",    icon: "🏢" },
-    { label: "市町村保健センター",        group: "g-team",    icon: "🏘" },
+    { label: "市町村保健センター",        group: "g-unit",    icon: "🏘" },  // [CHANGED] g-team→g-unit
     { label: "避難所",                   group: "g-team",    icon: "🏘" },
     { label: "医療機関",                 group: "g-team",    icon: "🏥" },
   ];
@@ -84,13 +84,13 @@
     { label: "県庁",                          group: "g-command", icon: "🏛" },
     { label: "C県A保健所",                   group: "g-command", icon: "🏥" },
     { label: "地域災害医療コーディネーター", group: "g-command", icon: "🩺" },
-    { label: "DHEAT",                         group: "g-section", icon: "📋" },
-    { label: "DPAT",                          group: "g-section", icon: "🧠" },
-    { label: "DWAT",                          group: "g-section", icon: "💧" },
-    { label: "JMAT",                          group: "g-section", icon: "🏥" },
-    { label: "JRAT",                          group: "g-section", icon: "🔧" },
-    { label: "C県看護協会",                   group: "g-section", icon: "💉" },
-    { label: "DCAT",                         group: "g-section", icon: "🤝" },
+    { label: "DHEAT",                         group: "g-section", icon: "📋" },  // g-section 維持（撤退候補として学習者が判断）
+    { label: "DPAT",                          group: "g-unit",    icon: "🧠" },  // [CHANGED] g-section→g-unit
+    { label: "DWAT",                          group: "g-unit",    icon: "💧" },  // [CHANGED] g-section→g-unit
+    { label: "JMAT",                          group: "g-unit",    icon: "🏥" },  // [CHANGED] g-section→g-unit
+    { label: "JRAT",                          group: "g-unit",    icon: "🔧" },  // [CHANGED] g-section→g-unit
+    { label: "C県看護協会",                   group: "g-unit",    icon: "💉" },  // [CHANGED] g-section→g-unit
+    { label: "DCAT",                         group: "g-unit",    icon: "🤝" },  // [CHANGED] g-section→g-unit
     { label: "医師会",                        group: "g-unit",    icon: "👨‍⚕️" },
     { label: "歯科医師会",                    group: "g-unit",    icon: "🦷" },
     { label: "AB薬剤師会",                    group: "g-unit",    icon: "💊" },
@@ -100,7 +100,7 @@
     { label: "社会福祉士会",                 group: "g-unit",    icon: "👥" },
     { label: "地域支え合いセンター",         group: "g-unit",    icon: "🏘" },
     { label: "介護支援専門員協会",            group: "g-unit",    icon: "🧑‍⚕️" },
-    { label: "市町村保健センター",            group: "g-team",    icon: "🏘" },
+    { label: "市町村保健センター",            group: "g-unit",    icon: "🏘" },  // [CHANGED] g-team→g-unit
     { label: "避難所",                        group: "g-team",    icon: "🏘" },
     { label: "在宅避難者",                    group: "g-team",    icon: "🏠" },
     { label: "仮設住宅",                     group: "g-team",    icon: "🏠" },
@@ -191,12 +191,16 @@
   };
 
   // === レイヤー定義 ===
+  // layer は学習者に見せる ICS 指揮階層（UI の中心概念）
   const LAYER_NAMES = ["", "指揮（Command）", "調整・統制（Section）", "実働（Branch/Group）", "支援対象"];
+
+  // group は学習者に見せる ICS 階層ではなく内部メタデータ（将来の採点・バリデーション用）
+  // UI / 描画クラスには一切使用しない
   const GROUP_EXPECTED_LAYERS = {
-    "g-command": [1, 2],
-    "g-section": [2, 3],
-    "g-unit":    [3],
-    "g-team":    [4],
+    "g-command": [1, 2], // 県庁・保健所・コーディネーター
+    "g-section": [2],    // DHEAT のみ（調整・統制機能）
+    "g-unit":    [2, 3], // 実働チーム・専門職団体
+    "g-team":    [4],    // 支援対象（beneficiary）
   };
 
   // ================================================================
@@ -505,6 +509,7 @@
 
     for (const n of activePaletteNodes) {
       const div = document.createElement("div");
+      // group は内部メタデータ。パレット item に group クラスを付与しない（layer のみで色を表現）
       div.className = "pitem";
       if (BENEFICIARY_LABELS.has(n.label)) div.classList.add("node-beneficiary");
 
@@ -692,7 +697,8 @@
       const div = document.createElement("div");
       const layerClass = n.layerId ? `layer-${n.layerId}` : "layer-none";
       const benefClass = BENEFICIARY_LABELS.has(n.label) ? " node-beneficiary" : "";
-      div.className = `node ${isReadOnly ? "" : "draggable "}${n.group} ${layerClass}${benefClass}`;
+      // group は内部メタデータ。class には layer と beneficiary のみ反映する
+      div.className = `node ${isReadOnly ? "" : "draggable "}${layerClass}${benefClass}`;
       div.dataset.id = n.id;
       div.style.left = n.x + "px";
       div.style.top  = n.y + "px";
@@ -931,7 +937,7 @@
     }
 
     cancelArrowDraw();
-    // g-team（被支援者）ノードへの矢印は「支援」ラベルを自動付与
+    // 支援対象（BENEFICIARY_LABELS に含まれるノード）への矢印は「支援」ラベルを自動付与
     const toNode = state.nodes.find(n => n.id === toId);
     if (BENEFICIARY_LABELS.has(toNode?.label)) {
       addEdgeWithLabel(fromId, toId, "支援");
@@ -1531,8 +1537,10 @@
     for (const n of nodes) {
       const div = document.createElement("div");
       const layerClass = n.layerId ? `layer-${n.layerId}` : "layer-none";
-      const benefClass = (n.group === "g-team") ? " node-beneficiary" : "";
-      div.className = `node ${n.group} ${layerClass}${benefClass}`;
+      // beneficiary 判定は label ベースに統一（renderNodes と同じ BENEFICIARY_LABELS を参照）
+      // group クラスは class に含めない（内部メタデータ）
+      const benefClass = BENEFICIARY_LABELS.has(n.label) ? " node-beneficiary" : "";
+      div.className = `node ${layerClass}${benefClass}`;
       div.dataset.id = n.id;
       div.style.left = n.x + "px";
       div.style.top  = n.y + "px";

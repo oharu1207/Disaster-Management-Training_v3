@@ -155,10 +155,7 @@ button.full { width: 100%; }
   font-size: 11px; font-weight: 400; color: var(--text-dim);
   line-height: 1.3; padding-left: 2px;
 }
-.member-chip.g-command { background: var(--cmd-bg); border: 1px solid var(--cmd-bdr); color: var(--cmd-text); }
-.member-chip.g-section { background: var(--sec-bg); border: 1px solid var(--sec-bdr); color: var(--sec-text); }
-.member-chip.g-unit    { background: var(--unit-bg); border: 1px solid var(--unit-bdr); color: var(--unit-text); }
-.member-chip.g-team    { background: var(--team-bg); border: 1px solid var(--team-bdr); color: var(--team-text); }
+/* group ベースのメンバーチップ色分けは削除。オリエンテーション一覧は統一デザイン。 */
 .hint-box {
   background: rgba(255,209,102,0.05); border: 1px solid rgba(255,209,102,0.18);
   border-radius: 10px; padding: 12px 14px; margin-top: 12px; font-size: 13px; color: var(--text-dim);
@@ -210,14 +207,7 @@ button.full { width: 100%; }
   margin-left: auto; font-size: 11px; padding: 2px 8px;
   border-radius: 999px; border: 1px solid var(--border2); color: var(--text-muted); flex-shrink: 0;
 }
-.pitem.g-command { border-color: var(--cmd-bdr); background: rgba(122,42,69,0.12); }
-.pitem.g-command .plabel { color: var(--cmd-text); }
-.pitem.g-section { border-color: var(--sec-bdr); background: rgba(30,74,122,0.15); }
-.pitem.g-section .plabel { color: var(--sec-text); }
-.pitem.g-unit    { border-color: var(--unit-bdr); background: rgba(30,106,69,0.15); }
-.pitem.g-unit    .plabel { color: var(--unit-text); }
-.pitem.g-team    { border-color: var(--team-bdr); background: rgba(90,30,138,0.15); }
-.pitem.g-team    .plabel { color: var(--team-text); }
+/* group ベースのパレット色分けは削除。group は内部メタデータのため UI に出さない。 */
 
 /* group header */
 .palette-group-header {
@@ -348,14 +338,8 @@ textarea { resize: vertical; min-height: 70px; }
 .node:hover .node-connect-btn { display: flex; }
 .node-connect-btn:hover { background: var(--green); transform: translateY(-50%) scale(1.2); }
 
-.node.g-command { background: var(--cmd-bg); border-color: var(--cmd-bdr); }
-.node.g-command .ntitle { color: var(--cmd-text); }
-.node.g-section { background: var(--sec-bg); border-color: var(--sec-bdr); }
-.node.g-section .ntitle { color: var(--sec-text); }
-.node.g-unit    { background: var(--unit-bg); border-color: var(--unit-bdr); }
-.node.g-unit    .ntitle { color: var(--unit-text); }
-.node.g-team    { background: var(--team-bg); border-color: var(--team-bdr); }
-.node.g-team    .ntitle { color: var(--team-text); }
+/* group ベースのノード色は削除。ノード色は layer-1〜4 と node-beneficiary のみで決まる。
+   （group は内部メタデータ。描画クラスとして使用しない） */
 
 /* ===== 層配置によるノード色（グループ色を上書き） ===== */
 .node.layer-none { background: #3a3a4a; border-color: #555568; }
