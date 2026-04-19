@@ -12,7 +12,7 @@
 <header class="app-header">
   <div class="header-left">
     <div class="logo">ICS <span>学習支援システム</span></div>
-    <!-- [CHANGED] ステップ7個に更新。data-phase は PHASE 定数値に合わせて変更 -->
+    <!-- [CHANGED] ステップ9個に更新。data-phase は PHASE 定数値に合わせて変更 -->
     <div class="phase-track">
       <div class="phase-step active" data-phase="0"><span class="step-num">1</span><span class="step-label">オリエン<br>テーション</span></div>
       <span class="phase-arrow">›</span>
@@ -20,17 +20,20 @@
       <span class="phase-arrow">›</span>
       <div class="phase-step" data-phase="2"><span class="step-num">3</span><span class="step-label">比較・分析<br>（急性期）</span></div>
       <span class="phase-arrow">›</span>
-      <!-- [ADDED] 新ステップ: PHASE.ACUTE_RECORD = 3 -->
       <div class="phase-step" data-phase="3"><span class="step-num">4</span><span class="step-label">対応検証<br>記録</span></div>
       <span class="phase-arrow">›</span>
-      <!-- [CHANGED] data-phase 3→4 -->
       <div class="phase-step" data-phase="4"><span class="step-num">5</span><span class="step-label">復旧期<br>準備</span></div>
       <span class="phase-arrow">›</span>
-      <!-- [CHANGED] data-phase 4→5 -->
       <div class="phase-step" data-phase="5"><span class="step-num">6</span><span class="step-label">復旧期<br>マップ</span></div>
       <span class="phase-arrow">›</span>
-      <!-- [CHANGED] data-phase 5→6 -->
-      <div class="phase-step" data-phase="6"><span class="step-num">7</span><span class="step-label">シーケンス<br>図構築</span></div>
+      <!-- [ADDED] data-phase=6: PHASE.RECOVERY_ACTUAL -->
+      <div class="phase-step" data-phase="6"><span class="step-num">7</span><span class="step-label">復旧期<br>実際マップ</span></div>
+      <span class="phase-arrow">›</span>
+      <!-- [ADDED] data-phase=7: PHASE.RECOVERY_COMPARE -->
+      <div class="phase-step" data-phase="7"><span class="step-num">8</span><span class="step-label">比較・分析<br>（復旧期）</span></div>
+      <span class="phase-arrow">›</span>
+      <!-- [CHANGED] data-phase 6→8: PHASE.SEQUENCE -->
+      <div class="phase-step" data-phase="8"><span class="step-num">9</span><span class="step-label">シーケンス<br>図構築</span></div>
     </div>
   </div>
   <div class="header-right">
@@ -490,6 +493,9 @@
       <div class="sb-title">🔧 追加可能なノード</div>
       <div class="palette" id="palette-p6" style="flex:1;overflow-y:auto;"></div>
     </div>
+    <div class="sb-block">
+      <button class="btn-primary full" onclick="switchPhase(6)">復旧期実際マップを確認する →</button>
+    </div>
   </div><!-- /map-sidebar -->
 
   <!-- CANVAS -->
@@ -534,6 +540,175 @@
   </div><!-- /canvas-col -->
 
 </div><!-- /phase-6 -->
+
+<!-- ===== PHASE 7: 復旧期実際マップ ===== --> <!-- [ADDED] -->
+<div id="phase-recoveryActual" class="phase-view">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="map-sidebar">
+    <div class="sb-block">
+      <div class="scenario-badge">復旧期 実際マップ</div>
+      <div style="font-size:13px;line-height:1.6;margin-top:8px;color:#fff;">
+        実際の対応で構築された復旧期の組織構造です。<br>
+        各ノードの配置・関係を確認し、あなたの理想マップと比較してください。
+      </div>
+    </div>
+    <div class="sb-block">
+      <div class="sb-title">💡 確認のポイント</div>
+      <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
+        <ul style="padding-left:14px;margin:0;display:flex;flex-direction:column;gap:4px;">
+          <li>指揮系統（layer 1）の変化</li>
+          <li>急性期から撤退・追加された主体</li>
+          <li>被支援者への支援経路</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sb-block" style="margin-top:auto;">
+      <button id="btnToRecoveryCompare" class="btn-primary full">比較・分析へ進む →</button>
+    </div>
+  </div><!-- /map-sidebar -->
+
+  <!-- CANVAS (read-only) -->
+  <div class="canvas-col">
+    <div class="canvas-toolbar">
+      <span class="canvas-stat" id="canvasStat-raActual">読み取り専用</span>
+    </div>
+    <div class="canvasWrap" id="canvasWrap-raActual">
+      <div class="phase-layer-bands">
+        <div class="layer-band" data-layer="1">
+          <span class="layer-label">指揮 Command</span>
+          <span class="layer-concept">指示命令の起点</span>
+        </div>
+        <div class="layer-band" data-layer="2">
+          <span class="layer-label">調整・統制 Section</span>
+          <span class="layer-concept">情報集約・組織間調整</span>
+        </div>
+        <div class="layer-band" data-layer="3">
+          <span class="layer-label">実働 Branch / Group</span>
+          <span class="layer-concept">現場活動チーム</span>
+        </div>
+        <div class="layer-band" data-layer="4">
+          <span class="layer-label">支援対象</span>
+          <span class="layer-concept">活動の対象となる機関・住民</span>
+        </div>
+      </div>
+      <svg id="svgLayer-raActual" class="phase-svg-layer">
+        <defs>
+          <marker id="arrow-red-raActual"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b6b"/></marker>
+          <marker id="arrow-blue-raActual"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4d8fff"/></marker>
+          <marker id="arrow-teal-raActual"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3dcf8a"/></marker>
+          <marker id="arrow-purple-raActual" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/></marker>
+        </defs>
+      </svg>
+      <div id="canvas-raActual" class="phase-canvas"></div>
+    </div>
+  </div><!-- /canvas-col -->
+
+</div><!-- /phase-recoveryActual -->
+
+<!-- ===== PHASE 8: 比較・分析（復旧期） ===== --> <!-- [ADDED] -->
+<div id="phase-recoveryCompare" class="phase-view">
+
+  <!-- 左カラム：学習者の復旧期理想マップ -->
+  <div class="compare-col" id="rcCompareColIdeal">
+    <div class="compare-col-header">
+      <span class="compare-col-title">📐 あなたの復旧期マップ</span>
+      <span class="compare-col-stat" id="canvasStat-rcIdeal">ノード: 0 ／ 矢印: 0</span>
+    </div>
+    <div class="canvasWrap" id="canvasWrap-rcIdeal">
+      <div class="phase-layer-bands">
+        <div class="layer-band" data-layer="1">
+          <span class="layer-label">指揮 Command</span>
+          <span class="layer-concept">指示命令の起点</span>
+        </div>
+        <div class="layer-band" data-layer="2">
+          <span class="layer-label">調整・統制 Section</span>
+          <span class="layer-concept">情報集約・組織間調整</span>
+        </div>
+        <div class="layer-band" data-layer="3">
+          <span class="layer-label">実働 Branch / Group</span>
+          <span class="layer-concept">現場活動チーム</span>
+        </div>
+        <div class="layer-band" data-layer="4">
+          <span class="layer-label">支援対象</span>
+          <span class="layer-concept">活動の対象となる機関・住民</span>
+        </div>
+      </div>
+      <svg id="svgLayer-rcIdeal" class="phase-svg-layer">
+        <defs>
+          <marker id="arrow-red-rcIdeal"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b6b"/></marker>
+          <marker id="arrow-blue-rcIdeal"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4d8fff"/></marker>
+          <marker id="arrow-teal-rcIdeal"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3dcf8a"/></marker>
+          <marker id="arrow-purple-rcIdeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/></marker>
+        </defs>
+      </svg>
+      <div id="canvas-rcIdeal" class="phase-canvas"></div>
+    </div>
+  </div>
+
+  <!-- 右カラム：復旧期実際マップ -->
+  <div class="compare-col" id="rcCompareColActual">
+    <div class="compare-col-header">
+      <span class="compare-col-title">📋 復旧期 実際マップ</span>
+      <span class="compare-col-stat" id="canvasStat-rcActual">ノード: 0 ／ 矢印: 0</span>
+    </div>
+    <div class="canvasWrap" id="canvasWrap-rcActual">
+      <div class="phase-layer-bands">
+        <div class="layer-band" data-layer="1">
+          <span class="layer-label">指揮 Command</span>
+          <span class="layer-concept">指示命令の起点</span>
+        </div>
+        <div class="layer-band" data-layer="2">
+          <span class="layer-label">調整・統制 Section</span>
+          <span class="layer-concept">情報集約・組織間調整</span>
+        </div>
+        <div class="layer-band" data-layer="3">
+          <span class="layer-label">実働 Branch / Group</span>
+          <span class="layer-concept">現場活動チーム</span>
+        </div>
+        <div class="layer-band" data-layer="4">
+          <span class="layer-label">支援対象</span>
+          <span class="layer-concept">活動の対象となる機関・住民</span>
+        </div>
+      </div>
+      <svg id="svgLayer-rcActual" class="phase-svg-layer">
+        <defs>
+          <marker id="arrow-red-rcActual"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b6b"/></marker>
+          <marker id="arrow-blue-rcActual"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4d8fff"/></marker>
+          <marker id="arrow-teal-rcActual"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3dcf8a"/></marker>
+          <marker id="arrow-purple-rcActual" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/></marker>
+        </defs>
+      </svg>
+      <div id="canvas-rcActual" class="phase-canvas"></div>
+    </div>
+  </div>
+
+  <!-- 記述問題パネル（下段・横断） -->
+  <div class="compare-qa-panel" id="rcQaPanel">
+    <div class="compare-qa-inner">
+      <div class="compare-qa-block">
+        <label class="compare-qa-label">
+          問6. 復旧期の理想マップと実際マップを比較し、最も重要と思う構造的差異を1つ挙げて説明せよ。（100字以内）
+        </label>
+        <textarea id="rcQ6Answer" rows="2"
+          placeholder="例）理想マップでは…が存在するが、実際マップでは…"></textarea>
+        <div class="char-count"><span id="rcQ6CharCount">0</span> / 100 字</div>
+      </div>
+      <div class="compare-qa-block">
+        <label class="compare-qa-label">
+          問7. 問6で指摘した差異が生じた理由を、ICS原則または急性期との継続性の観点から説明せよ。（200字以内）
+        </label>
+        <textarea id="rcQ7Answer" rows="2"
+          placeholder="例）急性期では…であったが、復旧期には…"></textarea>
+        <div class="char-count"><span id="rcQ7CharCount">0</span> / 200 字</div>
+      </div>
+      <div class="compare-qa-block compare-qa-block--nav">
+        <button id="btnToSequence" class="btn-primary">シーケンス図へ進む →</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /phase-recoveryCompare -->
 
 <div id="phase-3" class="phase-view">
   <div class="coming-soon">

@@ -19,26 +19,30 @@
   // DOM 上の .phase-view の並び順やインデックスには依存しない。
   // ================================================================
   const PHASE = {
-    ORIENTATION:   0,   // オリエンテーション
-    ACUTE_MAP:     1,   // マップ構築（急性期）
-    ACUTE_COMPARE: 2,   // 比較・分析（急性期）
-    ACUTE_RECORD:  3,   // 対応検証記録レビュー（急性期） // [ADDED]
-    RECOVERY_PREP: 4,   // 復旧期準備 // [CHANGED]
-    RECOVERY_MAP:  5,   // 復旧期マップ // [CHANGED]
-    SEQUENCE:      6,   // シーケンス図構築 // [CHANGED]
+    ORIENTATION:      0,   // オリエンテーション
+    ACUTE_MAP:        1,   // マップ構築（急性期）
+    ACUTE_COMPARE:    2,   // 比較・分析（急性期）
+    ACUTE_RECORD:     3,   // 対応検証記録レビュー（急性期）
+    RECOVERY_PREP:    4,   // 復旧期準備
+    RECOVERY_MAP:     5,   // 復旧期マップ
+    RECOVERY_ACTUAL:  6,   // 復旧期実際マップ表示 [ADDED]
+    RECOVERY_COMPARE: 7,   // 比較・分析（復旧期） [ADDED]
+    SEQUENCE:         8,   // シーケンス図構築 [CHANGED was 6]
   };
 
   // フェーズ番号 → 対応する .phase-view の HTML id
   // DOM 順ではなく id で直接参照するため、並び替えに強い。
   // [CHANGED] キー（数値）を PHASE 定数に合わせて更新。値（DOM id 文字列）は変更しない。
   const PHASE_VIEW_ID = {
-    [PHASE.ORIENTATION]:   "phase-0",
-    [PHASE.ACUTE_MAP]:     "phase-1",
-    [PHASE.ACUTE_COMPARE]: "phase-2",
-    [PHASE.ACUTE_RECORD]:  "phase-acuteRecord", // [ADDED]
-    [PHASE.RECOVERY_PREP]: "phase-5",   // key: 3→4 [CHANGED]
-    [PHASE.RECOVERY_MAP]:  "phase-6",   // key: 4→5 [CHANGED]
-    [PHASE.SEQUENCE]:      "phase-3",   // key: 5→6 [CHANGED]
+    [PHASE.ORIENTATION]:      "phase-0",
+    [PHASE.ACUTE_MAP]:        "phase-1",
+    [PHASE.ACUTE_COMPARE]:    "phase-2",
+    [PHASE.ACUTE_RECORD]:     "phase-acuteRecord",
+    [PHASE.RECOVERY_PREP]:    "phase-5",
+    [PHASE.RECOVERY_MAP]:     "phase-6",
+    [PHASE.RECOVERY_ACTUAL]:  "phase-recoveryActual",  // [ADDED]
+    [PHASE.RECOVERY_COMPARE]: "phase-recoveryCompare", // [ADDED]
+    [PHASE.SEQUENCE]:         "phase-3",
   };
 
   // === ノード一覧（Excelノート_.xlsx より） ===
@@ -191,6 +195,28 @@
     ]
   };
 
+  // ================================================================
+  // RECOVERY_COMPARE_CONTENT — 復旧期比較・分析フェーズのデータ定義 [ADDED]
+  // ================================================================
+  const RECOVERY_COMPARE_CONTENT = {
+    questions: [
+      {
+        id: "q6",
+        kind: "textarea",
+        label: "問6. 復旧期の理想マップと実際マップを比較し、最も重要と思う構造的差異を1つ挙げて説明せよ。（100字以内）",
+        placeholder: "例）理想マップでは…が存在するが、実際マップでは…",
+        maxLength: 100,
+      },
+      {
+        id: "q7",
+        kind: "textarea",
+        label: "問7. 問6で指摘した差異が生じた理由を、ICS原則または急性期との継続性の観点から説明せよ。（200字以内）",
+        placeholder: "例）急性期では…であったが、復旧期には…",
+        maxLength: 200,
+      }
+    ]
+  };
+
   // === レイヤー定義 ===
   // layer は学習者に見せる ICS 指揮階層（UI の中心概念）
   const LAYER_NAMES = ["", "指揮（Command）", "調整・統制（Section）", "実働（Branch/Group）", "支援対象"];
@@ -223,9 +249,10 @@
     log: [],
   };
 
-  window.idealMapAcute  = null;
-  window.actualMapAcute = null;
-  window.phase5Data     = { removals: [] };
+  window.idealMapAcute    = null;
+  window.actualMapAcute   = null;
+  window.actualMapRecovery = null; // [ADDED] 復旧期実際マップ
+  window.phase5Data       = { removals: [] };
 
   // ── Phase6 状態変数 ────────────────────────────────────────────────────
   // Phase6 の状態は以下の 2 フラグ + phaseData.p6 の 3 点で表現する。
@@ -261,7 +288,8 @@
                 selectedNodeId:null, selectedEdgeId:null },
     p6:       { nodes:[], edges:[], answers:{q1:"",q2:""}, log:[],
                 selectedNodeId:null, selectedEdgeId:null },
-    acuteRecord: { answers: { q4: "", q5: "" } }, // [ADDED]
+    acuteRecord:     { answers: { q4: "", q5: "" } },
+    recoveryCompare: { answers: { q6: "", q7: "" } }, // [ADDED]
   };
 
   function savePhaseData(key) {
@@ -440,6 +468,84 @@
       }
       renderAcuteRecordView();
       restoreAcuteRecordAnswers();
+      return;
+    }
+
+    // ── 復旧期実際マップ表示 ────────────────────────────────────────────── [ADDED]
+    if (p === PHASE.RECOVERY_ACTUAL) {
+      if (phaseData.p6.nodes.length === 0) {
+        showToast("先に復旧期マップを作成してください", 3000);
+        state.phase = prevPhase;
+        activatePhaseView(prevPhase);
+        updatePhaseSteps(prevPhase);
+        return;
+      }
+      BENEFICIARY_LABELS = PHASE6_BENEFICIARY_LABELS;
+      renderRecoveryActualView();
+      return;
+    }
+
+    // ── 復旧期比較・分析 ─────────────────────────────────────────────────── [ADDED]
+    if (p === PHASE.RECOVERY_COMPARE) {
+      if (phaseData.p6.nodes.length === 0) {
+        showToast("先に復旧期マップを作成してください", 3000);
+        state.phase = prevPhase;
+        activatePhaseView(prevPhase);
+        updatePhaseSteps(prevPhase);
+        return;
+      }
+      BENEFICIARY_LABELS = PHASE6_BENEFICIARY_LABELS;
+
+      requestAnimationFrame(() => {
+        // 左カラム：学習者の復旧期理想マップ
+        renderReadOnlyMap(
+          phaseData.p6.nodes,
+          phaseData.p6.edges,
+          $("canvas-rcIdeal"),
+          $("svgLayer-rcIdeal"),
+          $("canvasWrap-rcIdeal"),
+          $("canvasStat-rcIdeal"),
+          "-rcIdeal",
+          null, true,
+          () => clearHighlightRO($("canvas-rcActual"), $("svgLayer-rcActual"))
+        );
+
+        // 右カラム：復旧期実際マップ
+        if (window.actualMapRecovery) {
+          const rcNodes = window.actualMapRecovery.recovery?.nodes || [];
+          const rcEdges = window.actualMapRecovery.recovery?.edges || [];
+          renderReadOnlyMap(
+            rcNodes, rcEdges,
+            $("canvas-rcActual"),
+            $("svgLayer-rcActual"),
+            $("canvasWrap-rcActual"),
+            $("canvasStat-rcActual"),
+            "-rcActual",
+            null, true,
+            () => clearHighlightRO($("canvas-rcIdeal"), $("svgLayer-rcIdeal"))
+          );
+        } else {
+          const el = $("canvas-rcActual");
+          if (el) el.innerHTML =
+            '<div style="color:var(--red);padding:20px;font-size:14px;">⚠ 実際マップの読み込みに失敗しました</div>';
+        }
+      });
+
+      // 回答の復元
+      const rcAns = phaseData.recoveryCompare.answers;
+      const q6el = $("rcQ6Answer");
+      const q7el = $("rcQ7Answer");
+      if (q6el) {
+        q6el.value = rcAns.q6 || "";
+        const cc = $("rcQ6CharCount");
+        if (cc) cc.textContent = (rcAns.q6 || "").length;
+      }
+      if (q7el) {
+        q7el.value = rcAns.q7 || "";
+        const cc = $("rcQ7CharCount");
+        if (cc) cc.textContent = (rcAns.q7 || "").length;
+      }
+      showToast("ノードをダブルクリックすると接続関係をハイライトできます", 3500);
       return;
     }
 
@@ -1288,7 +1394,7 @@
     if (activePhaseKey && !MAP_PHASE_CONFIG[state.phase]?.isReadOnly)
       savePhaseData(activePhaseKey);
     return {
-      version: 3, // [CHANGED] 2 → 3
+      version: 4, // [CHANGED] 3 → 4
       exportedAt: new Date().toISOString(),
       scenarioId: SCENARIO.id,
       acute: {
@@ -1304,9 +1410,11 @@
         operationLog: phaseData.p6.log,
       },
       phase5Data: window.phase5Data,
-      // [ADDED]
       acuteRecord: {
         answers: phaseData.acuteRecord.answers,
+      },
+      recoveryCompare: { // [ADDED]
+        answers: phaseData.recoveryCompare.answers,
       },
     };
   }
@@ -1345,8 +1453,8 @@
           const obj = JSON.parse(fr.result);
           let hasConflict = false;
 
-          if (obj.version === 3 && obj.acute && obj.recovery) { // [CHANGED] v3 対応
-            // v3: 全フェーズを復元
+          if ((obj.version === 4 || obj.version === 3) && obj.acute && obj.recovery) { // [CHANGED] v4/v3 対応
+            // v3/v4: 全フェーズを復元
             const loadPhase = (src) => ({
               nodes: (src.nodes || []).map(n => ({ layerId: null, layerReason: "", isInitial: false, ...n })),
               edges: src.edges || [],
@@ -1356,11 +1464,18 @@
             });
             phaseData.acute    = loadPhase(obj.acute);
             phaseData.recovery = loadPhase(obj.recovery);
-            // [ADDED] acuteRecord の復元
+            // acuteRecord の復元
             phaseData.acuteRecord = {
               answers: {
                 q4: obj.acuteRecord?.answers?.q4 || "",
                 q5: obj.acuteRecord?.answers?.q5 || "",
+              }
+            };
+            // [ADDED] recoveryCompare の復元（v4 のみ存在、v3 は空で補完）
+            phaseData.recoveryCompare = {
+              answers: {
+                q6: obj.recoveryCompare?.answers?.q6 || "",
+                q7: obj.recoveryCompare?.answers?.q7 || "",
               }
             };
             // phase5Data の復元（同一ラベルのノードを補完）
@@ -1394,7 +1509,7 @@
             }
             if (validateEdgeConflicts(phaseData.acute.edges) ||
                 validateEdgeConflicts(phaseData.recovery.edges)) hasConflict = true;
-          } else if (obj.version === 2 && obj.acute && obj.recovery) { // [ADDED] v2 後方互換
+          } else if (obj.version === 2 && obj.acute && obj.recovery) { // v2 後方互換
             const loadPhaseV2 = (src) => ({
               nodes: (src.nodes || []).map(n => ({ layerId: null, layerReason: "", isInitial: false, ...n })),
               edges: src.edges || [],
@@ -1404,8 +1519,9 @@
             });
             phaseData.acute    = loadPhaseV2(obj.acute);
             phaseData.recovery = loadPhaseV2(obj.recovery);
-            // v2 には acuteRecord がないため空で補完
-            phaseData.acuteRecord = { answers: { q4: "", q5: "" } };
+            // v2 には acuteRecord / recoveryCompare がないため空で補完
+            phaseData.acuteRecord     = { answers: { q4: "", q5: "" } };
+            phaseData.recoveryCompare = { answers: { q6: "", q7: "" } }; // [ADDED]
             if (obj.phase5Data?.removals) {
               const restoredRemovals = [];
               const seenLabels = new Set();
@@ -1439,8 +1555,9 @@
               log: obj.operationLog || [],
               selectedNodeId: null, selectedEdgeId: null,
             };
-            // v1 には acuteRecord がないため空で補完 [ADDED]
-            phaseData.acuteRecord = { answers: { q4: "", q5: "" } };
+            // v1 には acuteRecord / recoveryCompare がないため空で補完
+            phaseData.acuteRecord     = { answers: { q4: "", q5: "" } };
+            phaseData.recoveryCompare = { answers: { q6: "", q7: "" } }; // [ADDED]
             if (validateEdgeConflicts(phaseData.acute.edges)) hasConflict = true;
           } else {
             throw new Error();
@@ -1469,11 +1586,26 @@
   }
 
   function resetAll() {
-    // [ADDED] 対応検証記録：問4・問5 の回答をクリア
+    // 対応検証記録：問4・問5 の回答をクリア
     if (state.phase === PHASE.ACUTE_RECORD) {
       if (!confirm("問4・問5 の回答をリセットしますか？")) return;
       phaseData.acuteRecord.answers = { q4: "", q5: "" };
       renderAcuteRecordView();   // フォームを再描画してリセット状態に戻す
+      return;
+    }
+    // 復旧期実際マップ：読み取り専用のためリセット対象外 [ADDED]
+    if (state.phase === PHASE.RECOVERY_ACTUAL) {
+      showToast("実際マップ表示画面はリセット対象外です", 2000);
+      return;
+    }
+    // 復旧期比較・分析：問6・問7 の回答をクリア [ADDED]
+    if (state.phase === PHASE.RECOVERY_COMPARE) {
+      if (!confirm("復旧期比較・分析の回答をリセットしますか？")) return;
+      phaseData.recoveryCompare.answers = { q6: "", q7: "" };
+      const q6el = $("rcQ6Answer");
+      const q7el = $("rcQ7Answer");
+      if (q6el) { q6el.value = ""; const cc = $("rcQ6CharCount"); if (cc) cc.textContent = "0"; }
+      if (q7el) { q7el.value = ""; const cc = $("rcQ7CharCount"); if (cc) cc.textContent = "0"; }
       return;
     }
     // 復旧期準備：削除候補リストのみクリア
@@ -2019,6 +2151,42 @@
   }
 
   // ================================================================
+  // RECOVERY_ACTUAL フェーズ レンダラー [ADDED]
+  // ================================================================
+
+  /**
+   * 復旧期実際マップを #canvas-raActual に描画する（読み取り専用）
+   */
+  function renderRecoveryActualView() {
+    const raCanvas = $("canvas-raActual");
+    const raSvg    = $("svgLayer-raActual");
+    const raWrap   = $("canvasWrap-raActual");
+    const raStat   = $("canvasStat-raActual");
+    if (!raCanvas || !raSvg || !raWrap) return;
+
+    if (!window.actualMapRecovery) {
+      raCanvas.innerHTML =
+        '<div style="color:var(--red);padding:20px;font-size:14px;">⚠ 実際マップの読み込みに失敗しました</div>';
+      return;
+    }
+
+    const nodes = window.actualMapRecovery.recovery?.nodes || [];
+    const edges = window.actualMapRecovery.recovery?.edges || [];
+
+    requestAnimationFrame(() => {
+      renderReadOnlyMap(nodes, edges, raCanvas, raSvg, raWrap, raStat, "-raActual", null, true);
+    });
+
+    // 「比較・分析へ進む」ボタン（重複イベント防止）
+    const btnToRc = $("btnToRecoveryCompare");
+    if (btnToRc) {
+      const fresh = btnToRc.cloneNode(true);
+      btnToRc.replaceWith(fresh);
+      fresh.addEventListener("click", () => switchPhase(PHASE.RECOVERY_COMPARE));
+    }
+  }
+
+  // ================================================================
   // RENDER ALL
   // ================================================================
   function renderAll() {
@@ -2082,6 +2250,43 @@
       radio.addEventListener("change", () => {
         phaseData.acute.answers.p3q2sel = radio.value;
       });
+    });
+
+    // [ADDED] 復旧期比較・分析 テキストエリア文字数カウント
+    const rcQ6 = $("rcQ6Answer");
+    const rcQ7 = $("rcQ7Answer");
+    if (rcQ6) {
+      rcQ6.addEventListener("input", () => {
+        const len = rcQ6.value.length;
+        const cc  = $("rcQ6CharCount");
+        if (cc) {
+          cc.textContent = len;
+          const max = RECOVERY_COMPARE_CONTENT.questions.find(q => q.id === "q6")?.maxLength || 100;
+          cc.parentElement.className = "char-count" + (len > max ? " over" : len >= max * 0.9 ? " warn" : "");
+        }
+        phaseData.recoveryCompare.answers.q6 = rcQ6.value;
+      });
+    }
+    if (rcQ7) {
+      rcQ7.addEventListener("input", () => {
+        const len = rcQ7.value.length;
+        const cc  = $("rcQ7CharCount");
+        if (cc) {
+          cc.textContent = len;
+          const max = RECOVERY_COMPARE_CONTENT.questions.find(q => q.id === "q7")?.maxLength || 200;
+          cc.parentElement.className = "char-count" + (len > max ? " over" : len >= max * 0.9 ? " warn" : "");
+        }
+        phaseData.recoveryCompare.answers.q7 = rcQ7.value;
+      });
+    }
+
+    // [ADDED] 「シーケンス図へ進む」ボタン
+    $("btnToSequence")?.addEventListener("click", () => {
+      const { q6, q7 } = phaseData.recoveryCompare.answers;
+      if (!q6 && !q7) {
+        if (!confirm("問6・問7 が未入力です。このまま進みますか？")) return;
+      }
+      switchPhase(PHASE.SEQUENCE);
     });
 
     document.addEventListener("keydown", e => {
@@ -2204,6 +2409,17 @@
     }
   }
 
+  // [ADDED] 復旧期実際マップを取得する
+  async function loadActualMapRecovery() {
+    try {
+      const resp = await fetch('./actual_map_recovery.json');
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      window.actualMapRecovery = await resp.json();
+    } catch (e) {
+      console.error('[ICS] actual_map_recovery.json の読み込みに失敗:', e);
+    }
+  }
+
   // ================================================================
   // INIT
   // ================================================================
@@ -2226,6 +2442,7 @@
     logOp("INIT", { scenarioId: SCENARIO.id });
     loadIdealMapAcute();
     loadActualMapAcute();
+    loadActualMapRecovery(); // [ADDED]
   }
 
   init();
