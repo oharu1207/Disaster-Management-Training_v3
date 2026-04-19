@@ -25,9 +25,8 @@
     ACUTE_RECORD:     3,   // 対応検証記録レビュー（急性期）
     RECOVERY_PREP:    4,   // 復旧期準備
     RECOVERY_MAP:     5,   // 復旧期マップ
-    RECOVERY_ACTUAL:  6,   // 復旧期実際マップ表示 [ADDED]
-    RECOVERY_COMPARE: 7,   // 比較・分析（復旧期） [ADDED]
-    SEQUENCE:         8,   // シーケンス図構築 [CHANGED was 6]
+    RECOVERY_COMPARE: 6,   // 比較・分析（復旧期）
+    SEQUENCE:         7,   // シーケンス図構築
   };
 
   // フェーズ番号 → 対応する .phase-view の HTML id
@@ -40,8 +39,7 @@
     [PHASE.ACUTE_RECORD]:     "phase-acuteRecord",
     [PHASE.RECOVERY_PREP]:    "phase-5",
     [PHASE.RECOVERY_MAP]:     "phase-6",
-    [PHASE.RECOVERY_ACTUAL]:  "phase-recoveryActual",  // [ADDED]
-    [PHASE.RECOVERY_COMPARE]: "phase-recoveryCompare", // [ADDED]
+    [PHASE.RECOVERY_COMPARE]: "phase-recoveryCompare",
     [PHASE.SEQUENCE]:         "phase-3",
   };
 
@@ -468,20 +466,6 @@
       }
       renderAcuteRecordView();
       restoreAcuteRecordAnswers();
-      return;
-    }
-
-    // ── 復旧期実際マップ表示 ────────────────────────────────────────────── [ADDED]
-    if (p === PHASE.RECOVERY_ACTUAL) {
-      if (phaseData.p6.nodes.length === 0) {
-        showToast("先に復旧期マップを作成してください", 3000);
-        state.phase = prevPhase;
-        activatePhaseView(prevPhase);
-        updatePhaseSteps(prevPhase);
-        return;
-      }
-      BENEFICIARY_LABELS = PHASE6_BENEFICIARY_LABELS;
-      renderRecoveryActualView();
       return;
     }
 
@@ -1593,11 +1577,6 @@
       renderAcuteRecordView();   // フォームを再描画してリセット状態に戻す
       return;
     }
-    // 復旧期実際マップ：読み取り専用のためリセット対象外 [ADDED]
-    if (state.phase === PHASE.RECOVERY_ACTUAL) {
-      showToast("実際マップ表示画面はリセット対象外です", 2000);
-      return;
-    }
     // 復旧期比較・分析：問6・問7 の回答をクリア [ADDED]
     if (state.phase === PHASE.RECOVERY_COMPARE) {
       if (!confirm("復旧期比較・分析の回答をリセットしますか？")) return;
@@ -2147,42 +2126,6 @@
         cc.parentElement.className =
           "char-count" + (q5.length > max ? " over" : q5.length >= max * 0.9 ? " warn" : "");
       }
-    }
-  }
-
-  // ================================================================
-  // RECOVERY_ACTUAL フェーズ レンダラー [ADDED]
-  // ================================================================
-
-  /**
-   * 復旧期実際マップを #canvas-raActual に描画する（読み取り専用）
-   */
-  function renderRecoveryActualView() {
-    const raCanvas = $("canvas-raActual");
-    const raSvg    = $("svgLayer-raActual");
-    const raWrap   = $("canvasWrap-raActual");
-    const raStat   = $("canvasStat-raActual");
-    if (!raCanvas || !raSvg || !raWrap) return;
-
-    if (!window.actualMapRecovery) {
-      raCanvas.innerHTML =
-        '<div style="color:var(--red);padding:20px;font-size:14px;">⚠ 実際マップの読み込みに失敗しました</div>';
-      return;
-    }
-
-    const nodes = window.actualMapRecovery.recovery?.nodes || [];
-    const edges = window.actualMapRecovery.recovery?.edges || [];
-
-    requestAnimationFrame(() => {
-      renderReadOnlyMap(nodes, edges, raCanvas, raSvg, raWrap, raStat, "-raActual", null, true);
-    });
-
-    // 「比較・分析へ進む」ボタン（重複イベント防止）
-    const btnToRc = $("btnToRecoveryCompare");
-    if (btnToRc) {
-      const fresh = btnToRc.cloneNode(true);
-      btnToRc.replaceWith(fresh);
-      fresh.addEventListener("click", () => switchPhase(PHASE.RECOVERY_COMPARE));
     }
   }
 

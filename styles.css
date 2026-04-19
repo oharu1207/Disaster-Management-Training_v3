@@ -937,19 +937,7 @@ textarea { resize: vertical; min-height: 70px; }
 }
 
 /* ================================================================
-   PHASE 7: 復旧期実際マップ表示 [ADDED]
-   ================================================================ */
-
-#phase-recoveryActual {
-  display: none;
-  grid-template-columns: 300px 1fr;
-  height: calc(100vh - 54px);
-  overflow: hidden;
-}
-#phase-recoveryActual.active { display: grid; }
-
-/* ================================================================
-   PHASE 8: 比較・分析（復旧期） [ADDED]
+   PHASE 8 (now Phase7): 比較・分析（復旧期）
    — #phase-2 と同じグリッド構成を使い回す
    ================================================================ */
 
