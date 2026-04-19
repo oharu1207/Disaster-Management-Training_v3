@@ -102,13 +102,14 @@
     { label: "介護支援専門員協会",            group: "g-unit",    icon: "🧑‍⚕️" },
     { label: "市町村保健センター",            group: "g-unit",    icon: "🏘" },  // [CHANGED] g-team→g-unit
     { label: "避難所",                        group: "g-team",    icon: "🏘" },
+    { label: "福祉避難所",                    group: "g-team",    icon: "🏡" },
     { label: "在宅避難者",                    group: "g-team",    icon: "🏠" },
     { label: "仮設住宅",                     group: "g-team",    icon: "🏠" },
   ];
 
-  const RECOVERY_BENEFICIARY_LABELS = new Set(["避難所", "在宅避難者", "仮設住宅"]);
+  const RECOVERY_BENEFICIARY_LABELS = new Set(["避難所", "福祉避難所", "在宅避難者", "仮設住宅"]);
 
-  const PHASE6_BENEFICIARY_LABELS = new Set(["避難所", "医療機関", "在宅避難者", "仮設住宅"]);
+  const PHASE6_BENEFICIARY_LABELS = new Set(["避難所", "医療機関", "福祉避難所", "在宅避難者", "仮設住宅"]);
 
   const MAP_PHASE_CONFIG = {
     [PHASE.ACUTE_MAP]: {
