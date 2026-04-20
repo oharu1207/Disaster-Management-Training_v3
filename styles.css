@@ -860,6 +860,27 @@ textarea { resize: vertical; min-height: 70px; }
 }
 
 
+/* --- 選択済みICS原則チップ --- */
+.ar-principle-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(77,143,255,0.10);
+  border: 1.5px solid rgba(77,143,255,0.35);
+  border-radius: 9px;
+  padding: 8px 11px;
+}
+.ar-principle-en {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1.3;
+}
+.ar-principle-ja {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
 /* --- 抜粋リスト --- */
 .ar-excerpt-list {
   display: flex;

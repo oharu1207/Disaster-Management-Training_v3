@@ -424,7 +424,7 @@
     }
 
     // 現フェーズがマップ画面なら矢印キャンセル＋保存（読み取り専用フェーズは保存不要）
-    if (MAP_PHASE_CONFIG[state.phase] && !MAP_PHASE_CONFIG[state.phase].isReadOnly) {
+    if (MAP_PHASE_CONFIG[state.phase] && !MAP_PHASE_CONFIG[state.phase].isReadOnly && state.phase !== PHASE.ACUTE_COMPARE) {
       if (state.drawingArrow) cancelArrowDraw();
       savePhaseData(activePhaseKey);
     }
@@ -515,6 +515,7 @@
       }
       renderAcuteRecordView();
       restoreAcuteRecordAnswers();
+      renderSelectedPrinciple("arSelectedPrinciple", phaseData.acute.answers.p3q2sel, "問3で原則を選択すると表示されます");
       return;
     }
 
@@ -597,6 +598,7 @@
       }
       renderRecoveryRecordView();
       restoreRecoveryRecordAnswers();
+      renderSelectedPrinciple("rrSelectedPrinciple", phaseData.recoveryCompare.answers.q7sel, "問7で原則を選択すると表示されます");
       return;
     }
 
@@ -2062,6 +2064,33 @@
   }
 
   // ================================================================
+  // ================================================================
+  // ICS原則 選択表示ヘルパー
+  // ================================================================
+  const ICS_PRINCIPLE_JA = {
+    "Unity of Command":     "指揮一元化",
+    "Unified Command":      "統合指揮",
+    "Span of Control":      "統制範囲",
+    "Modular Organization": "組立型組織",
+    "Communications":       "コミュニケーション",
+  };
+
+  function renderSelectedPrinciple(elementId, value, fallbackMsg) {
+    const el = $(elementId);
+    if (!el) return;
+    if (!value) {
+      el.innerHTML = `<span style="font-size:11px;color:var(--text-muted);">${esc(fallbackMsg || "（未選択）")}</span>`;
+      return;
+    }
+    const ja = ICS_PRINCIPLE_JA[value] || "";
+    el.innerHTML = `
+      <div class="ar-principle-chip">
+        <span class="ar-principle-en">${esc(value)}</span>
+        <span class="ar-principle-ja">${esc(ja)}</span>
+      </div>
+    `;
+  }
+
   // ACUTE_RECORD フェーズ レンダラー [ADDED]
   // ================================================================
 
