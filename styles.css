@@ -821,13 +821,15 @@ textarea { resize: vertical; min-height: 70px; }
    ================================================================ */
 
 /* --- Layout --- */
-#phase-acuteRecord {
+#phase-acuteRecord,
+#phase-recoveryRecord {
   display: none;
   grid-template-columns: 300px 1fr;
   height: calc(100vh - 54px);
   overflow: hidden;
 }
-#phase-acuteRecord.active { display: grid; }
+#phase-acuteRecord.active,
+#phase-recoveryRecord.active { display: grid; }
 
 /* サイドバーは既存 .map-sidebar を流用 */
 .ar-sidebar {

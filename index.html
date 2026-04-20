@@ -28,7 +28,9 @@
       <span class="phase-arrow">›</span>
       <div class="phase-step" data-phase="6"><span class="step-num">7</span><span class="step-label">比較・分析<br>（復旧期）</span></div>
       <span class="phase-arrow">›</span>
-      <div class="phase-step" data-phase="7"><span class="step-num">8</span><span class="step-label">シーケンス<br>図構築</span></div>
+      <div class="phase-step" data-phase="7"><span class="step-num">8</span><span class="step-label">対応検証<br>記録（復旧）</span></div>
+      <span class="phase-arrow">›</span>
+      <div class="phase-step" data-phase="8"><span class="step-num">9</span><span class="step-label">シーケンス<br>図構築</span></div>
     </div>
   </div>
   <div class="header-right">
@@ -633,12 +635,44 @@
         <div class="char-count"><span id="rcQ7CharCount">0</span> / 200 字</div>
       </div>
       <div class="compare-qa-block compare-qa-block--nav">
-        <button id="btnToSequence" class="btn-primary">シーケンス図へ進む →</button>
+        <button id="btnToRecoveryRecord" class="btn-primary">対応検証記録へ進む →</button>
       </div>
     </div>
   </div>
 
 </div><!-- /phase-recoveryCompare -->
+
+<!-- ===== PHASE RECOVERY_RECORD: 対応検証記録（復旧期） ===== -->
+<div id="phase-recoveryRecord" class="phase-view">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="map-sidebar ar-sidebar">
+    <div class="sb-block">
+      <div class="scenario-badge">復旧期 対応検証</div>
+      <div style="font-size:13px;line-height:1.6;margin-top:8px;color:#fff;">
+        対応検証記録の抜粋を読んだ上で問8・問9に回答してください。
+      </div>
+    </div>
+    <div class="sb-block">
+      <div class="sb-title">💡 ICS原則 リマインダー</div>
+      <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
+        問7で指摘した原則（Unity of Command / Unified Command / Span of Control / Modular Organization / Communications）が、右の抜粋のどの事例に対応するか確認してください。
+      </div>
+    </div>
+    <div class="sb-block" style="margin-top:auto;">
+      <button id="btnToSequenceFromRR" class="btn-primary full">シーケンス図へ進む →</button>
+    </div>
+  </div><!-- /ar-sidebar -->
+
+  <!-- RIGHT MAIN AREA -->
+  <div class="canvas-col ar-main-col">
+    <div class="ar-section-header">📄 対応検証記録（復旧期 課題抜粋）</div>
+    <div id="rrExcerptList" class="ar-excerpt-list"></div>
+    <div class="ar-section-header" style="margin-top:16px;">✏️ 設問</div>
+    <div id="rrQuestionArea" class="ar-question-area"></div>
+  </div><!-- /ar-main-col -->
+
+</div><!-- /phase-recoveryRecord -->
 
 <div id="phase-3" class="phase-view">
   <div class="coming-soon">
