@@ -156,23 +156,23 @@
     title: "対応検証記録（急性期 課題抜粋）",
     excerpts: [
       {
-        id: "R1",
+        id: "1",
         text: "県庁との情報共有については、県庁における窓口が統一されておらず、県庁の各課から同じような内容の確認が幾度となくあり、保健所が把握していない問題への対応依頼等があり、保健所は混乱することがあった。"
       },
       {
-        id: "R2",
+        id: "2",
         text: "県庁本部で、県庁と支援団体間だけで決められていた被災地支援活動などがあった。そういった活動の中には、保健所が現場ですでに取り組んでいた活動もあり、二重になってしまうこともあった。"
       },
       {
-        id: "R3",
+        id: "3",
         text: "「参加者が多いと、会議時間が長くなってしまう」「会議では情報共有はできたが、具体的な支援団体の配置や活動における役割分担などにまで話が及ぶことはあまりなかった」"
       },
       {
-        id: "R4",
+        id: "4",
         text: "DHEATを派遣するにあたり、保健所側の要望も聞いて欲しい。必ずしもプッシュ型である必要はあまりないのではないか。"
       },
       {
-        id: "R5",
+        id: "5",
         text: "「県庁保健医療調整本部‐保健所現地保健医療調整本部との連携は、かなり薄かったと言わざるを得なかった。保健所には県庁本部の動きはまったく伝わってこなかった。」「情報網が遮断されたこともあって、保健所の全体的な活動を本庁に伝える手段もなく、本庁から聞かれることもなかった。」"
       }
     ],
@@ -224,23 +224,23 @@
     title: "対応検証記録（復旧期 課題抜粋）",
     excerpts: [
       {
-        id: "RR1",
+        id: "2-1",
         text: "DHEATの撤退判断が地域の実情を踏まえず一律に行われたため、撤退後に保健所の調整機能が低下し、支援チームの活動が散漫になった。撤退時期の判断基準について、地域側との事前合意が不足していた。"
       },
       {
-        id: "RR2",
+        id: "2-2",
         text: "復旧期においても、県庁保健医療調整本部と現地保健所との情報共有は不十分であった。仮設住宅の建設スケジュールや入居者の健康状態に関する情報が、現地から県庁に届かないケースが続いた。"
       },
       {
-        id: "RR3",
+        id: "2-3",
         text: "在宅避難者への訪問支援の窓口が、地域包括支援センター・市町村保健センター・DWAT等で重複していた。それぞれが独自に動いており、支援の優先順位や役割分担について統一した調整の場が設けられていなかった。"
       },
       {
-        id: "RR4",
+        id: "2-4",
         text: "福祉避難所への保健医療支援については、一般避難所と異なる対応が必要にもかかわらず、支援チームの配置基準や巡回スケジュールが一般避難所と同一であった。担当チームが福祉避難所の特性を十分に把握していなかった。"
       },
       {
-        id: "RR5",
+        id: "2-5",
         text: "急性期から復旧期への移行期に支援チームの引き継ぎが不十分で、急性期に構築された連携関係が復旧期に継続されなかった。特にDPATとDWATの活動情報が後続の支援チームに共有されていなかった。"
       }
     ],
@@ -335,7 +335,7 @@
     p6:       { nodes:[], edges:[], answers:{q1:"",q2:""}, log:[],
                 selectedNodeId:null, selectedEdgeId:null },
     acuteRecord:     { answers: { q4: "", q5: "" } },
-    recoveryCompare: { answers: { q6: "", q7: "" } },
+    recoveryCompare: { answers: { q6: "", q7: "", q7sel: "" } },
     recoveryRecord:  { answers: { q8: "", q9: "" } },
   };
 
@@ -577,6 +577,10 @@
         q7el.value = rcAns.q7 || "";
         const cc = $("rcQ7CharCount");
         if (cc) cc.textContent = (rcAns.q7 || "").length;
+      }
+      if (rcAns.q7sel) {
+        const radio = document.querySelector(`input[name="rcQ7principle"][value="${rcAns.q7sel}"]`);
+        if (radio) radio.checked = true;
       }
       showToast("ノードをダブルクリックすると接続関係をハイライトできます", 3500);
       return;
@@ -1524,8 +1528,9 @@
             // recoveryCompare の復元（v4/v5 に存在、v3 は空で補完）
             phaseData.recoveryCompare = {
               answers: {
-                q6: obj.recoveryCompare?.answers?.q6 || "",
-                q7: obj.recoveryCompare?.answers?.q7 || "",
+                q6:    obj.recoveryCompare?.answers?.q6    || "",
+                q7:    obj.recoveryCompare?.answers?.q7    || "",
+                q7sel: obj.recoveryCompare?.answers?.q7sel || "",
               }
             };
             // recoveryRecord の復元（v5 に存在、v3/v4 は空で補完）
@@ -1578,7 +1583,7 @@
             phaseData.recovery = loadPhaseV2(obj.recovery);
             // v2 には acuteRecord / recoveryCompare / recoveryRecord がないため空で補完
             phaseData.acuteRecord     = { answers: { q4: "", q5: "" } };
-            phaseData.recoveryCompare = { answers: { q6: "", q7: "" } };
+            phaseData.recoveryCompare = { answers: { q6: "", q7: "", q7sel: "" } };
             phaseData.recoveryRecord  = { answers: { q8: "", q9: "" } };
             if (obj.phase5Data?.removals) {
               const restoredRemovals = [];
@@ -1615,7 +1620,7 @@
             };
             // v1 には acuteRecord / recoveryCompare / recoveryRecord がないため空で補完
             phaseData.acuteRecord     = { answers: { q4: "", q5: "" } };
-            phaseData.recoveryCompare = { answers: { q6: "", q7: "" } };
+            phaseData.recoveryCompare = { answers: { q6: "", q7: "", q7sel: "" } };
             phaseData.recoveryRecord  = { answers: { q8: "", q9: "" } };
             if (validateEdgeConflicts(phaseData.acute.edges)) hasConflict = true;
           } else {
@@ -1655,11 +1660,12 @@
     // 復旧期比較・分析：問6・問7 の回答をクリア
     if (state.phase === PHASE.RECOVERY_COMPARE) {
       if (!confirm("復旧期比較・分析の回答をリセットしますか？")) return;
-      phaseData.recoveryCompare.answers = { q6: "", q7: "" };
+      phaseData.recoveryCompare.answers = { q6: "", q7: "", q7sel: "" };
       const q6el = $("rcQ6Answer");
       const q7el = $("rcQ7Answer");
       if (q6el) { q6el.value = ""; const cc = $("rcQ6CharCount"); if (cc) cc.textContent = "0"; }
       if (q7el) { q7el.value = ""; const cc = $("rcQ7CharCount"); if (cc) cc.textContent = "0"; }
+      document.querySelectorAll('input[name="rcQ7principle"]').forEach(r => { r.checked = false; });
       return;
     }
     // 復旧期対応検証記録：問8・問9 の回答をクリア
@@ -2430,6 +2436,11 @@
         phaseData.recoveryCompare.answers.q7 = rcQ7.value;
       });
     }
+    document.querySelectorAll('input[name="rcQ7principle"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        phaseData.recoveryCompare.answers.q7sel = radio.value;
+      });
+    });
 
     // 「対応検証記録（復旧期）へ進む」ボタン（問6 入力チェック付き）
     $("btnToRecoveryRecord")?.addEventListener("click", () => {

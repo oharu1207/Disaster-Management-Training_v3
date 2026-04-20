@@ -729,7 +729,7 @@ textarea { resize: vertical; min-height: 70px; }
 .compare-qa-label {
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-dim);
+  color: var(--text);
   line-height: 1.4;
 }
 
@@ -851,13 +851,14 @@ textarea { resize: vertical; min-height: 70px; }
 .ar-section-header {
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-dim);
+  color: var(--text);
   text-transform: uppercase;
   letter-spacing: 0.6px;
   margin-bottom: 10px;
   padding-bottom: 5px;
   border-bottom: 1px solid var(--border);
 }
+
 
 /* --- 抜粋リスト --- */
 .ar-excerpt-list {
@@ -909,7 +910,7 @@ textarea { resize: vertical; min-height: 70px; }
 .ar-excerpt-text {
   font-size: 13px;
   line-height: 1.7;
-  color: var(--text-dim);
+  color: var(--text);
 }
 
 /* --- 設問ブロック --- */
