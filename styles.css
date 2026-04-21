@@ -755,17 +755,18 @@ textarea { resize: vertical; min-height: 70px; }
   min-height: 48px;
   resize: none;
 }
-/* [ADDED] 「問4・5へ進む」ボタン用ブロック */
-.compare-qa-block--nav {
-  flex: 0 0 auto;
+/* 問3・問7ブロック内ボタン行 */
+.compare-qa-btn-row {
+  display: flex;
   justify-content: flex-end;
-  align-self: flex-end;
+  margin-top: 4px;
 }
 
 /* ===== Phase3 ICSラジオボタングループ ===== */
 .ics-radio-group {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: start;
   gap: 5px;
   padding: 5px 0 4px;
 }
