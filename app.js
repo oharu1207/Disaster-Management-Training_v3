@@ -1085,17 +1085,6 @@
     if (state.arrowFrom === toId) { cancelArrowDraw(); return; }
 
     const fromId = state.arrowFrom;
-    // COOPが存在するペアにはCMD/INFOを追加不可（ポップアップを表示する前にブロック）
-    const pairHasCoop = state.edges.some(e =>
-      e.label === "連携協力" &&
-      ((e.from === fromId && e.to === toId) || (e.from === toId && e.to === fromId))
-    );
-    if (pairHasCoop) {
-      cancelArrowDraw();
-      showToast("連携協力が設定済みのペアには指示命令・情報伝達を追加できません");
-      return;
-    }
-
     cancelArrowDraw();
     // 支援対象（BENEFICIARY_LABELS に含まれるノード）への矢印は「支援」ラベルを自動付与
     const toNode = state.nodes.find(n => n.id === toId);
@@ -1252,7 +1241,8 @@
     if (defs) svgEl.appendChild(defs);
     const isP5 = !!(MAP_PHASE_CONFIG[state.phase]?.isReadOnly);
 
-    const CURVE_OFFSET = 50;
+    const CURVE_OFFSET  = 50;
+    const SAME_DIR_STEP = 22; // 同方向グループ内の間隔（px）
 
     for (const e of state.edges) {
       const from = state.nodes.find(n => n.id === e.from);
@@ -1273,6 +1263,22 @@
         r.id !== e.id && r.from === e.to && r.to === e.from
       );
 
+      // 同方向グループ（同一 from/to）を ID でソートして安定インデックスを取得
+      const sameDirEdges = state.edges
+        .filter(x => x.from === e.from && x.to === e.to)
+        .sort((p, q) => p.id < q.id ? -1 : 1);
+      const sameDirIndex  = sameDirEdges.findIndex(x => x.id === e.id);
+      const sameDirCount  = sameDirEdges.length;
+      const sameDirOffset = (sameDirIndex - (sameDirCount - 1) / 2) * SAME_DIR_STEP;
+
+      // 正規方向（ID小→大）で法線を統一（hasReverse の有無に関わらず常に算出）
+      const sign = e.from < e.to ? 1 : -1;
+      const [canonFrom, canonTo] = e.from < e.to ? [from, to] : [to, from];
+      const ca = nodeCenter(canonFrom), cb = nodeCenter(canonTo);
+      const cdx = cb.x - ca.x, cdy = cb.y - ca.y;
+      const cdist = Math.sqrt(cdx*cdx + cdy*cdy) || 1;
+      const cnx = -cdy / cdist, cny = cdx / cdist;
+
       // 開始・終了点（ノード端から shorten px 引く）
       const sx = a.x + (dx/dist)*shorten;
       const sy = a.y + (dy/dist)*shorten;
@@ -1281,33 +1287,23 @@
 
       let pathD, lx, ly;
 
-      if (hasReverse) {
-        // 逆向きペアあり → 二次ベジェ曲線で湾曲させる
-        // 正規方向（IDの小さい方→大きい方）で法線を統一し、sign で左右に振り分ける
-        const sign = e.from < e.to ? 1 : -1;
-        const [canonFrom, canonTo] = e.from < e.to ? [from, to] : [to, from];
-        const ca = nodeCenter(canonFrom), cb = nodeCenter(canonTo);
-        const cdx = cb.x - ca.x, cdy = cb.y - ca.y;
-        const cdist = Math.sqrt(cdx*cdx + cdy*cdy) || 1;
-        const cnx = -cdy / cdist, cny = cdx / cdist;
-        const cpx = (sx + ex) / 2 + sign * CURVE_OFFSET * cnx;
-        const cpy = (sy + ey) / 2 + sign * CURVE_OFFSET * cny;
-        pathD = `M ${sx} ${sy} Q ${cpx} ${cpy} ${ex} ${ey}`;
-        // ラベル位置 = ベジェ曲線 t=0.5 の点
-        lx = (sx + 2 * cpx + ex) / 4;
-        ly = (sy + 2 * cpy + ey) / 4;
-      } else if (e.bidirectional) {
-        // 双方向（連携協力）: 両端に矢印を持つ直線
+      if (e.bidirectional) {
+        // 双方向（連携協力）: 両端に矢印を持つ直線（変更なし）
         const bsx = a.x + (dx / dist) * shorten;
         const bsy = a.y + (dy / dist) * shorten;
         pathD = `M ${bsx} ${bsy} L ${ex} ${ey}`;
         lx = (a.x + b.x) / 2;
         ly = (a.y + b.y) / 2;
       } else {
-        // 通常の単方向直線
-        pathD = `M ${a.x} ${a.y} L ${ex} ${ey}`;
-        lx = (a.x + b.x) / 2;
-        ly = (a.y + b.y) / 2;
+        // 指示命令・情報伝達・支援: 複合オフセットによる二次ベジェ
+        // totalOffset=0 のとき制御点が中点 → 直線と等価
+        const reverseOffset = hasReverse ? sign * CURVE_OFFSET : 0;
+        const totalOffset   = reverseOffset + sameDirOffset;
+        const cpx = (sx + ex) / 2 + totalOffset * cnx;
+        const cpy = (sy + ey) / 2 + totalOffset * cny;
+        pathD = `M ${sx} ${sy} Q ${cpx} ${cpy} ${ex} ${ey}`;
+        lx = (sx + 2 * cpx + ex) / 4;
+        ly = (sy + 2 * cpy + ey) / 4;
       }
 
       const isSelected = e.id === state.selectedEdgeId;
@@ -2541,35 +2537,34 @@
     // 支援エッジは排他チェック対象外
     if (type === "支援") return { allowed: true, reason: "" };
 
-    // 無方向でペアのエッジを抽出
+    // 無方向ペアのエッジ（COOP共存チェック用）
     const pairEdges = edges.filter(e =>
       (e.from === fromId && e.to === toId) ||
       (e.from === toId   && e.to === fromId)
     );
 
-    // COOP追加時: CMD/INFOが存在すれば拒否
+    // COOP追加時
     if (type === COOP) {
+      // CMD/INFOが存在すれば拒否（無方向）
       if (pairEdges.some(e => CMD_INFO.has(e.label))) {
-        return {
-          allowed: false,
-          reason: "指示命令または情報伝達が設定済みのペアには連携協力を追加できません"
-        };
+        return { allowed: false, reason: "指示命令または情報伝達が設定済みのペアには連携協力を追加できません" };
       }
-    }
-
-    // CMD/INFO追加時: COOPが存在すれば拒否
-    if (CMD_INFO.has(type)) {
+      // COOP重複チェックは無方向（A↔B を同一ペアとみなす）
       if (pairEdges.some(e => e.label === COOP)) {
-        return {
-          allowed: false,
-          reason: "連携協力が設定済みのペアには指示命令・情報伝達を追加できません"
-        };
+        return { allowed: false, reason: "同じ種類の矢印がすでに存在します" };
       }
     }
 
-    // 同種重複チェック
-    if (pairEdges.some(e => e.label === type)) {
-      return { allowed: false, reason: "同じ種類の矢印がすでに存在します" };
+    // CMD/INFO追加時
+    if (CMD_INFO.has(type)) {
+      // COOPが存在すれば拒否（無方向）
+      if (pairEdges.some(e => e.label === COOP)) {
+        return { allowed: false, reason: "連携協力が設定済みのペアには指示命令・情報伝達を追加できません" };
+      }
+      // 重複チェックは有方向（同一 from/to/type のみブロック。逆向きは別エッジとして許可）
+      if (edges.some(e => e.from === fromId && e.to === toId && e.label === type)) {
+        return { allowed: false, reason: "同じ種類の矢印がすでに存在します" };
+      }
     }
 
     return { allowed: true, reason: "" };
