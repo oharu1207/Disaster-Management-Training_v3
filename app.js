@@ -295,9 +295,14 @@
     log: [],
   };
 
-  window.idealMapAcute    = null;
-  window.actualMapAcute   = null;
-  window.actualMapRecovery = null; // [ADDED] 復旧期実際マップ
+  window.idealMapAcute     = null;
+  window.actualMapAcute    = null;
+  window.actualMapRecovery = null;
+  const mapLoadStatus = {
+    idealAcute:     "idle",
+    actualAcute:    "idle",
+    actualRecovery: "idle",
+  };
   window.phase5Data       = { removals: [] };
 
   // ── Phase6 状態変数 ────────────────────────────────────────────────────
@@ -467,7 +472,7 @@
         const actualWrap   = $("canvasWrap-actual");
         const actualStat   = $("canvasStat-actual");
 
-        if (window.actualMapAcute) {
+        if (mapLoadStatus.actualAcute === "ready") {
           renderReadOnlyMap(
             window.actualMapAcute.nodes,
             window.actualMapAcute.edges,
@@ -475,9 +480,12 @@
             null, true,
             () => clearHighlightRO($("canvas-ideal"), $("svgLayer-ideal"))
           );
-        } else {
+        } else if (mapLoadStatus.actualAcute === "error") {
           actualCanvas.innerHTML =
             '<div style="color:var(--red);padding:20px;font-size:14px;">⚠ 実際マップの読み込みに失敗しました</div>';
+        } else {
+          actualCanvas.innerHTML =
+            '<div style="color:var(--text-dim);padding:20px;font-size:14px;">読み込み中…</div>';
         }
       });
 
@@ -545,12 +553,13 @@
         );
 
         // 右カラム：復旧期実際マップ
-        if (window.actualMapRecovery) {
+        const rcActualCanvas = $("canvas-rcActual");
+        if (mapLoadStatus.actualRecovery === "ready") {
           const rcNodes = window.actualMapRecovery.recovery?.nodes || [];
           const rcEdges = window.actualMapRecovery.recovery?.edges || [];
           renderReadOnlyMap(
             rcNodes, rcEdges,
-            $("canvas-rcActual"),
+            rcActualCanvas,
             $("svgLayer-rcActual"),
             $("canvasWrap-rcActual"),
             $("canvasStat-rcActual"),
@@ -558,10 +567,12 @@
             null, true,
             () => clearHighlightRO($("canvas-rcIdeal"), $("svgLayer-rcIdeal"))
           );
-        } else {
-          const el = $("canvas-rcActual");
-          if (el) el.innerHTML =
+        } else if (mapLoadStatus.actualRecovery === "error") {
+          if (rcActualCanvas) rcActualCanvas.innerHTML =
             '<div style="color:var(--red);padding:20px;font-size:14px;">⚠ 実際マップの読み込みに失敗しました</div>';
+        } else {
+          if (rcActualCanvas) rcActualCanvas.innerHTML =
+            '<div style="color:var(--text-dim);padding:20px;font-size:14px;">読み込み中…</div>';
         }
       });
 
@@ -1910,9 +1921,10 @@
   // PHASE 5 — READ-ONLY MAP & REMOVAL CANDIDATE LOGIC
   // ================================================================
   function renderPhase5Map() {
-    if (!window.idealMapAcute) {
-      if (canvasEl) canvasEl.innerHTML =
-        '<div style="color:var(--red);padding:20px;font-size:14px;">⚠ 理想マップの読み込みに失敗しました</div>';
+    if (mapLoadStatus.idealAcute !== "ready") {
+      if (canvasEl) canvasEl.innerHTML = mapLoadStatus.idealAcute === "error"
+        ? '<div style="color:var(--red);padding:20px;font-size:14px;">⚠ 理想マップの読み込みに失敗しました</div>'
+        : '<div style="color:var(--text-dim);padding:20px;font-size:14px;">読み込み中…</div>';
       return;
     }
     state.nodes           = window.idealMapAcute.nodes.map(n => ({ ...n }));
@@ -2026,7 +2038,7 @@
   // PHASE 6 — CANVAS INITIALISATION
   // ================================================================
   function initPhase6Canvas() {
-    if (!window.idealMapAcute) return;
+    if (mapLoadStatus.idealAcute !== "ready") return;
     const removedIds = new Set(window.phase5Data.removals.map(r => r.nodeId));
 
     // 旧ID → 新ID のマッピング（canvas-p5 との data-id 重複を解消）
@@ -2574,39 +2586,63 @@
   // MAP LOADERS
   // ================================================================
   async function loadIdealMapAcute() {
+    mapLoadStatus.idealAcute = "loading";
     try {
       const resp = await fetch('./ideal_map_acute.json');
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       window.idealMapAcute = await resp.json();
+      mapLoadStatus.idealAcute = "ready";
     } catch (e) {
       console.error('[ICS] ideal_map_acute.json の読み込みに失敗:', e);
       if (window.IDEAL_MAP_ACUTE_FALLBACK) {
         window.idealMapAcute = window.IDEAL_MAP_ACUTE_FALLBACK;
+        mapLoadStatus.idealAcute = "ready";
+      } else {
+        mapLoadStatus.idealAcute = "error";
       }
+    }
+    // Phase5 / Phase6 に滞在中なら自動再描画
+    if (state.phase === PHASE.RECOVERY_PREP || state.phase === PHASE.RECOVERY_MAP) {
+      switchPhase(state.phase);
     }
   }
 
   async function loadActualMapAcute() {
+    mapLoadStatus.actualAcute = "loading";
     try {
       const resp = await fetch('./actual_map_acute.json');
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       window.actualMapAcute = await resp.json();
+      mapLoadStatus.actualAcute = "ready";
     } catch (e) {
       console.error('[ICS] actual_map_acute.json の読み込みに失敗:', e);
       if (window.ACTUAL_MAP_ACUTE_FALLBACK) {
         window.actualMapAcute = window.ACTUAL_MAP_ACUTE_FALLBACK;
+        mapLoadStatus.actualAcute = "ready";
+      } else {
+        mapLoadStatus.actualAcute = "error";
       }
+    }
+    // ACUTE_COMPARE に滞在中なら自動再描画
+    if (state.phase === PHASE.ACUTE_COMPARE) {
+      switchPhase(state.phase);
     }
   }
 
-  // [ADDED] 復旧期実際マップを取得する
   async function loadActualMapRecovery() {
+    mapLoadStatus.actualRecovery = "loading";
     try {
       const resp = await fetch('./actual_map_recovery.json');
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       window.actualMapRecovery = await resp.json();
+      mapLoadStatus.actualRecovery = "ready";
     } catch (e) {
       console.error('[ICS] actual_map_recovery.json の読み込みに失敗:', e);
+      mapLoadStatus.actualRecovery = "error";
+    }
+    // RECOVERY_COMPARE に滞在中なら自動再描画
+    if (state.phase === PHASE.RECOVERY_COMPARE) {
+      switchPhase(state.phase);
     }
   }
 
