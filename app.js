@@ -123,13 +123,6 @@
                 wrap:"canvasWrap-acute", stat:"canvasStat-acute", hint:"arrowModeHint-acute" },
       markerSuffix: "-acute",
     },
-    [PHASE.ACUTE_COMPARE]: {
-      key: "recovery", paletteNodes: RECOVERY_PALETTE_NODES,
-      beneficiaries: RECOVERY_BENEFICIARY_LABELS,
-      domIds: { canvas:"canvas-recovery", svg:"svgLayer-recovery", palette:"palette-recovery",
-                wrap:"canvasWrap-recovery", stat:"canvasStat-recovery", hint:"arrowModeHint-recovery" },
-      markerSuffix: "-recovery",
-    },
     [PHASE.RECOVERY_PREP]: {
       key: "p5",
       isReadOnly: true,
@@ -335,8 +328,11 @@
   const phaseData = {
     acute:    { nodes:[], edges:[], answers:{q1:"",q2:"",p3q1:"",p3q2:"",p3q2sel:""}, log:[],
                 selectedNodeId:null, selectedEdgeId:null },
+    // 旧フォーマット (v1-v3) の importJSON 後方互換のためのみ保持。
+    // 通常フローでは savePhaseData の対象外で、常に空のまま。
     recovery: { nodes:[], edges:[], answers:{q1:"",q2:""}, log:[],
                 selectedNodeId:null, selectedEdgeId:null },
+    // answers.q1, q2 は現行フローでは未使用だが、importJSON v3 互換で復元先として保持。
     p6:       { nodes:[], edges:[], answers:{q1:"",q2:""}, log:[],
                 selectedNodeId:null, selectedEdgeId:null },
     acuteRecord:     { answers: { q4: "", q5: "" } },
@@ -429,7 +425,7 @@
     }
 
     // 現フェーズがマップ画面なら矢印キャンセル＋保存（読み取り専用フェーズは保存不要）
-    if (MAP_PHASE_CONFIG[state.phase] && !MAP_PHASE_CONFIG[state.phase].isReadOnly && state.phase !== PHASE.ACUTE_COMPARE) {
+    if (MAP_PHASE_CONFIG[state.phase] && !MAP_PHASE_CONFIG[state.phase].isReadOnly) {
       if (state.drawingArrow) cancelArrowDraw();
       savePhaseData(activePhaseKey);
     }
@@ -615,7 +611,7 @@
 
     // ── マップ系フェーズ共通（急性期マップ・復旧期準備・復旧期マップ） ───
     const cfg = MAP_PHASE_CONFIG[p];
-    if (cfg && p !== PHASE.ACUTE_COMPARE) {
+    if (cfg) {
       if (cfg.isReadOnly) {
         // 復旧期準備：読み取り専用モード
         activePhaseKey     = cfg.key;
@@ -1706,7 +1702,7 @@
       renderAll();
       return;
     }
-    const phaseLabel = activePhaseKey === "recovery" ? "復旧期（Phase3）" : "急性期";
+    const phaseLabel = state.phase === PHASE.RECOVERY_MAP ? "復旧期" : "急性期";
     if (!confirm(`初期化しますか？（${phaseLabel}のノード・矢印・回答・ログが消えます）`)) return;
     state.nodes = []; state.edges = [];
     state.answers = { q1: "", q2: "" }; state.log = [];
@@ -2131,6 +2127,8 @@
    * @returns {string} HTML 文字列
    */
   function renderTextareaQuestion(q) {
+    // FIXME: textarea 問題が将来複数になる場合は question.id ベースで ID を動的生成すること。
+    //        現状は1問固定前提でハードコードしている。
     return `
       <div class="ar-question-block" id="arQBlock-${esc(q.id)}">
         <div class="compare-qa-label">${esc(q.label)}</div>
@@ -2292,6 +2290,8 @@
         `;
       }
       if (q.kind === "textarea") {
+        // FIXME: textarea 問題が将来複数になる場合は question.id ベースで ID を動的生成すること。
+        //        現状は1問固定前提でハードコードしている。
         return `
           <div class="ar-question-block" id="rrQBlock-${esc(q.id)}">
             <div class="compare-qa-label">${esc(q.label)}</div>

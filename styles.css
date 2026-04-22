@@ -170,8 +170,8 @@ button.full { width: 100%; }
 .btn-start:hover { transform: translateY(-2px); box-shadow: 0 0 44px rgba(77,143,255,0.48); }
 
 /* ===== PHASE 1: MAP BUILDER ===== */
-#phase-1, #phase-2 { display: none; grid-template-columns: 300px 1fr; height: calc(100vh - 54px); overflow: hidden; }
-#phase-1.active, #phase-2.active { display: grid; }
+#phase-1 { display: none; grid-template-columns: 300px 1fr; height: calc(100vh - 54px); overflow: hidden; }
+#phase-1.active { display: grid; }
 
 /* Left sidebar */
 .map-sidebar {
@@ -670,7 +670,7 @@ textarea { resize: vertical; min-height: 70px; }
   color: var(--green);
 }
 
-/* ===== Phase3：比較画面 ===== */
+/* ===== Phase3：比較・分析（急性期）===== */
 #phase-2 {
   display: none;
   grid-template-rows: 1fr auto;
@@ -717,6 +717,7 @@ textarea { resize: vertical; min-height: 70px; }
 }
 .compare-qa-inner {
   display: flex;
+  align-items: stretch;
   gap: 20px;
   width: 100%;
 }
@@ -743,13 +744,6 @@ textarea { resize: vertical; min-height: 70px; }
 }
 
 /* ===== Phase3 QA パネル：高さ揃え ===== */
-.compare-qa-inner {
-  align-items: stretch;
-}
-.compare-qa-block {
-  display: flex;
-  flex-direction: column;
-}
 .compare-qa-block textarea {
   flex: 1;
   min-height: 48px;
@@ -962,7 +956,7 @@ textarea { resize: vertical; min-height: 70px; }
 }
 
 /* ================================================================
-   PHASE 8 (now Phase7): 比較・分析（復旧期）
+   PHASE.RECOVERY_COMPARE (Phase 7): 比較・分析（復旧期）
    — #phase-2 と同じグリッド構成を使い回す
    ================================================================ */
 
