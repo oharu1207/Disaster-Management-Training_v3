@@ -423,6 +423,12 @@
         if (el) { el.style.transform = ""; el.style.transformOrigin = ""; }
       }
     }
+    if (state.phase === PHASE.RECOVERY_COMPARE) {
+      for (const id of ["canvas-rcIdeal", "svgLayer-rcIdeal", "canvas-rcActual", "svgLayer-rcActual"]) {
+        const el = $(id);
+        if (el) { el.style.transform = ""; el.style.transformOrigin = ""; }
+      }
+    }
 
     // 現フェーズがマップ画面なら矢印キャンセル＋保存（読み取り専用フェーズは保存不要）
     if (MAP_PHASE_CONFIG[state.phase] && !MAP_PHASE_CONFIG[state.phase].isReadOnly) {
@@ -1735,6 +1741,12 @@
       canvasEl, svgEl, canvasWrapEl, statEl, markerSuffix,
       onNodeClick = null, fitToWrap = false,
       onNodeDblClick = null) {
+
+    // 前回の fitToWrap transform が残っている場合に備えてリセット
+    canvasEl.style.transform = "";
+    canvasEl.style.transformOrigin = "";
+    svgEl.style.transform = "";
+    svgEl.style.transformOrigin = "";
 
     // ノード描画
     let roHighlightId = null;
