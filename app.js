@@ -403,6 +403,20 @@
     state.log.push({ ts: new Date().toISOString(), type, detail });
   }
 
+  function hasUnsavedWork() {
+    const hasString = obj => obj && Object.values(obj).some(v => typeof v === "string" && v.length > 0);
+    if (phaseData.acute.nodes.length > 0)    return true;
+    if (phaseData.acute.edges.length > 0)    return true;
+    if (phaseData.p6.nodes.length > 0)       return true;
+    if (phaseData.p6.edges.length > 0)       return true;
+    if (hasString(phaseData.acute.answers))           return true;
+    if (hasString(phaseData.recoveryCompare?.answers)) return true;
+    if (hasString(phaseData.acuteRecord?.answers))     return true;
+    if (hasString(phaseData.recoveryRecord?.answers))  return true;
+    if ((window.phase5Data?.removals?.length ?? 0) > 0) return true;
+    return false;
+  }
+
   function getNodeEl(id) {
     return canvasEl ? canvasEl.querySelector(`.node[data-id="${id}"]`) : null;
   }
@@ -2684,4 +2698,11 @@
   }
 
   init();
+
+  window.addEventListener("beforeunload", (e) => {
+    if (hasUnsavedWork()) {
+      e.preventDefault();
+      e.returnValue = ""; // Chrome が要求
+    }
+  });
 })();
