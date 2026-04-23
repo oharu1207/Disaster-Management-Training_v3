@@ -30,6 +30,9 @@
     SEQUENCE:         8,   // シーケンス図構築
   };
 
+  const STORAGE_KEY            = "ics-learning-system-v1";
+  const STORAGE_SCHEMA_VERSION = 1;
+
   // フェーズ番号 → 対応する .phase-view の HTML id
   // DOM 順ではなく id で直接参照するため、並び替えに強い。
   // [CHANGED] キー（数値）を PHASE 定数に合わせて更新。値（DOM id 文字列）は変更しない。
@@ -346,6 +349,7 @@
       answers: { ...state.answers }, log: state.log,
       selectedNodeId: state.selectedNodeId, selectedEdgeId: state.selectedEdgeId,
     };
+    saveToLocalStorage();
   }
 
   function loadPhaseData(key) {
@@ -415,6 +419,51 @@
     if (hasString(phaseData.recoveryRecord?.answers))  return true;
     if ((window.phase5Data?.removals?.length ?? 0) > 0) return true;
     return false;
+  }
+
+  // ================================================================
+  // LOCAL STORAGE — 自動保存・復元
+  // ================================================================
+  function saveToLocalStorage() {
+    try {
+      const payload = {
+        version:      STORAGE_SCHEMA_VERSION,
+        savedAt:      new Date().toISOString(),
+        currentPhase: state.phase,
+        phaseData:    phaseData,
+        phase5Data:   window.phase5Data,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      console.warn("[ICS] localStorage への保存に失敗しました:", e);
+    }
+  }
+
+  function loadFromLocalStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const obj = JSON.parse(raw);
+      if (obj.version !== STORAGE_SCHEMA_VERSION) {
+        // バージョン不一致：将来的にマイグレーション処理を追加する場所
+        console.warn("[ICS] localStorage のスキーマバージョンが異なります。復元をスキップします。");
+        return null;
+      }
+      return obj;
+    } catch (e) {
+      console.warn("[ICS] localStorage の読み込みに失敗しました:", e);
+      return null;
+    }
+  }
+
+  function clearLocalStorage() {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
+  let _autoSaveTimer = null;
+  function debouncedSave() {
+    clearTimeout(_autoSaveTimer);
+    _autoSaveTimer = setTimeout(saveToLocalStorage, 700);
   }
 
   function getNodeEl(id) {
@@ -730,6 +779,7 @@
     state.nodes.push({ id, label, group, x, y, layerId: BENEFICIARY_LABELS.has(label) ? 4 : null, layerReason: "" });
     renderAll();
     selectNode(id);
+    saveToLocalStorage();
   }
 
   function selectNode(id) {
@@ -870,6 +920,7 @@
     state.nodes = state.nodes.filter(n => n.id !== id);
     state.selectedNodeId = null;
     renderAll();
+    saveToLocalStorage();
   }
 
   // ================================================================
@@ -1043,6 +1094,7 @@
             div.classList.add(`layer-${n.layerId}`);
           }
           logOp("MOVE_NODE", { id: n.id, label: n.label, layerId: n.layerId });
+          saveToLocalStorage();
         }
       };
       div.addEventListener("pointermove", onMove);
@@ -1249,6 +1301,7 @@
     const toN   = state.nodes.find(n => n.id === toId);
     logOp("ADD_EDGE", { from: fromN?.label, to: toN?.label, label, bidirectional: bidir });
     renderAll();
+    saveToLocalStorage();
   }
 
   // ================================================================
@@ -1450,6 +1503,7 @@
     state.edges = state.edges.filter(x => x.id !== id);
     state.selectedEdgeId = null;
     renderAll();
+    saveToLocalStorage();
   }
 
   // ================================================================
@@ -1654,6 +1708,7 @@
 
           if (hasConflict) showToast("読み込んだデータに矛盾する矢印の組み合わせが含まれています", 3000);
           logOp("IMPORT", {});
+          saveToLocalStorage();
           // 急性期フェーズに切り替えて表示
           // ※ switchPhase 内の savePhaseData が phaseData.recovery を上書きするため、
           //   インポート済みデータをスナップショットしてから復元する
@@ -2200,6 +2255,7 @@
         excerptList.querySelectorAll(".ar-excerpt-card").forEach(card => {
           card.classList.toggle("selected", card.dataset.id === radio.value);
         });
+        saveToLocalStorage();
       });
     });
 
@@ -2221,6 +2277,7 @@
           }
         }
         phaseData.acuteRecord.answers.q5 = q5ta.value;
+        debouncedSave();
       });
     }
 
@@ -2338,6 +2395,7 @@
         excerptList.querySelectorAll(".ar-excerpt-card").forEach(card => {
           card.classList.toggle("selected", card.dataset.id === radio.value);
         });
+        saveToLocalStorage();
       });
     });
 
@@ -2355,6 +2413,7 @@
           q9ta.classList.toggle("over", len > max);
         }
         phaseData.recoveryRecord.answers.q9 = q9ta.value;
+        debouncedSave();
       });
     }
 
@@ -2450,6 +2509,7 @@
             "char-count" + (len > 100 ? " over" : len >= 90 ? " warn" : "");
         }
         phaseData.acute.answers.p3q1 = p3q1.value;
+        debouncedSave();
       });
     }
 
@@ -2463,6 +2523,7 @@
             "char-count" + (len > 100 ? " over" : len >= 90 ? " warn" : "");
         }
         phaseData.acute.answers.p3q2 = p3q2.value;
+        debouncedSave();
       });
     }
 
@@ -2485,6 +2546,7 @@
           cc.parentElement.className = "char-count" + (len > max ? " over" : len >= max * 0.9 ? " warn" : "");
         }
         phaseData.recoveryCompare.answers.q6 = rcQ6.value;
+        debouncedSave();
       });
     }
     if (rcQ7) {
@@ -2497,6 +2559,7 @@
           cc.parentElement.className = "char-count" + (len > max ? " over" : len >= max * 0.9 ? " warn" : "");
         }
         phaseData.recoveryCompare.answers.q7 = rcQ7.value;
+        debouncedSave();
       });
     }
     document.querySelectorAll('input[name="rcQ7principle"]').forEach(radio => {
@@ -2698,6 +2761,23 @@
   }
 
   init();
+
+  // ── localStorage 復元フロー ────────────────────────────────────────
+  (function restoreFromStorage() {
+    const saved = loadFromLocalStorage();
+    if (!saved) return;
+    const savedAt = new Date(saved.savedAt).toLocaleString();
+    if (confirm(`前回の作業（${savedAt} 保存）を復元しますか？\n「キャンセル」を選ぶと前回の作業は破棄され、新しいセッションとして開始します。`)) {
+      Object.assign(phaseData, saved.phaseData);
+      if (saved.phase5Data) Object.assign(window.phase5Data, saved.phase5Data);
+      switchPhase(saved.currentPhase ?? PHASE.ORIENTATION);
+    } else {
+      clearLocalStorage();
+    }
+  })();
+
+  // 被験者切替・実験者向け運用 API
+  window.__icsClearStorage = clearLocalStorage;
 
   window.addEventListener("beforeunload", (e) => {
     if (hasUnsavedWork()) {
