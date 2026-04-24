@@ -11,7 +11,7 @@
 <!-- ===== HEADER ===== -->
 <header class="app-header">
   <div class="header-left">
-    <div class="logo">ICS <span>学習支援システム</span></div>
+    <div class="logo"><span class="logo-ics">ICS</span><span class="logo-name">学習支援<span class="logo-sub">システム</span></span></div>
     <!-- [CHANGED] ステップ9個に更新。data-phase は PHASE 定数値に合わせて変更 -->
     <div class="phase-track">
       <div class="phase-step active" data-phase="0"><span class="step-num">1</span><span class="step-label">オリエン<br>テーション</span></div>
@@ -45,7 +45,13 @@
   <div class="orient-layout-v2">
     <!-- Block A: Title hero -->
     <div class="o-card orient-hero">
-      <h2 class="orient-title">ICS 学習支援システム</h2>
+      <div class="orient-hero-brand">
+        <div class="orient-hero-badge">ICS</div>
+        <div>
+          <h2 class="orient-title">学習支援システム</h2>
+          <p class="orient-subtitle">行政保健師のための健康危機管理訓練</p>
+        </div>
+      </div>
       <button id="btnStartMap" class="btn-start">学習を開始する →</button>
     </div>
     <!-- Block B: Node list (dynamic, 3-col) -->
@@ -58,9 +64,21 @@
       <div class="o-card">
         <h3 style="font-size:14px;font-weight:700;margin-bottom:10px;">🗺 矢印の種類と意味</h3>
         <div class="edge-legend-grid">
-          <div class="edge-legend-item"><span style="color:#ff6b6b;font-size:18px;line-height:1">→</span><span><strong style="color:#ff6b6b">指示命令</strong><br><span style="font-size:11px;color:var(--text-muted)">命令・指示（一方向）</span></span></div>
-          <div class="edge-legend-item"><span style="color:#4d8fff;font-size:18px;line-height:1">→</span><span><strong style="color:#4d8fff">情報伝達</strong><br><span style="font-size:11px;color:var(--text-muted)">情報の流れ（一方向）</span></span></div>
-          <div class="edge-legend-item"><span style="color:#3dcf8a;font-size:18px;line-height:1">⇄</span><span><strong style="color:#3dcf8a">連携協力</strong><br><span style="font-size:11px;color:var(--text-muted)">双方向・協力関係</span></span></div>
+          <div class="edge-legend-item">
+            <strong class="eli-label" style="color:#ff6b6b;">指示命令</strong>
+            <span class="eli-arrow" style="color:#ff6b6b;">→</span>
+            <span class="eli-desc">命令・指示（一方向）</span>
+          </div>
+          <div class="edge-legend-item">
+            <strong class="eli-label" style="color:#4d8fff;">情報伝達</strong>
+            <span class="eli-arrow" style="color:#4d8fff;">→</span>
+            <span class="eli-desc">情報の流れ（一方向）</span>
+          </div>
+          <div class="edge-legend-item">
+            <strong class="eli-label" style="color:#3dcf8a;">連携協力</strong>
+            <span class="eli-arrow" style="color:#3dcf8a;">⇄</span>
+            <span class="eli-desc">双方向・協力関係</span>
+          </div>
         </div>
       </div>
       <div class="o-card">

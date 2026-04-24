@@ -2770,26 +2770,33 @@
   function renderOrientationNodeList() {
     const container = $("orientationNodeList");
     if (!container) return;
+    const ORIENT_BENEFICIARY = new Set(["避難所", "医療機関", "福祉避難所", "在宅避難者", "仮設住宅"]);
     const iconMap = new Map();
     for (const n of PALETTE_NODES)          { if (!iconMap.has(n.label)) iconMap.set(n.label, n.icon); }
     for (const n of RECOVERY_PALETTE_NODES) { if (!iconMap.has(n.label)) iconMap.set(n.label, n.icon); }
     const seen = new Set();
-    const orderedLabels = [];
+    const regular = [], beneficiary = [];
     for (const n of [...PALETTE_NODES, ...RECOVERY_PALETTE_NODES]) {
       if (seen.has(n.label)) continue;
       seen.add(n.label);
-      orderedLabels.push(n.label);
+      (ORIENT_BENEFICIARY.has(n.label) ? beneficiary : regular).push(n.label);
     }
-    container.innerHTML = "";
-    for (const label of orderedLabels) {
+    const makeChip = (label, isBenef) => {
       const icon = iconMap.get(label) || "";
       const desc = NODE_DESCRIPTIONS[label] || "";
       const chip = document.createElement("div");
-      chip.className = "member-chip";
+      chip.className = "member-chip" + (isBenef ? " chip-beneficiary" : "");
       chip.setAttribute("aria-label", `${label}：${desc}`);
       chip.innerHTML = `<div class="mchip-main"><span class="ico">${icon}</span>${esc(label)}</div><span class="mchip-desc">${esc(desc)}</span>`;
-      container.appendChild(chip);
-    }
+      return chip;
+    };
+    container.innerHTML = "";
+    for (const label of regular) container.appendChild(makeChip(label, false));
+    const sep = document.createElement("div");
+    sep.className = "mchip-separator";
+    sep.textContent = "支援対象";
+    container.appendChild(sep);
+    for (const label of beneficiary) container.appendChild(makeChip(label, true));
   }
 
   function init() {
