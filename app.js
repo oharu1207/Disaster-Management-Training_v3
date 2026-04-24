@@ -118,6 +118,35 @@
 
   const PHASE6_BENEFICIARY_LABELS = new Set(["避難所", "医療機関", "福祉避難所", "在宅避難者", "仮設住宅"]);
 
+  const NODE_DESCRIPTIONS = {
+    "県庁":                          "広域指揮・県全体の災害対応方針を決定する行政機関",
+    "C県A保健所":                   "地域の現地指揮拠点・支援チームの受入・調整を担う",
+    "地域災害医療コーディネーター": "医療資源の配分と機関間調整を専門的に支援する",
+    "DMAT":                          "災害急性期に派遣される専門的医療チーム",
+    "DHEAT":                         "保健医療調整・情報収集を担う都道府県チーム",
+    "DPAT":                          "被災者・支援者のこころのケアを担う専門チーム",
+    "DWAT":                          "要介護者・障害者等への福祉的支援を担うチーム",
+    "JMAT":                          "日本医師会が派遣する医療救護チーム",
+    "JRAT":                          "生活不活発病予防・リハビリ支援を担うチーム",
+    "C県看護協会":                   "県内看護職の派遣・調整を担う職能団体",
+    "医師会":                        "地域医療を担う医師の職能団体",
+    "歯科医師会":                    "口腔ケア・身元確認等を担う歯科医師の職能団体",
+    "AB薬剤師会":                    "薬剤管理・服薬支援を担う薬剤師の職能団体",
+    "C県栄養士会":                   "避難所等での栄養管理・食支援を担う職能団体",
+    "地域包括支援センター":           "高齢者・要支援者の生活支援ニーズを把握する機関",
+    "W民間団体":                     "行政を補完するボランティア・NPO等の民間支援組織",
+    "市町村保健センター":             "住民に最も近い保健活動の実施主体",
+    "避難所":                        "被災住民が生活する拠点・保健医療支援の主要な活動場所",
+    "医療機関":                      "急性期における傷病者受入・医療救護の実施場所",
+    "DCAT":                          "（要確認）被災者の生活再建を支援する相談支援チーム",
+    "社会福祉士会":                  "（要確認）要配慮者の福祉的ニーズへの専門的対応",
+    "地域支え合いセンター":           "（要確認）復旧期の在宅被災者を支える地域拠点",
+    "介護支援専門員協会":             "（要確認）要介護者のケアマネジメント体制を支援",
+    "福祉避難所":                    "（要確認）要配慮者が生活する特別な避難拠点",
+    "在宅避難者":                    "（要確認）自宅に留まる被災住民・支援ニーズの把握が必要",
+    "仮設住宅":                      "（要確認）復旧期に被災者が移行する生活再建の拠点",
+  };
+
   const MAP_PHASE_CONFIG = {
     [PHASE.ACUTE_MAP]: {
       key: "acute", paletteNodes: PALETTE_NODES,
@@ -2738,6 +2767,31 @@
   // ================================================================
   // INIT
   // ================================================================
+  function renderOrientationNodeList() {
+    const container = $("orientationNodeList");
+    if (!container) return;
+    const iconMap = new Map();
+    for (const n of PALETTE_NODES)          { if (!iconMap.has(n.label)) iconMap.set(n.label, n.icon); }
+    for (const n of RECOVERY_PALETTE_NODES) { if (!iconMap.has(n.label)) iconMap.set(n.label, n.icon); }
+    const seen = new Set();
+    const orderedLabels = [];
+    for (const n of [...PALETTE_NODES, ...RECOVERY_PALETTE_NODES]) {
+      if (seen.has(n.label)) continue;
+      seen.add(n.label);
+      orderedLabels.push(n.label);
+    }
+    container.innerHTML = "";
+    for (const label of orderedLabels) {
+      const icon = iconMap.get(label) || "";
+      const desc = NODE_DESCRIPTIONS[label] || "";
+      const chip = document.createElement("div");
+      chip.className = "member-chip";
+      chip.setAttribute("aria-label", `${label}：${desc}`);
+      chip.innerHTML = `<div class="mchip-main"><span class="ico">${icon}</span>${esc(label)}</div><span class="mchip-desc">${esc(desc)}</span>`;
+      container.appendChild(chip);
+    }
+  }
+
   function init() {
     const cfg = MAP_PHASE_CONFIG[1];  // 急性期
     activePhaseKey     = cfg.key;
@@ -2753,6 +2807,7 @@
 
     renderPalette();
     wireEvents();
+    renderOrientationNodeList();
     renderAll();
     logOp("INIT", { scenarioId: SCENARIO.id });
     loadIdealMapAcute();

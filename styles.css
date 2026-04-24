@@ -105,10 +105,14 @@ button.full { width: 100%; }
 
 /* ===== PHASE 0: ORIENTATION ===== */
 #phase-0 { overflow-y: auto; padding: 20px; }
-.orient-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 16px; max-width: 1400px; margin: 0 auto;
-}
+.orient-layout-v2 { display: flex; flex-direction: column; gap: 14px; max-width: 1400px; margin: 0 auto; }
+.orient-hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 24px; margin-bottom: 0; }
+.orient-title { font-size: 22px; font-weight: 800; color: #fff; margin: 0; flex: 1; }
+.orient-hero .btn-start { margin: 0; flex: 0 0 auto; }
+.orient-bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.orient-bottom-grid .o-card { margin-bottom: 0; }
+.edge-legend-grid { display: grid; grid-template-columns: 1fr; gap: 7px; font-size: 13px; }
+.edge-legend-item { background: var(--bg3); padding: 10px 12px; border-radius: 9px; display: flex; gap: 8px; align-items: center; }
 .o-card {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 16px; padding: 18px; margin-bottom: 14px;
@@ -118,32 +122,8 @@ button.full { width: 100%; }
   background: rgba(77,143,255,0.10); border: 1px solid rgba(77,143,255,0.3);
   color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 10px;
 }
-.scenario-title { font-size: 24px; font-weight: 900; line-height: 1.3; margin-bottom: 14px; color: #fff; }
-.tag-label {
-  display: inline-block; padding: 3px 10px; border-radius: 6px;
-  font-size: 11px; font-weight: 700; margin-bottom: 8px;
-}
-.tag-disaster { background: #1a2840; color: var(--accent); }
-.tag-problem  { background: #2a1a0a; color: var(--orange); }
-.tag-task     { background: #0a2a1a; color: var(--green); }
-.info-block {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; font-size: 13px;
-}
-.info-block p { margin-bottom: 6px; color: var(--text-dim); }
-.info-block p:last-child { margin-bottom: 0; }
-.info-block ul, .info-block ol { padding-left: 18px; }
-.info-block li { margin-bottom: 3px; }
-.info-block.problem li { color: var(--orange); }
-.ics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 10px; }
-.ics-principle {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 10px; padding: 10px; display: flex; gap: 9px;
-}
-.ics-principle .ico { font-size: 20px; flex-shrink: 0; }
-.ics-principle strong { display: block; font-size: 13px; }
-.ics-principle p { font-size: 12px; color: var(--text-dim); margin: 2px 0 0; }
 .member-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; align-items: flex-start; }
+.member-grid-3col { grid-template-columns: 1fr 1fr 1fr; }
 .member-chip {
   display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
   padding: 8px 10px; border-radius: 8px; font-size: 12px; font-weight: 600;
@@ -155,13 +135,6 @@ button.full { width: 100%; }
   font-size: 11px; font-weight: 400; color: var(--text-dim);
   line-height: 1.3; padding-left: 2px;
 }
-/* group ベースのメンバーチップ色分けは削除。オリエンテーション一覧は統一デザイン。 */
-.hint-box {
-  background: rgba(255,209,102,0.05); border: 1px solid rgba(255,209,102,0.18);
-  border-radius: 10px; padding: 12px 14px; margin-top: 12px; font-size: 13px; color: var(--text-dim);
-}
-.hint-box strong { color: var(--yellow); display: block; margin-bottom: 6px; font-size: 14px; }
-.start-btn-wrap { text-align: center; margin-top: 18px; }
 .btn-start {
   font-size: 16px; font-weight: 800; padding: 15px 44px;
   background: var(--accent); color: #fff; border-radius: 14px;
