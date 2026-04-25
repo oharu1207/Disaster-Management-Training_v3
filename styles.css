@@ -866,19 +866,29 @@ textarea { resize: vertical; min-height: 70px; }
   color: #ff8080;
   margin-bottom: 5px;
 }
-.removal-reason-input {
-  font-size: 12px;
-  padding: 5px 8px;
+/* [ADDED] Phase 5 判断方針 textarea */
+.p5-policy-input {
   width: 100%;
-  border-radius: 6px;
+  min-height: 88px;
+  resize: vertical;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 8px 10px;
   background: var(--bg3);
   border: 1px solid var(--border2);
+  border-radius: 8px;
   color: var(--text);
   font-family: inherit;
   outline: none;
   box-sizing: border-box;
 }
-.removal-reason-input:focus { border-color: var(--accent); }
+.p5-policy-input:focus { border-color: var(--accent); }
+.p5-policy-counter {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 4px;
+}
 .p5-hint {
   font-size: 11px;
   color: var(--text-muted);

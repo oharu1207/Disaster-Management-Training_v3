@@ -425,6 +425,19 @@
       <div class="sb-title">🗑 削除候補ノード</div>
       <div id="p5RemovalList"><span style="color:var(--text-muted);font-size:12px;">（まだ選択されていません）</span></div>
     </div>
+    <!-- [ADDED] 削除候補選定の判断方針（任意・1問集約版） -->
+    <div class="sb-block">
+      <div class="sb-title">📝 問4-2（任意）削除判断の方針</div>
+      <div style="font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:6px;">
+        あなたがこのノードを残し、このノードを削除した方針を簡潔に説明してください。
+        すべてのノードについて個別に書く必要はなく、判断の基本的な考え方を記述してください。
+      </div>
+      <textarea id="p5PolicyRationale"
+                class="p5-policy-input"
+                maxlength="150"
+                placeholder="（任意・150字以内）例：急性期にしか必要のない医療系の調整機能を中心に外し、復旧期に必要な生活支援系の機能を残した。"></textarea>
+      <div class="p5-policy-counter"><span id="p5PolicyCount">0</span> / 150 字</div>
+    </div>
     <div class="sb-block">
       <button id="btnToPhase6" class="btn-primary full" disabled
               onclick="goToPhase6()">復旧期マップへ進む →</button>

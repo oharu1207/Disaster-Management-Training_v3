@@ -328,7 +328,11 @@
     actualAcute:    "idle",
     actualRecovery: "idle",
   };
-  window.phase5Data       = { removals: [] };
+  // phase5Data の構造：
+  //   removals: 削除候補ノード（reason フィールドは後方互換のため残すが UI からは入力されない）
+  //   policyRationale: 削除候補選定の判断方針（任意・150字以内・全削除に対して1つのみ）
+  //     構造変換能力の三角測量データとして機能。マップ操作の意図解釈に使用。
+  window.phase5Data       = { removals: [], policyRationale: "" };
 
   // ── Phase6 状態変数 ────────────────────────────────────────────────────
   // Phase6 の状態は以下の 2 フラグ + phaseData.p6 の 3 点で表現する。
@@ -1589,7 +1593,7 @@
     if (activePhaseKey && !MAP_PHASE_CONFIG[state.phase]?.isReadOnly)
       savePhaseData(activePhaseKey);
     return {
-      version: 5, // [CHANGED] 4 → 5
+      version: 6, // [CHANGED] 5 → 6（phase5Data.policyRationale 追加）
       exportedAt: new Date().toISOString(),
       scenarioId: SCENARIO.id,
       acute: {
@@ -1651,7 +1655,7 @@
           const obj = JSON.parse(fr.result);
           let hasConflict = false;
 
-          if ((obj.version === 5 || obj.version === 4 || obj.version === 3) && obj.acute && obj.recovery) { // v5/v4/v3
+          if ((obj.version === 6 || obj.version === 5 || obj.version === 4 || obj.version === 3) && obj.acute && obj.recovery) { // v6/v5/v4/v3
             // v3/v4: 全フェーズを復元
             const loadPhase = (src) => ({
               nodes: (src.nodes || []).map(n => ({ layerId: null, layerReason: "", isInitial: false, ...n })),
@@ -1701,7 +1705,10 @@
                   restoredRemovals.push(r);
                 }
               }
-              window.phase5Data = { removals: restoredRemovals };
+              window.phase5Data = {
+                removals: restoredRemovals,
+                policyRationale: obj.phase5Data?.policyRationale || ""  // [ADDED] v5 以前は空文字で補完
+              };
             }
             // recovery → phaseData.p6 に復元（Phase6 の正規データ）
             phaseData.p6 = loadPhase(obj.recovery);
@@ -1744,7 +1751,10 @@
                   restoredRemovals.push(r);
                 }
               }
-              window.phase5Data = { removals: restoredRemovals };
+              window.phase5Data = {
+                removals: restoredRemovals,
+                policyRationale: obj.phase5Data?.policyRationale || ""  // [ADDED] v2 は空文字で補完
+              };
             }
             phaseData.p6 = loadPhaseV2(obj.recovery);
             phase6Initialized = phaseData.p6.nodes.length > 0;
@@ -1822,9 +1832,9 @@
     }
     // 復旧期準備：削除候補リストのみクリア
     if (state.phase === PHASE.RECOVERY_PREP) {
-      if (!confirm("削除候補の選択をすべてリセットしますか？")) return;
+      if (!confirm("削除候補の選択と判断方針をすべてリセットしますか？")) return;
       window.phase5Data.removals = [];
-      // 削除候補がすべてなくなるため Phase6 も無効化する
+      window.phase5Data.policyRationale = "";  // [ADDED]
       invalidatePhase6();
       renderPhase5Map();
       return;
@@ -2082,6 +2092,7 @@
       toggleRemovalCandidate
     );
     renderRemovalList();
+    initPolicyRationaleInput();
     updatePhase6Btn();
   }
 
@@ -2146,22 +2157,29 @@
         return acc;
       }, {})
     );
+    // [CHANGED] per-node の理由入力欄を削除し、ラベル表示のみとする
     listEl.innerHTML = uniqueRemovals.map((r) => `
       <div class="removal-item" data-label="${esc(r.label)}">
         <div class="removal-item-label">🗑 ${esc(r.label)}</div>
-        <input type="text" class="removal-reason-input"
-               maxlength="30" placeholder="なぜ不要か（任意・30字以内）"
-               value="${esc(r.reason)}" data-label="${esc(r.label)}" />
       </div>
     `).join("");
-    listEl.querySelectorAll(".removal-reason-input").forEach(inp => {
-      inp.addEventListener("input", () => {
-        // 同一ラベルの全エントリに同じ理由を反映
-        const lbl = inp.dataset.label;
-        window.phase5Data.removals
-          .filter(r => r.label === lbl)
-          .forEach(r => { r.reason = inp.value; });
-      });
+  }
+
+  // [ADDED] 判断方針 textarea の初期化と input ハンドラ登録
+  // renderPhase5Map() 末尾から呼ぶ。重複登録防止のため cloneNode + replaceWith パターンを使用。
+  function initPolicyRationaleInput() {
+    const ta = $("p5PolicyRationale");
+    const counter = $("p5PolicyCount");
+    if (!ta) return;
+    ta.value = window.phase5Data.policyRationale || "";
+    if (counter) counter.textContent = String(ta.value.length);
+    const fresh = ta.cloneNode(true);
+    fresh.value = ta.value;
+    ta.replaceWith(fresh);
+    fresh.addEventListener("input", () => {
+      window.phase5Data.policyRationale = fresh.value;
+      if (counter) counter.textContent = String(fresh.value.length);
+      debouncedSave();
     });
   }
 
