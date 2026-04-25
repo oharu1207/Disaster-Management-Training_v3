@@ -630,6 +630,24 @@
         updatePhaseSteps(prevPhase);
         return;
       }
+      const unsetNodes = phaseData.p6.nodes.filter(n => n.layerId === null);
+      if (unsetNodes.length > 0) {
+        showToast("レイヤーが設定されていない組織名があります。灰色のノードをドラッグして、適切なレイヤーに配置してください。", 4000);
+        const p6Canvas = document.getElementById("canvas-p6");
+        if (p6Canvas) {
+          unsetNodes.forEach(n => {
+            const el = p6Canvas.querySelector(`.node[data-id="${n.id}"]`);
+            if (el) {
+              el.classList.add("layer-unset-error");
+              setTimeout(() => el.classList.remove("layer-unset-error"), 2500);
+            }
+          });
+        }
+        state.phase = prevPhase;
+        activatePhaseView(prevPhase);
+        updatePhaseSteps(prevPhase);
+        return;
+      }
       BENEFICIARY_LABELS = PHASE6_BENEFICIARY_LABELS;
 
       requestAnimationFrame(() => {

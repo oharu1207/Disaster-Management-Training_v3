@@ -387,6 +387,16 @@ button.full { width: 100%; }
 }
 .btn-start:hover { transform: translateY(-2px); box-shadow: 0 0 44px rgba(77,143,255,0.48); }
 
+@keyframes unset-node-blink {
+  0%, 100% { border-color: #ef4444; box-shadow: 0 0 0px rgba(239,68,68,0); }
+  50%       { border-color: #ef4444; box-shadow: 0 0 14px rgba(239,68,68,0.7); }
+}
+.node.layer-unset-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 14px rgba(239,68,68,0.5) !important;
+  animation: unset-node-blink 0.5s ease-in-out 4;
+}
+
 /* ===== PHASE 1: MAP BUILDER ===== */
 #phase-1 { display: none; grid-template-columns: 300px 1fr; height: calc(100vh - 54px); overflow: hidden; }
 #phase-1.active { display: grid; }
