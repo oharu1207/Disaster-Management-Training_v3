@@ -637,7 +637,7 @@
       </div>
       <div class="compare-qa-block">
         <label class="compare-qa-label">
-          問7． 問6で指摘した差異が生じた理由について、ICS原則のうちどの違反かを選択し、急性期との継続性の観点から説明せよ。（200字以内）
+          問7． 問6-2で指摘した差異が生じた理由について、ICS原則のうちどの違反かを選択し、急性期との継続性の観点から説明せよ。（200字以内）
         </label>
         <div class="ics-radio-group" id="rcQ7RadioGroup">
           <label class="ics-radio-item">
@@ -706,8 +706,9 @@
 
 </div><!-- /phase-recoveryRecord -->
 
-<div id="phase-3" class="phase-view">
-  <!-- PHASE.SEQUENCE (Phase 9): 実装予定。PHASE 定数・switchPhase 分岐は保持 -->
+<div id="phase-3" class="phase-view" style="display:none" data-feature-flag="ENABLE_SEQUENCE_PHASE">
+  <!-- PHASE.SEQUENCE (Phase 9): 実装予定。FEATURES.ENABLE_SEQUENCE_PHASE で制御。
+       コード構造（PHASE 定数・PHASE_VIEW_ID・switchPhase 分岐）は保持。 -->
   <div class="coming-soon">
     <div class="cs-icon">📈</div>
     <h2>シーケンス図構築</h2>

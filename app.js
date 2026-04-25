@@ -14,6 +14,17 @@
   };
 
   // ================================================================
+  // FEATURE FLAGS
+  // 将来の再有効化や A/B 比較のため、機能の ON/OFF を1箇所で制御する。
+  // false にすると、ヘッダーステップ表示・遷移ボタン・関連キーボードショートカット等が
+  // すべて非表示／無効化される。コード構造（PHASE 定数、PHASE_VIEW_ID、switchPhase の
+  // 分岐先）は保持されるため、true に戻すだけで再有効化できる。
+  // ================================================================
+  const FEATURES = Object.freeze({
+    ENABLE_SEQUENCE_PHASE: false,  // Phase 9（シーケンス図構築）
+  });
+
+  // ================================================================
   // PHASE 定数
   // state.phase の値がフェーズ名で分かるようにする。
   // DOM 上の .phase-view の並び順やインデックスには依存しない。
@@ -398,10 +409,30 @@
   const $ = id => document.getElementById(id);
   const phaseSteps = document.querySelectorAll(".phase-step");
 
+  // Feature flag によるヘッダーステップの動的制御
+  // data-phase="8"（PHASE.SEQUENCE）のステップと、その直前の「›」を非表示にする。
+  if (!FEATURES.ENABLE_SEQUENCE_PHASE) {
+    const seqStep = document.querySelector(`.phase-step[data-phase="${PHASE.SEQUENCE}"]`);
+    if (seqStep) {
+      const prevArrow = seqStep.previousElementSibling;
+      if (prevArrow && prevArrow.classList.contains("phase-arrow")) {
+        prevArrow.style.display = "none";
+      }
+      seqStep.style.display = "none";
+    }
+  }
+
   // PHASE_VIEW_ID マップを使い、DOM 順に依存せずビューを切り替える
   function activatePhaseView(p) {
     document.querySelectorAll(".phase-view").forEach(el => el.classList.remove("active"));
-    $(PHASE_VIEW_ID[p])?.classList.add("active");
+    const view = $(PHASE_VIEW_ID[p]);
+    if (view) {
+      // feature flag で隠した要素を再表示する場合の保険
+      if (view.dataset.featureFlag && FEATURES[view.dataset.featureFlag]) {
+        view.style.display = "";
+      }
+      view.classList.add("active");
+    }
   }
 
   // ヘッダーステップの active / done クラスを data-phase 属性で更新する
@@ -2503,19 +2534,24 @@
     // 「シーケンス図へ進む」ボタン
     const btnToSeq = $("btnToSequenceFromRR");
     if (btnToSeq) {
-      const fresh = btnToSeq.cloneNode(true);
-      btnToSeq.replaceWith(fresh);
-      fresh.addEventListener("click", () => {
-        const { q8, q9 } = phaseData.recoveryRecord.answers;
-        if (!q8) {
-          showToast("問8で対応検証記録の番号を選択してください", 3000);
-          return;
-        }
-        if (!q9) {
-          if (!confirm("問9が未入力です。このまま進みますか？")) return;
-        }
-        switchPhase(PHASE.SEQUENCE);
-      });
+      if (!FEATURES.ENABLE_SEQUENCE_PHASE) {
+        // Phase 9 無効時はボタン自体を非表示。被験者から存在を秘匿する。
+        btnToSeq.style.display = "none";
+      } else {
+        const fresh = btnToSeq.cloneNode(true);
+        btnToSeq.replaceWith(fresh);
+        fresh.addEventListener("click", () => {
+          const { q8, q9 } = phaseData.recoveryRecord.answers;
+          if (!q8) {
+            showToast("問8で対応検証記録の番号を選択してください", 3000);
+            return;
+          }
+          if (!q9) {
+            if (!confirm("問9が未入力です。このまま進みますか？")) return;
+          }
+          switchPhase(PHASE.SEQUENCE);
+        });
+      }
     }
   }
 
