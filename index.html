@@ -82,8 +82,58 @@
         </div>
       </div>
       <div class="o-card">
-        <h3 style="font-size:14px;font-weight:700;margin-bottom:10px;">💡 操作のヒント</h3>
-        <p style="font-size:13px;color:var(--text-dim);line-height:1.7;">「誰が中心か」を決め → 「縦（指揮・報告）」→「横（調整・連携）」→「支援対象」の順で組み立てましょう。矢印はノードの右側の <strong style="color:var(--accent)">→</strong> ボタンから引けます。</p>
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;">💡 操作ガイド</h3>
+        <div class="op-guide-grid">
+
+          <!-- ① パレットから追加 -->
+          <div class="op-step">
+            <div class="op-anim-box">
+              <div class="op-add-scene">
+                <div class="op-pal-item">🏛 県庁<div class="op-click-ring"></div></div>
+                <div class="op-add-arrow">›</div>
+                <div class="op-canvas-mini"><div class="op-placed-node">🏛 県庁</div></div>
+              </div>
+            </div>
+            <p class="op-caption"><span class="op-num">1</span>パレットをクリックして追加</p>
+          </div>
+
+          <!-- ② ドラッグして配置 -->
+          <div class="op-step">
+            <div class="op-anim-box">
+              <div class="op-drag-scene">
+                <div class="op-layer-row op-layer-cmd">指揮 Command</div>
+                <div class="op-layer-row op-layer-sec">調整 Section</div>
+                <div class="op-drag-node">🏛</div>
+              </div>
+            </div>
+            <p class="op-caption"><span class="op-num">2</span>ドラッグしてレイヤーに配置</p>
+          </div>
+
+          <!-- ③ 矢印を引く -->
+          <div class="op-step">
+            <div class="op-anim-box">
+              <div class="op-arrow-scene">
+                <div class="op-src-node">A<div class="op-conn-btn">→</div></div>
+                <div class="op-edge-line"></div>
+                <div class="op-dst-node">B</div>
+              </div>
+            </div>
+            <p class="op-caption"><span class="op-num">3</span>→ ボタンから矢印を引く</p>
+          </div>
+
+          <!-- ④ 種類を選択 -->
+          <div class="op-step">
+            <div class="op-anim-box">
+              <div class="op-select-scene">
+                <div class="op-type-btn op-type-cmd">指示命令</div>
+                <div class="op-type-btn op-type-info">情報伝達</div>
+                <div class="op-type-btn op-type-coop">連携協力</div>
+              </div>
+            </div>
+            <p class="op-caption"><span class="op-num">4</span>矢印の種類を選択</p>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>

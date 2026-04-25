@@ -139,6 +139,143 @@ button.full { width: 100%; }
 .eli-label { font-size: 15px; font-weight: 700; min-width: 4em; flex-shrink: 0; }
 .eli-arrow { font-size: 18px; line-height: 1; flex-shrink: 0; }
 .eli-desc { font-size: 14px; color: var(--text-dim); }
+
+/* ===== PHASE 0: OPERATION GUIDE ===== */
+.op-guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.op-step {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 11px; padding: 9px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.op-anim-box {
+  height: 108px; border-radius: 8px; overflow: hidden;
+  background: var(--bg); border: 1px solid var(--border); position: relative;
+}
+.op-caption { font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; line-height: 1.4; margin: 0; }
+.op-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; flex-shrink: 0;
+}
+
+/* -- ① Add from palette -- */
+.op-add-scene { display: flex; align-items: center; justify-content: space-around; height: 100%; padding: 0 10px; }
+.op-pal-item {
+  position: relative; font-size: 11px; font-weight: 700;
+  background: var(--bg3); border: 1.5px solid var(--border2);
+  border-radius: 8px; padding: 6px 8px; color: var(--text-dim);
+  animation: op-click-pulse 2.8s ease-in-out infinite; white-space: nowrap;
+}
+.op-click-ring {
+  position: absolute; inset: -4px; border-radius: 11px;
+  border: 2px solid var(--accent); animation: op-ring-fade 2.8s ease-in-out infinite;
+}
+.op-add-arrow { font-size: 20px; color: var(--text-muted); flex-shrink: 0; }
+.op-canvas-mini {
+  background: var(--bg2); border: 1px dashed var(--border2); border-radius: 8px;
+  width: 70px; height: 56px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.op-placed-node {
+  font-size: 10px; font-weight: 700; background: var(--card); border: 1.5px solid var(--accent);
+  border-radius: 6px; padding: 4px 6px; color: var(--text);
+  animation: op-node-appear 2.8s ease-in-out infinite; white-space: nowrap;
+}
+@keyframes op-click-pulse {
+  0%, 55%, 100% { transform: scale(1); border-color: var(--border2); }
+  28% { transform: scale(0.88); border-color: var(--accent); }
+}
+@keyframes op-ring-fade {
+  0%, 15% { opacity: 0; transform: scale(0.75); }
+  28% { opacity: 1; transform: scale(1); }
+  50%, 100% { opacity: 0; transform: scale(1.35); }
+}
+@keyframes op-node-appear {
+  0%, 30% { opacity: 0; transform: scale(0.6); }
+  50%, 85% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.6); }
+}
+
+/* -- ② Drag to layer -- */
+.op-drag-scene { position: relative; height: 100%; }
+.op-layer-row {
+  position: absolute; left: 0; right: 0; height: 50%;
+  display: flex; align-items: center; padding-left: 8px;
+  font-size: 10px; font-weight: 700; border-bottom: 1px dashed var(--border);
+}
+.op-layer-cmd { top: 0; color: var(--cmd-text); background: rgba(255,170,204,0.05); }
+.op-layer-sec { top: 50%; color: var(--sec-text); background: rgba(136,204,255,0.05); border-bottom: none; }
+.op-drag-node {
+  position: absolute; right: 20px; top: 10px; font-size: 22px;
+  animation: op-drag-move 2.8s ease-in-out infinite;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+}
+@keyframes op-drag-move {
+  0%, 10% { transform: translateY(0); }
+  40%, 65% { transform: translateY(46px); }
+  88%, 100% { transform: translateY(0); }
+}
+
+/* -- ③ Arrow from connect button -- */
+.op-arrow-scene { height: 100%; display: flex; align-items: center; padding: 0 14px; }
+.op-src-node, .op-dst-node {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--card); border: 2px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--text-dim);
+  flex-shrink: 0; position: relative; z-index: 2;
+}
+.op-src-node { border-color: var(--yellow); color: var(--yellow); }
+.op-conn-btn {
+  position: absolute; right: -10px; top: 50%;
+  transform: translateY(-50%) scale(0);
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 5; border: 1.5px solid #fff;
+  animation: op-btn-appear 2.8s ease-in-out infinite;
+}
+.op-edge-line {
+  flex: 1; height: 2px; background: #4d8fff;
+  transform-origin: left center; z-index: 1;
+  animation: op-line-grow 2.8s ease-in-out infinite;
+}
+@keyframes op-btn-appear {
+  0%, 18% { transform: translateY(-50%) scale(0); opacity: 0; }
+  32%, 82% { transform: translateY(-50%) scale(1); opacity: 1; }
+  95%, 100% { transform: translateY(-50%) scale(0); opacity: 0; }
+}
+@keyframes op-line-grow {
+  0%, 38% { transform: scaleX(0); opacity: 0; }
+  58%, 80% { transform: scaleX(1); opacity: 1; }
+  95%, 100% { transform: scaleX(1); opacity: 0; }
+}
+
+/* -- ④ Select arrow type -- */
+.op-select-scene {
+  height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 5px; padding: 8px;
+}
+.op-type-btn {
+  font-size: 11px; font-weight: 700; padding: 5px 0;
+  border-radius: 8px; border: 1.5px solid var(--border2);
+  background: var(--bg3); color: var(--text-dim); width: 90%; text-align: center;
+}
+.op-type-cmd  { animation: op-cmd-hl  3.6s ease-in-out infinite; }
+.op-type-info { animation: op-info-hl 3.6s ease-in-out infinite; }
+.op-type-coop { animation: op-coop-hl 3.6s ease-in-out infinite; }
+@keyframes op-cmd-hl {
+  0%, 70%, 100% { background: var(--bg3); border-color: var(--border2); color: var(--text-dim); }
+  5%, 28%       { background: rgba(255,107,107,0.16); border-color: #ff6b6b; color: #ff6b6b; }
+}
+@keyframes op-info-hl {
+  0%, 33%, 100% { background: var(--bg3); border-color: var(--border2); color: var(--text-dim); }
+  38%, 60%      { background: rgba(77,143,255,0.16); border-color: #4d8fff; color: #4d8fff; }
+}
+@keyframes op-coop-hl {
+  0%, 62%, 100% { background: var(--bg3); border-color: var(--border2); color: var(--text-dim); }
+  67%, 90%      { background: rgba(61,207,138,0.13); border-color: #3dcf8a; color: #3dcf8a; }
+}
+
 .o-card {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 16px; padding: 18px; margin-bottom: 14px;
