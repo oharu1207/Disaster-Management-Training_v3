@@ -205,26 +205,34 @@ button.full { width: 100%; }
 .op-layer-cmd { top: 0; color: var(--cmd-text); background: rgba(255,170,204,0.05); }
 .op-layer-sec { top: 50%; color: var(--sec-text); background: rgba(136,204,255,0.05); border-bottom: none; }
 .op-drag-node {
-  position: absolute; right: 20px; top: 10px; font-size: 22px;
+  position: absolute; right: 10px; top: 9px;
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700;
+  background: var(--card); border: 1.5px solid var(--border2);
+  border-radius: 8px; padding: 5px 9px; color: var(--text);
+  white-space: nowrap; z-index: 3;
   animation: op-drag-move 2.8s ease-in-out infinite;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
 }
+.op-drag-ico { font-size: 14px; line-height: 1; }
 @keyframes op-drag-move {
   0%, 10% { transform: translateY(0); }
-  40%, 65% { transform: translateY(46px); }
+  40%, 65% { transform: translateY(52px); }
   88%, 100% { transform: translateY(0); }
 }
 
 /* -- ③ Arrow from connect button -- */
 .op-arrow-scene { height: 100%; display: flex; align-items: center; padding: 0 14px; }
 .op-src-node, .op-dst-node {
-  width: 32px; height: 32px; border-radius: 8px;
+  border-radius: 8px;
   background: var(--card); border: 2px solid var(--border2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; color: var(--text-dim);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 5px 7px; color: var(--text-dim);
   flex-shrink: 0; position: relative; z-index: 2;
 }
 .op-src-node { border-color: var(--yellow); color: var(--yellow); }
+.op-node-ico { font-size: 15px; line-height: 1; }
+.op-node-lbl { font-size: 9px; font-weight: 700; line-height: 1.3; text-align: center; }
 .op-conn-btn {
   position: absolute; right: -10px; top: 50%;
   transform: translateY(-50%) scale(0);
