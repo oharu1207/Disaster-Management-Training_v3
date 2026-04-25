@@ -330,7 +330,7 @@
   };
   // phase5Data の構造：
   //   removals: 削除候補ノード（reason フィールドは後方互換のため残すが UI からは入力されない）
-  //   policyRationale: 削除候補選定の判断方針（任意・150字以内・全削除に対して1つのみ）
+  //   policyRationale: 削除候補選定の判断方針（150字以内・全削除に対して1つのみ）
   //     構造変換能力の三角測量データとして機能。マップ操作の意図解釈に使用。
   window.phase5Data       = { removals: [], policyRationale: "" };
 
