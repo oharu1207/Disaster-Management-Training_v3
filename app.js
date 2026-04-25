@@ -544,6 +544,24 @@
         updatePhaseSteps(prevPhase);
         return;
       }
+      const acuteUnsetNodes = phaseData.acute.nodes.filter(n => n.layerId === null);
+      if (acuteUnsetNodes.length > 0) {
+        showToast("レイヤーが設定されていない組織名があります。灰色のノードをドラッグして、適切なレイヤーに配置してください。", 4000);
+        const acuteCanvas = document.getElementById("canvas-acute");
+        if (acuteCanvas) {
+          acuteUnsetNodes.forEach(n => {
+            const el = acuteCanvas.querySelector(`.node[data-id="${n.id}"]`);
+            if (el) {
+              el.classList.add("layer-unset-error");
+              setTimeout(() => el.classList.remove("layer-unset-error"), 2500);
+            }
+          });
+        }
+        state.phase = prevPhase;
+        activatePhaseView(prevPhase);
+        updatePhaseSteps(prevPhase);
+        return;
+      }
 
       // 描画はグリッドレイアウト確定後に実行
       requestAnimationFrame(() => {
