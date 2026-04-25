@@ -331,6 +331,19 @@ button.full { width: 100%; }
   42%, 88% { opacity: 0.18; }
   97%, 100%{ opacity: 1; }
 }
+.op-hl-svg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; overflow: visible;
+}
+.op-hl-line {
+  opacity: 0.22;
+  animation: op-hl-line-appear 3.2s ease-in-out infinite;
+}
+@keyframes op-hl-line-appear {
+  0%, 35%  { opacity: 0.22; stroke: #4d8fff; }
+  42%, 88% { opacity: 1;    stroke: #4d8fff; }
+  97%, 100%{ opacity: 0.22; stroke: #4d8fff; }
+}
 
 .o-card {
   background: var(--card); border: 1px solid var(--border);
