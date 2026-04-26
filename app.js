@@ -330,7 +330,11 @@
     previewEnd: { x: 0, y: 0 },
     // answers
     answers: { q1: "", q2: "" },
-    log: [],
+    log: [],            // backward-compat placeholder (no longer written by logOp)
+    // operation log (single top-level series)
+    sessionId:      null,
+    operationLog:   [],
+    phaseStartTime: 0,
   };
 
   window.idealMapAcute     = null;
@@ -393,7 +397,7 @@
   function savePhaseData(key) {
     phaseData[key] = {
       nodes: state.nodes, edges: state.edges,
-      answers: { ...state.answers }, log: state.log,
+      answers: { ...state.answers },
       selectedNodeId: state.selectedNodeId, selectedEdgeId: state.selectedEdgeId,
     };
     saveToLocalStorage();
@@ -402,7 +406,7 @@
   function loadPhaseData(key) {
     const d = phaseData[key];
     state.nodes = d.nodes; state.edges = d.edges;
-    state.answers = { ...d.answers }; state.log = d.log;
+    state.answers = { ...d.answers };
     state.selectedNodeId = d.selectedNodeId; state.selectedEdgeId = d.selectedEdgeId;
   }
 
@@ -470,8 +474,46 @@
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
 
-  function logOp(type, detail) {
-    state.log.push({ ts: new Date().toISOString(), type, detail });
+  function generateSessionId() {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return crypto.randomUUID();
+    }
+    return `s-${Date.now()}-${uid()}`;
+  }
+
+  function getPhaseName(phase) {
+    switch (phase) {
+      case PHASE.ORIENTATION:        return "orientation";
+      case PHASE.ACUTE_MAP:          return "acute_map";
+      case PHASE.ACUTE_COMPARE:      return "acute_compare";
+      case PHASE.ACUTE_RECORD:       return "acute_record";
+      case PHASE.RECOVERY_PREP:      return "recovery_prep";
+      case PHASE.RECOVERY_MAP:       return "recovery_map";
+      case PHASE.TRANSITION_COMPARE: return "transition_compare";
+      case PHASE.RECOVERY_COMPARE:   return "recovery_compare";
+      case PHASE.RECOVERY_RECORD:    return "recovery_record";
+      case PHASE.SEQUENCE:           return "sequence";
+      default:                       return "unknown";
+    }
+  }
+
+  function logOp(type, detail = {}) {
+    state.operationLog.push({
+      ts: new Date().toISOString(),
+      sessionId: state.sessionId,
+      phase: state.phase,
+      phaseName: getPhaseName(state.phase),
+      activePhaseKey,
+      type,
+      detail
+    });
+  }
+
+  function _logPhaseTransition(from, to, prevStartTime) {
+    logOp("PHASE_EXIT",     { from, fromName: getPhaseName(from), to, toName: getPhaseName(to) });
+    logOp("PHASE_DURATION", { phase: from, phaseName: getPhaseName(from), ms: Date.now() - prevStartTime });
+    state.phaseStartTime = Date.now();
+    logOp("PHASE_ENTER",    { from, fromName: getPhaseName(from), to, toName: getPhaseName(to) });
   }
 
   function hasUnsavedWork() {
@@ -495,11 +537,14 @@
   function saveToLocalStorage() {
     try {
       const payload = {
-        version:      STORAGE_SCHEMA_VERSION,
-        savedAt:      new Date().toISOString(),
-        currentPhase: state.phase,
-        phaseData:    phaseData,
-        phase5Data:   window.phase5Data,
+        version:        STORAGE_SCHEMA_VERSION,
+        savedAt:        new Date().toISOString(),
+        currentPhase:   state.phase,
+        sessionId:      state.sessionId,
+        phaseStartTime: state.phaseStartTime,
+        operationLog:   state.operationLog,
+        phaseData:      phaseData,
+        phase5Data:     window.phase5Data,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch (e) {
@@ -542,7 +587,8 @@
   // PHASE SWITCHING
   // ================================================================
   window.switchPhase = function(p) {
-    const prevPhase = state.phase;
+    const prevPhase      = state.phase;
+    const prevStartTime  = state.phaseStartTime;
 
     // drawingArrow が残留していたら必ずキャンセル
     if (state.drawingArrow) cancelArrowDraw();
@@ -578,6 +624,7 @@
       // 未作成チェック
       if (phaseData.acute.nodes.length === 0) {
         showToast("先に急性期の理想マップを作成してください", 3000);
+        logOp("VALIDATION_ERROR", { type: "ACUTE_MAP_EMPTY", attemptedPhase: p });
         state.phase = prevPhase;
         activatePhaseView(prevPhase);
         updatePhaseSteps(prevPhase);
@@ -586,6 +633,10 @@
       const acuteUnsetNodes = phaseData.acute.nodes.filter(n => n.layerId === null);
       if (acuteUnsetNodes.length > 0) {
         showToast("レイヤーが設定されていない組織名があります。灰色のノードをドラッグして、適切なレイヤーに配置してください。", 4000);
+        logOp("VALIDATION_ERROR", {
+          type: "ACUTE_LAYER_UNSET", attemptedPhase: p,
+          nodeIds: acuteUnsetNodes.map(n => n.id), labels: acuteUnsetNodes.map(n => n.label)
+        });
         const acuteCanvas = document.getElementById("canvas-acute");
         if (acuteCanvas) {
           acuteUnsetNodes.forEach(n => {
@@ -658,6 +709,7 @@
         );
         if (radio) radio.checked = true;
       }
+      _logPhaseTransition(prevPhase, p, prevStartTime);
       showToast("ノードをダブルクリックすると接続関係をハイライトできます", 3500);
       return;
     }
@@ -667,11 +719,13 @@
       // 前提チェック：ACUTE_COMPARE が未完了なら戻す
       if (phaseData.acute.nodes.length === 0) {
         showToast("先に急性期の比較・分析を完了してください", 3000);
+        logOp("VALIDATION_ERROR", { type: "ACUTE_MAP_EMPTY", attemptedPhase: p });
         state.phase = prevPhase;
         activatePhaseView(prevPhase);
         updatePhaseSteps(prevPhase);
         return;
       }
+      _logPhaseTransition(prevPhase, p, prevStartTime);
       renderAcuteRecordView();
       restoreAcuteRecordAnswers();
       renderSelectedPrinciple("arSelectedPrinciple", phaseData.acute.answers.p3q2sel, "問3で原則を選択すると表示されます");
@@ -682,6 +736,7 @@
     if (p === PHASE.TRANSITION_COMPARE) {
       if (phaseData.p6.nodes.length === 0) {
         showToast("先に復旧期マップを作成してください", 3000);
+        logOp("VALIDATION_ERROR", { type: "RECOVERY_MAP_EMPTY", attemptedPhase: p });
         state.phase = prevPhase;
         activatePhaseView(prevPhase);
         updatePhaseSteps(prevPhase);
@@ -733,12 +788,34 @@
         const freshTc = tcQ6el.cloneNode(true);
         freshTc.value = tcQ6el.value;
         tcQ6el.replaceWith(freshTc);
+        const tcState = { started: false, editCount: 0, maxLengthReached: freshTc.value.length };
+        freshTc.addEventListener("focus", () => {
+          if (!tcState.started) {
+            tcState.started = true;
+            tcState.editCount = 0;
+            tcState.maxLengthReached = freshTc.value.length;
+            logOp("ANSWER_START", { questionId: "transitionCompare.q6" });
+          }
+        });
         freshTc.addEventListener("input", () => {
+          tcState.editCount += 1;
+          tcState.maxLengthReached = Math.max(tcState.maxLengthReached, freshTc.value.length);
           phaseData.transitionCompare.answers.q6 = freshTc.value;
           if (tcQ6cc) tcQ6cc.textContent = freshTc.value.length;
           debouncedSave();
         });
+        freshTc.addEventListener("blur", () => {
+          if (tcState.editCount === 0) return;
+          logOp("ANSWER_CHANGE", {
+            questionId: "transitionCompare.q6",
+            valueLength: freshTc.value.length,
+            editCount: tcState.editCount,
+            maxLengthReached: tcState.maxLengthReached
+          });
+          tcState.editCount = 0;
+        });
       }
+      _logPhaseTransition(prevPhase, p, prevStartTime);
       showToast("ノードをダブルクリックすると接続関係をハイライトできます", 3500);
       return;
     }
@@ -747,6 +824,7 @@
     if (p === PHASE.RECOVERY_COMPARE) {
       if (phaseData.p6.nodes.length === 0) {
         showToast("先に復旧期マップを作成してください", 3000);
+        logOp("VALIDATION_ERROR", { type: "RECOVERY_MAP_EMPTY", attemptedPhase: p });
         state.phase = prevPhase;
         activatePhaseView(prevPhase);
         updatePhaseSteps(prevPhase);
@@ -755,6 +833,10 @@
       const unsetNodes = phaseData.p6.nodes.filter(n => n.layerId === null);
       if (unsetNodes.length > 0) {
         showToast("レイヤーが設定されていない組織名があります。灰色のノードをドラッグして、適切なレイヤーに配置してください。", 4000);
+        logOp("VALIDATION_ERROR", {
+          type: "RECOVERY_LAYER_UNSET", attemptedPhase: p,
+          nodeIds: unsetNodes.map(n => n.id), labels: unsetNodes.map(n => n.label)
+        });
         const p6Canvas = document.getElementById("canvas-p6");
         if (p6Canvas) {
           unsetNodes.forEach(n => {
@@ -828,6 +910,7 @@
         const radio = document.querySelector(`input[name="rcQ7principle"][value="${rcAns.q7sel}"]`);
         if (radio) radio.checked = true;
       }
+      _logPhaseTransition(prevPhase, p, prevStartTime);
       showToast("ノードをダブルクリックすると接続関係をハイライトできます", 3500);
       return;
     }
@@ -836,11 +919,13 @@
     if (p === PHASE.RECOVERY_RECORD) {
       if (phaseData.p6.nodes.length === 0) {
         showToast("先に復旧期マップを作成してください", 3000);
+        logOp("VALIDATION_ERROR", { type: "RECOVERY_MAP_EMPTY", attemptedPhase: p });
         state.phase = prevPhase;
         activatePhaseView(prevPhase);
         updatePhaseSteps(prevPhase);
         return;
       }
+      _logPhaseTransition(prevPhase, p, prevStartTime);
       renderRecoveryRecordView();
       restoreRecoveryRecordAnswers();
       renderSelectedPrinciple("rrSelectedPrinciple", phaseData.recoveryCompare.answers.q7sel, "問8で原則を選択すると表示されます");
@@ -862,6 +947,7 @@
         activeMarkerSuffix = cfg.markerSuffix;
         activePaletteNodes = [];
         renderPhase5Map();
+        _logPhaseTransition(prevPhase, p, prevStartTime);
       } else {
         // 通常モード（急性期マップ・復旧期マップ）
         activePhaseKey     = cfg.key;
@@ -879,6 +965,7 @@
           // ヘッダーからの直接遷移も含め、削除候補が未選択なら復旧期準備に誘導する
           if (window.phase5Data.removals.length === 0) {
             showToast("先に復旧期準備で不要なノードを選択してください", 3000);
+            logOp("VALIDATION_ERROR", { type: "RECOVERY_REMOVAL_EMPTY", attemptedPhase: p });
             state.phase = prevPhase;
             activatePhaseView(prevPhase);
             updatePhaseSteps(prevPhase);
@@ -894,6 +981,7 @@
         loadPhaseData(cfg.key);
         renderPalette();
         renderAll();
+        _logPhaseTransition(prevPhase, p, prevStartTime);
       }
     }
   };
@@ -1084,10 +1172,13 @@
       return;
     }
     if (!confirm(`「${n?.label}」を削除しますか？`)) return;
-    logOp("DELETE_NODE", { id, label: n?.label });
+    const removedEdges = state.edges.filter(e => e.from === id || e.to === id);
+    const edgeIds = removedEdges.map(e => e.id);
+    const deletedEdgeCount = edgeIds.length;
     state.edges = state.edges.filter(e => e.from !== id && e.to !== id);
     state.nodes = state.nodes.filter(n => n.id !== id);
     state.selectedNodeId = null;
+    logOp("DELETE_NODE", { id, label: n?.label, deletedEdgeCount, edgeIds });
     renderAll();
     saveToLocalStorage();
   }
@@ -1237,6 +1328,7 @@
       const delBtn = div.querySelector(".node-delete-btn");
       if (delBtn) delBtn.style.display = "none";
       const sx = e.clientX, sy = e.clientY, bx = n.x, by = n.y;
+      const oldLayerId = n.layerId;
       let moved = false;
 
       const onMove = ev => {
@@ -1262,7 +1354,14 @@
             div.classList.remove("layer-none", "layer-1", "layer-2", "layer-3", "layer-4");
             div.classList.add(`layer-${n.layerId}`);
           }
-          logOp("MOVE_NODE", { id: n.id, label: n.label, layerId: n.layerId });
+          logOp("MOVE_NODE", {
+            id: n.id, label: n.label,
+            from: { x: bx, y: by, layerId: oldLayerId },
+            to:   { x: n.x, y: n.y, layerId: n.layerId }
+          });
+          if (oldLayerId !== n.layerId) {
+            logOp("SET_LAYER", { id: n.id, label: n.label, fromLayerId: oldLayerId, toLayerId: n.layerId });
+          }
           saveToLocalStorage();
         }
       };
@@ -1315,6 +1414,8 @@
     canvasWrap.addEventListener("mousemove", onArrowMouseMove);
     // escape key cancel
     document.addEventListener("keydown", onArrowKeyDown);
+
+    logOp("START_ARROW", { fromId, fromLabel: fromNode?.label || "" });
   }
 
   function onArrowMouseMove(e) {
@@ -1333,7 +1434,7 @@
     if (state.arrowFrom === toId) { cancelArrowDraw(); return; }
 
     const fromId = state.arrowFrom;
-    cancelArrowDraw();
+    clearArrowDrawState(); // 内部クリーンアップのみ（CANCEL_ARROW ログなし）
     // 支援対象（BENEFICIARY_LABELS に含まれるノード）への矢印は「支援」ラベルを自動付与
     const toNode = state.nodes.find(n => n.id === toId);
     if (BENEFICIARY_LABELS.has(toNode?.label)) {
@@ -1343,7 +1444,7 @@
     showEdgeLabelPopup(fromId, toId, clientX, clientY);
   }
 
-  function cancelArrowDraw() {
+  function clearArrowDrawState() {
     state.drawingArrow = false;
     state.arrowFrom = null;
     canvasWrap.classList.remove("drawing-arrow");
@@ -1354,6 +1455,12 @@
     });
     clearArrowPreview();
     if (activeArrowHintEl) activeArrowHintEl.style.display = "none";
+  }
+
+  function cancelArrowDraw() {
+    const fromId = state.arrowFrom;
+    clearArrowDrawState();
+    logOp("CANCEL_ARROW", { fromId });
   }
 
   function renderArrowPreview() {
@@ -1461,14 +1568,18 @@
 
   function addEdgeWithLabel(fromId, toId, label) {
     const check = canAddEdge(fromId, toId, label, state.edges);
-    if (!check.allowed) { showToast(check.reason); return; }
+    if (!check.allowed) {
+      showToast(check.reason);
+      logOp("VALIDATION_ERROR", { type: "EDGE_ADD_DENIED", fromId, toId, label, reason: check.reason });
+      return;
+    }
     const id    = "e-" + uid();
     const type  = EDGE_MAP[label] || EDGE_TYPES[0];
     const bidir = !!type.bidirectional;
     state.edges.push({ id, from: fromId, to: toId, label, bidirectional: bidir });
     const fromN = state.nodes.find(n => n.id === fromId);
     const toN   = state.nodes.find(n => n.id === toId);
-    logOp("ADD_EDGE", { from: fromN?.label, to: toN?.label, label, bidirectional: bidir });
+    logOp("ADD_EDGE", { id, fromId, toId, fromLabel: fromN?.label, toLabel: toN?.label, label, bidirectional: bidir });
     renderAll();
     saveToLocalStorage();
   }
@@ -1668,7 +1779,7 @@
     const fromN = state.nodes.find(n => n.id === e.from);
     const toN   = state.nodes.find(n => n.id === e.to);
     if (!confirm(`「${fromN?.label} → ${toN?.label}」の矢印を削除しますか？`)) return;
-    logOp("DELETE_EDGE", { from: fromN?.label, to: toN?.label, label: e.label });
+    logOp("DELETE_EDGE", { id, fromId: e.from, toId: e.to, fromLabel: fromN?.label, toLabel: toN?.label, label: e.label });
     state.edges = state.edges.filter(x => x.id !== id);
     state.selectedEdgeId = null;
     renderAll();
@@ -1693,45 +1804,42 @@
     if (activePhaseKey && !MAP_PHASE_CONFIG[state.phase]?.isReadOnly)
       savePhaseData(activePhaseKey);
     return {
-      version: 7, // [CHANGED] 6 → 7（transitionCompare 追加 + 問番号体系再整理）
+      version: 8,
+      logSchemaVersion: 1,
+      sessionId: state.sessionId,
       exportedAt: new Date().toISOString(),
       scenarioId: SCENARIO.id,
+      operationLog: state.operationLog,
       acute: {
-        nodes: phaseData.acute.nodes,
-        edges: phaseData.acute.edges,
+        nodes:   phaseData.acute.nodes,
+        edges:   phaseData.acute.edges,
         answers: phaseData.acute.answers,
-        operationLog: phaseData.acute.log,
       },
       recovery: {
-        nodes: phaseData.p6.nodes,
-        edges: phaseData.p6.edges,
+        nodes:   phaseData.p6.nodes,
+        edges:   phaseData.p6.edges,
         answers: phaseData.p6.answers,
-        operationLog: phaseData.p6.log,
       },
-      phase5Data: window.phase5Data,
-      acuteRecord: {
-        answers: phaseData.acuteRecord.answers,
-      },
-      transitionCompare: {                           // [NEW]
-        answers: phaseData.transitionCompare.answers,
-      },
-      recoveryCompare: {
-        answers: phaseData.recoveryCompare.answers,
-      },
-      recoveryRecord: {
-        answers: phaseData.recoveryRecord.answers,
-      },
+      phase5Data:        window.phase5Data        || {},
+      acuteRecord:       phaseData.acuteRecord,
+      transitionCompare: phaseData.transitionCompare,
+      recoveryCompare:   phaseData.recoveryCompare,
+      recoveryRecord:    phaseData.recoveryRecord,
     };
   }
 
   function exportJSON() {
+    logOp("EXPORT", {
+      currentPhase: state.phase,
+      currentPhaseName: getPhaseName(state.phase),
+      operationLogCount: state.operationLog.length
+    });
     const blob = new Blob([JSON.stringify(buildExportObject(), null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `ics_log_${SCENARIO.id}_${new Date().toISOString().slice(0,10)}.json`;
     a.click();
     URL.revokeObjectURL(a.href);
-    logOp("EXPORT", {});
   }
 
   function validateEdgeConflicts(edges) {
@@ -1746,6 +1854,30 @@
     );
   }
 
+  function normalizeLegacyLogEntry(entry) {
+    return {
+      ts:             entry.ts             || null,
+      sessionId:      entry.sessionId      || null,
+      phase:          entry.phase          ?? null,
+      phaseName:      entry.phaseName      || null,
+      activePhaseKey: entry.activePhaseKey || null,
+      type:           entry.type,
+      detail:         entry.detail         || {}
+    };
+  }
+
+  function migrateLegacyLogs(obj) {
+    if (Array.isArray(obj.operationLog)) {
+      return obj.operationLog;  // v8+
+    }
+    const merged = [
+      ...((obj.acute    && obj.acute.operationLog)    || []),
+      ...((obj.recovery && obj.recovery.operationLog) || [])
+    ];
+    merged.sort((a, b) => (a.ts || "").localeCompare(b.ts || ""));
+    return merged.map(normalizeLegacyLogEntry);
+  }
+
   function importJSON() {
     const inp = document.createElement("input");
     inp.type = "file"; inp.accept = ".json";
@@ -1757,8 +1889,10 @@
         try {
           const obj = JSON.parse(fr.result);
           let hasConflict = false;
+          const importedLogs = migrateLegacyLogs(obj);
+          const oldSessionId = obj.sessionId || null;
 
-          if ((obj.version === 7 || obj.version === 6 || obj.version === 5 || obj.version === 4 || obj.version === 3) && obj.acute && obj.recovery) { // v7/v6/v5/v4/v3
+          if ((obj.version === 8 || obj.version === 7 || obj.version === 6 || obj.version === 5 || obj.version === 4 || obj.version === 3) && obj.acute && obj.recovery) { // v8/v7/v6/v5/v4/v3
             // v3/v4: 全フェーズを復元
             const loadPhase = (src) => ({
               nodes: (src.nodes || []).map(n => ({ layerId: null, layerReason: "", isInitial: false, ...n })),
@@ -1893,7 +2027,17 @@
           }
 
           if (hasConflict) showToast("読み込んだデータに矛盾する矢印の組み合わせが含まれています", 3000);
-          logOp("IMPORT", {});
+          state.sessionId      = generateSessionId();
+          state.operationLog   = importedLogs;
+          state.phaseStartTime = Date.now();
+          logOp("IMPORT", {
+            importedVersion:   obj.version || null,
+            importedSessionId: oldSessionId,
+            importedLogCount:  importedLogs.length,
+            hasAcute:          !!obj.acute,
+            hasRecovery:       !!obj.recovery,
+            hasConflict
+          });
           saveToLocalStorage();
           // 急性期フェーズに切り替えて表示
           // ※ switchPhase 内の savePhaseData が phaseData.recovery を上書きするため、
@@ -1920,6 +2064,7 @@
     if (state.phase === PHASE.ACUTE_RECORD) {
       if (!confirm("問4・問5 の回答をリセットしますか？")) return;
       phaseData.acuteRecord.answers = { q4: "", q5: "" };
+      logOp("RESET", { target: "acuteRecordAnswers" });
       renderAcuteRecordView();   // フォームを再描画してリセット状態に戻す
       return;
     }
@@ -1929,6 +2074,7 @@
       phaseData.transitionCompare.answers = { q6: "" };
       const ta = $("tcQ6Answer"); if (ta) ta.value = "";
       const cc = $("tcQ6CharCount"); if (cc) cc.textContent = "0";
+      logOp("RESET", { target: "transitionCompareAnswers" });
       return;
     }
     // 復旧期比較・分析：問7・問8 の回答をクリア
@@ -1940,12 +2086,14 @@
       if (q6el) { q6el.value = ""; const cc = $("rcQ6CharCount"); if (cc) cc.textContent = "0"; }
       if (q7el) { q7el.value = ""; const cc = $("rcQ7CharCount"); if (cc) cc.textContent = "0"; }
       document.querySelectorAll('input[name="rcQ7principle"]').forEach(r => { r.checked = false; });
+      logOp("RESET", { target: "recoveryCompareAnswers" });
       return;
     }
     // 復旧期対応検証記録：問9・問10 の回答をクリア
     if (state.phase === PHASE.RECOVERY_RECORD) {
       if (!confirm("問9・問10 の回答をリセットしますか？")) return;
       phaseData.recoveryRecord.answers = { q8: "", q9: "" };
+      logOp("RESET", { target: "recoveryRecordAnswers" });
       renderRecoveryRecordView();
       return;
     }
@@ -1955,10 +2103,11 @@
       window.phase5Data.removals = [];
       window.phase5Data.policyRationale = "";  // [ADDED]
       invalidatePhase6();
+      logOp("RESET", { target: "phase5Removals" });
       renderPhase5Map();
       return;
     }
-    // 復旧期マップ：ノード・矢印・ログのみクリア（再初期化を許可）
+    // 復旧期マップ：ノード・矢印のみクリア（再初期化を許可）
     if (state.phase === PHASE.RECOVERY_MAP) {
       if (!confirm("リセットしますか？（復旧期マップのノード・矢印・ログを消します）")) return;
       state.nodes = []; state.edges = [];
@@ -1966,8 +2115,8 @@
       state.selectedNodeId = null; state.selectedEdgeId = null;
       // Phase6 を無効化: 次回入場時に initPhase6Canvas() が再実行される
       invalidatePhase6();
-      cancelArrowDraw();
-      logOp("RESET", { phase: "p6" });
+      clearArrowDrawState();
+      logOp("RESET", { target: "recoveryMap" });
       renderAll();
       return;
     }
@@ -1976,10 +2125,10 @@
     state.nodes = []; state.edges = [];
     state.answers = { q1: "", q2: "" }; state.log = [];
     state.selectedNodeId = null; state.selectedEdgeId = null;
-    cancelArrowDraw();
+    clearArrowDrawState();
     if ($("q2Answer")) $("q2Answer").value = "";
     const cc = $("charCount"); if (cc) cc.textContent = "0";
-    logOp("RESET", { phase: activePhaseKey });
+    logOp("RESET", { target: "activeMap", phaseKey: activePhaseKey });
     renderAll();
   }
 
@@ -2228,6 +2377,7 @@
       // 削除候補が変わるため Phase6 を無効化する。
       // 次回 switchPhase(RECOVERY_MAP) → p6NeedsRebuild()=true で再構築される。
       invalidatePhase6();
+      logOp("INVALIDATE_PHASE6", { reason: "removal_candidate_changed" });
     }
 
     const alreadySelected = window.phase5Data.removals.some(r => r.label === label);
@@ -2243,6 +2393,7 @@
           canvasEl?.querySelector(`.node[data-id="${n.id}"]`)
             ?.classList.remove("node-removal-candidate");
         });
+      logOp("REMOVE_CANDIDATE_REMOVE", { nodeId: _nodeId, label, removalCount: window.phase5Data.removals.length });
     } else {
       // 同一ラベルの全ノードをまとめて追加（重複防止あり）
       state.nodes
@@ -2254,6 +2405,7 @@
           canvasEl?.querySelector(`.node[data-id="${n.id}"]`)
             ?.classList.add("node-removal-candidate");
         });
+      logOp("REMOVE_CANDIDATE_ADD", { nodeId: _nodeId, label, removalCount: window.phase5Data.removals.length });
     }
 
     renderRemovalList();
@@ -2456,6 +2608,7 @@
         excerptList.querySelectorAll(".ar-excerpt-card").forEach(card => {
           card.classList.toggle("selected", card.dataset.id === radio.value);
         });
+        logOp("ANSWER_SELECT", { questionId: "acuteRecord.q4", value: radio.value });
         saveToLocalStorage();
       });
     });
@@ -2463,6 +2616,15 @@
     // (c) イベント attach — q5 テキストエリア（文字数カウント付き）
     const q5ta = $("arQ5Answer");
     if (q5ta) {
+      const q5State = { started: false, editCount: 0, maxLengthReached: 0 };
+      q5ta.addEventListener("focus", () => {
+        if (!q5State.started) {
+          q5State.started = true;
+          q5State.editCount = 0;
+          q5State.maxLengthReached = q5ta.value.length;
+          logOp("ANSWER_START", { questionId: "acuteRecord.q5" });
+        }
+      });
       q5ta.addEventListener("input", () => {
         const len = q5ta.value.length;
         const cc  = $("arQ5CharCount");
@@ -2477,8 +2639,20 @@
             q5ta.classList.remove("over");
           }
         }
+        q5State.editCount += 1;
+        q5State.maxLengthReached = Math.max(q5State.maxLengthReached, q5ta.value.length);
         phaseData.acuteRecord.answers.q5 = q5ta.value;
         debouncedSave();
+      });
+      q5ta.addEventListener("blur", () => {
+        if (q5State.editCount === 0) return;
+        logOp("ANSWER_CHANGE", {
+          questionId: "acuteRecord.q5",
+          valueLength: q5ta.value.length,
+          editCount: q5State.editCount,
+          maxLengthReached: q5State.maxLengthReached
+        });
+        q5State.editCount = 0;
       });
     }
 
@@ -2596,6 +2770,7 @@
         excerptList.querySelectorAll(".ar-excerpt-card").forEach(card => {
           card.classList.toggle("selected", card.dataset.id === radio.value);
         });
+        logOp("ANSWER_SELECT", { questionId: "recoveryRecord.q8", value: radio.value });
         saveToLocalStorage();
       });
     });
@@ -2603,6 +2778,15 @@
     // (c) イベント attach — q9 テキストエリア
     const q9ta = $("rrQ9Answer");
     if (q9ta) {
+      const q9State = { started: false, editCount: 0, maxLengthReached: 0 };
+      q9ta.addEventListener("focus", () => {
+        if (!q9State.started) {
+          q9State.started = true;
+          q9State.editCount = 0;
+          q9State.maxLengthReached = q9ta.value.length;
+          logOp("ANSWER_START", { questionId: "recoveryRecord.q9" });
+        }
+      });
       q9ta.addEventListener("input", () => {
         const len = q9ta.value.length;
         const cc  = $("rrQ9CharCount");
@@ -2613,8 +2797,20 @@
             "char-count" + (len > max ? " over" : len >= max * 0.9 ? " warn" : "");
           q9ta.classList.toggle("over", len > max);
         }
+        q9State.editCount += 1;
+        q9State.maxLengthReached = Math.max(q9State.maxLengthReached, q9ta.value.length);
         phaseData.recoveryRecord.answers.q9 = q9ta.value;
         debouncedSave();
+      });
+      q9ta.addEventListener("blur", () => {
+        if (q9State.editCount === 0) return;
+        logOp("ANSWER_CHANGE", {
+          questionId: "recoveryRecord.q9",
+          valueLength: q9ta.value.length,
+          editCount: q9State.editCount,
+          maxLengthReached: q9State.maxLengthReached
+        });
+        q9State.editCount = 0;
       });
     }
 
@@ -2704,73 +2900,97 @@
     // Phase3 記述問題パネル
     const p3q1 = $("p3q1Answer");
     const p3q2 = $("p3q2Answer");
+    const _ansState = {}; // { questionId: { started, editCount, maxLengthReached } }
 
-    if (p3q1) {
-      p3q1.addEventListener("input", () => {
-        const len = p3q1.value.length;
-        const cc  = $("p3q1CharCount");
-        if (cc) {
-          cc.textContent = len;
-          cc.parentElement.className =
-            "char-count" + (len > 100 ? " over" : len >= 90 ? " warn" : "");
+    function _attachTextareaLog(ta, questionId, onInput) {
+      if (!ta) return;
+      _ansState[questionId] = { started: false, editCount: 0, maxLengthReached: 0 };
+      ta.addEventListener("focus", () => {
+        if (!_ansState[questionId].started) {
+          _ansState[questionId].started = true;
+          _ansState[questionId].editCount = 0;
+          _ansState[questionId].maxLengthReached = ta.value.length;
+          logOp("ANSWER_START", { questionId });
         }
-        phaseData.acute.answers.p3q1 = p3q1.value;
-        debouncedSave();
+      });
+      ta.addEventListener("input", () => {
+        _ansState[questionId].editCount += 1;
+        _ansState[questionId].maxLengthReached = Math.max(_ansState[questionId].maxLengthReached, ta.value.length);
+        onInput();
+      });
+      ta.addEventListener("blur", () => {
+        const st = _ansState[questionId];
+        if (st.editCount === 0) return;
+        logOp("ANSWER_CHANGE", {
+          questionId,
+          valueLength: ta.value.length,
+          editCount: st.editCount,
+          maxLengthReached: st.maxLengthReached
+        });
+        st.editCount = 0;
       });
     }
 
-    if (p3q2) {
-      p3q2.addEventListener("input", () => {
-        const len = p3q2.value.length;
-        const cc  = $("p3q2CharCount");
-        if (cc) {
-          cc.textContent = len;
-          cc.parentElement.className =
-            "char-count" + (len > 100 ? " over" : len >= 90 ? " warn" : "");
-        }
-        phaseData.acute.answers.p3q2 = p3q2.value;
-        debouncedSave();
-      });
-    }
+    _attachTextareaLog(p3q1, "acute.p3q1", () => {
+      const len = p3q1.value.length;
+      const cc  = $("p3q1CharCount");
+      if (cc) {
+        cc.textContent = len;
+        cc.parentElement.className =
+          "char-count" + (len > 100 ? " over" : len >= 90 ? " warn" : "");
+      }
+      phaseData.acute.answers.p3q1 = p3q1.value;
+      debouncedSave();
+    });
+
+    _attachTextareaLog(p3q2, "acute.p3q2", () => {
+      const len = p3q2.value.length;
+      const cc  = $("p3q2CharCount");
+      if (cc) {
+        cc.textContent = len;
+        cc.parentElement.className =
+          "char-count" + (len > 100 ? " over" : len >= 90 ? " warn" : "");
+      }
+      phaseData.acute.answers.p3q2 = p3q2.value;
+      debouncedSave();
+    });
 
     document.querySelectorAll('input[name="p3q2principle"]').forEach(radio => {
       radio.addEventListener("change", () => {
         phaseData.acute.answers.p3q2sel = radio.value;
+        logOp("ANSWER_SELECT", { questionId: "acute.p3q2sel", value: radio.value });
       });
     });
 
     // [ADDED] 復旧期比較・分析 テキストエリア文字数カウント
     const rcQ6 = $("rcQ6Answer");
     const rcQ7 = $("rcQ7Answer");
-    if (rcQ6) {
-      rcQ6.addEventListener("input", () => {
-        const len = rcQ6.value.length;
-        const cc  = $("rcQ6CharCount");
-        if (cc) {
-          cc.textContent = len;
-          const max = RECOVERY_COMPARE_CONTENT.questions.find(q => q.id === "q6")?.maxLength || 100;
-          cc.parentElement.className = "char-count" + (len > max ? " over" : len >= max * 0.9 ? " warn" : "");
-        }
-        phaseData.recoveryCompare.answers.q6 = rcQ6.value;
-        debouncedSave();
-      });
-    }
-    if (rcQ7) {
-      rcQ7.addEventListener("input", () => {
-        const len = rcQ7.value.length;
-        const cc  = $("rcQ7CharCount");
-        if (cc) {
-          cc.textContent = len;
-          const max = RECOVERY_COMPARE_CONTENT.questions.find(q => q.id === "q7")?.maxLength || 200;
-          cc.parentElement.className = "char-count" + (len > max ? " over" : len >= max * 0.9 ? " warn" : "");
-        }
-        phaseData.recoveryCompare.answers.q7 = rcQ7.value;
-        debouncedSave();
-      });
-    }
+    _attachTextareaLog(rcQ6, "recoveryCompare.q6", () => {
+      const len = rcQ6.value.length;
+      const cc  = $("rcQ6CharCount");
+      if (cc) {
+        cc.textContent = len;
+        const max = RECOVERY_COMPARE_CONTENT.questions.find(q => q.id === "q6")?.maxLength || 100;
+        cc.parentElement.className = "char-count" + (len > max ? " over" : len >= max * 0.9 ? " warn" : "");
+      }
+      phaseData.recoveryCompare.answers.q6 = rcQ6.value;
+      debouncedSave();
+    });
+    _attachTextareaLog(rcQ7, "recoveryCompare.q7", () => {
+      const len = rcQ7.value.length;
+      const cc  = $("rcQ7CharCount");
+      if (cc) {
+        cc.textContent = len;
+        const max = RECOVERY_COMPARE_CONTENT.questions.find(q => q.id === "q7")?.maxLength || 200;
+        cc.parentElement.className = "char-count" + (len > max ? " over" : len >= max * 0.9 ? " warn" : "");
+      }
+      phaseData.recoveryCompare.answers.q7 = rcQ7.value;
+      debouncedSave();
+    });
     document.querySelectorAll('input[name="rcQ7principle"]').forEach(radio => {
       radio.addEventListener("change", () => {
         phaseData.recoveryCompare.answers.q7sel = radio.value;
+        logOp("ANSWER_SELECT", { questionId: "recoveryCompare.q7sel", value: radio.value });
       });
     });
 
@@ -2999,6 +3219,10 @@
     activeArrowHintEl  = $(cfg.domIds.hint);
     activeMarkerSuffix = cfg.markerSuffix;
 
+    state.sessionId      = generateSessionId();
+    state.operationLog   = [];
+    state.phaseStartTime = Date.now();
+
     renderPalette();
     wireEvents();
     renderOrientationNodeList();
@@ -3006,7 +3230,7 @@
     logOp("INIT", { scenarioId: SCENARIO.id });
     loadIdealMapAcute();
     loadActualMapAcute();
-    loadActualMapRecovery(); // [ADDED]
+    loadActualMapRecovery();
   }
 
   init();
@@ -3017,6 +3241,16 @@
     if (!saved) return;
     const savedAt = new Date(saved.savedAt).toLocaleString();
     if (confirm(`前回の作業（${savedAt} 保存）を復元しますか？\n「キャンセル」を選ぶと前回の作業は破棄され、新しいセッションとして開始します。`)) {
+      state.sessionId      = saved.sessionId      || generateSessionId();
+      state.operationLog   = saved.operationLog   || [];
+      state.phaseStartTime = Date.now();  // 復元時刻にリセット（異常滞在時間を防ぐ）
+      if (saved.phaseStartTime) {
+        logOp("RESUMED_FROM_STORAGE", {
+          previousPhaseStartTime: saved.phaseStartTime,
+          gapMs: Date.now() - saved.phaseStartTime,
+          operationLogCount: state.operationLog.length
+        });
+      }
       Object.assign(phaseData, saved.phaseData);
       if (saved.phase5Data) Object.assign(window.phase5Data, saved.phase5Data);
       switchPhase(saved.currentPhase ?? PHASE.ORIENTATION);
@@ -3027,6 +3261,12 @@
 
   // 被験者切替・実験者向け運用 API
   window.__icsClearStorage = clearLocalStorage;
+
+  window.addEventListener("blur", () => { logOp("WINDOW_BLUR", {}); });
+  window.addEventListener("focus", () => { logOp("WINDOW_FOCUS", {}); });
+  document.addEventListener("visibilitychange", () => {
+    logOp("VISIBILITY_CHANGE", { state: document.visibilityState });
+  });
 
   window.addEventListener("beforeunload", (e) => {
     if (hasUnsavedWork()) {
