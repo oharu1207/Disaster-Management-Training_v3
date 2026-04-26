@@ -12,7 +12,9 @@
 <header class="app-header">
   <div class="header-left">
     <div class="logo"><span class="logo-ics">ICS</span><span class="logo-name">学習支援<span class="logo-sub">システム</span></span></div>
-    <!-- [CHANGED] ステップ9個に更新。data-phase は PHASE 定数値に合わせて変更 -->
+    <!-- TODO: phase-track が10段階に増加。狭画面での視認性低下の可能性あり。
+         問題があれば step-label の改行・省略・2行表示への切替を検討する。 -->
+    <!-- [CHANGED] ステップ10個に更新。data-phase は PHASE 定数値に合わせて変更 -->
     <div class="phase-track">
       <div class="phase-step active" data-phase="0"><span class="step-num">1</span><span class="step-label">オリエン<br>テーション</span></div>
       <span class="phase-arrow">›</span>
@@ -26,11 +28,13 @@
       <span class="phase-arrow">›</span>
       <div class="phase-step" data-phase="5"><span class="step-num">6</span><span class="step-label">復旧期<br>マップ</span></div>
       <span class="phase-arrow">›</span>
-      <div class="phase-step" data-phase="6"><span class="step-num">7</span><span class="step-label">比較・分析<br>（復旧期）</span></div>
+      <div class="phase-step" data-phase="6"><span class="step-num">7</span><span class="step-label">急性期･<br>復旧期比較</span></div>
       <span class="phase-arrow">›</span>
-      <div class="phase-step" data-phase="7"><span class="step-num">8</span><span class="step-label">対応検証<br>記録（復旧）</span></div>
+      <div class="phase-step" data-phase="7"><span class="step-num">8</span><span class="step-label">比較・分析<br>（復旧期）</span></div>
       <span class="phase-arrow">›</span>
-      <div class="phase-step" data-phase="8"><span class="step-num">9</span><span class="step-label">シーケンス<br>図構築</span></div>
+      <div class="phase-step" data-phase="8"><span class="step-num">9</span><span class="step-label">対応検証<br>記録（復旧）</span></div>
+      <span class="phase-arrow">›</span>
+      <div class="phase-step" data-phase="9"><span class="step-num">10</span><span class="step-label">シーケンス<br>図構築</span></div>
     </div>
   </div>
   <div class="header-right">
@@ -425,19 +429,6 @@
       <div class="sb-title">🗑 削除候補ノード</div>
       <div id="p5RemovalList"><span style="color:var(--text-muted);font-size:12px;">（まだ選択されていません）</span></div>
     </div>
-    <!-- [ADDED] 削除候補選定の判断方針（1問集約版） -->
-    <div class="sb-block">
-      <div class="sb-title" style="color:#fff;">📝 問6-1． 削除判断の方針</div>
-      <div style="font-size:12px;color:#fff;line-height:1.5;margin-bottom:6px;">
-        あなたがこのノードを残し、このノードを削除した方針を簡潔に説明してください。
-        すべてのノードについて個別に書く必要はなく、判断の基本的な考え方を記述してください。
-      </div>
-      <textarea id="p5PolicyRationale"
-                class="p5-policy-input"
-                maxlength="150"
-                placeholder="（150字以内）例：急性期には…だったが、復旧期には…となった。"></textarea>
-      <div class="p5-policy-counter"><span id="p5PolicyCount">0</span> / 150 字</div>
-    </div>
     <div class="sb-block">
       <button id="btnToPhase6" class="btn-primary full" disabled
               onclick="goToPhase6()">復旧期マップへ進む →</button>
@@ -500,7 +491,7 @@
       <div class="palette" id="palette-p6" style="flex:1;overflow-y:auto;"></div>
     </div>
     <div class="sb-block">
-      <button class="btn-primary full" onclick="switchPhase(6)">比較・分析へ進む →</button>
+      <button id="btnFromP6ToTransition" class="btn-primary full">急性期・復旧期構造比較へ進む →</button>
     </div>
   </div><!-- /map-sidebar -->
 
@@ -547,7 +538,80 @@
 
 </div><!-- /phase-6 -->
 
-<!-- ===== PHASE 8 (now Phase7): 比較・分析（復旧期） ===== -->
+<!-- ===== PHASE TRANSITION_COMPARE: 急性期・復旧期構造比較 [NEW] ===== -->
+<div id="phase-transitionCompare" class="phase-view">
+
+  <!-- 左カラム：学習者の復旧期マップ（⑧と同様） -->
+  <div class="compare-col" id="tcCompareColRecovery">
+    <div class="compare-col-header">
+      <span class="compare-col-title">📐 あなたの復旧期マップ</span>
+      <span class="compare-col-stat" id="canvasStat-tcRecovery">ノード: 0 ／ 矢印: 0</span>
+    </div>
+    <div class="canvasWrap" id="canvasWrap-tcRecovery">
+      <div class="phase-layer-bands">
+        <div class="layer-band" data-layer="1"><span class="layer-label">指揮 Command</span><span class="layer-concept">指示命令の起点</span></div>
+        <div class="layer-band" data-layer="2"><span class="layer-label">調整・統制 Section</span><span class="layer-concept">情報集約・組織間調整</span></div>
+        <div class="layer-band" data-layer="3"><span class="layer-label">実働 Branch / Group</span><span class="layer-concept">現場活動チーム</span></div>
+        <div class="layer-band" data-layer="4"><span class="layer-label">支援対象</span><span class="layer-concept">活動の対象となる機関・住民</span></div>
+      </div>
+      <svg id="svgLayer-tcRecovery" class="phase-svg-layer">
+        <defs>
+          <marker id="arrow-red-tcRecovery"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b6b"/></marker>
+          <marker id="arrow-blue-tcRecovery"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4d8fff"/></marker>
+          <marker id="arrow-teal-tcRecovery"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3dcf8a"/></marker>
+          <marker id="arrow-purple-tcRecovery" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/></marker>
+        </defs>
+      </svg>
+      <div id="canvas-tcRecovery" class="phase-canvas"></div>
+    </div>
+  </div>
+
+  <!-- 右カラム：急性期理想マップ（ideal_map_acute.json） -->
+  <div class="compare-col" id="tcCompareColAcute">
+    <div class="compare-col-header">
+      <span class="compare-col-title">📐 急性期 理想マップ</span>
+      <span class="compare-col-stat" id="canvasStat-tcAcute">ノード: 0 ／ 矢印: 0</span>
+    </div>
+    <div class="canvasWrap" id="canvasWrap-tcAcute">
+      <div class="phase-layer-bands">
+        <div class="layer-band" data-layer="1"><span class="layer-label">指揮 Command</span><span class="layer-concept">指示命令の起点</span></div>
+        <div class="layer-band" data-layer="2"><span class="layer-label">調整・統制 Section</span><span class="layer-concept">情報集約・組織間調整</span></div>
+        <div class="layer-band" data-layer="3"><span class="layer-label">実働 Branch / Group</span><span class="layer-concept">現場活動チーム</span></div>
+        <div class="layer-band" data-layer="4"><span class="layer-label">支援対象</span><span class="layer-concept">活動の対象となる機関・住民</span></div>
+      </div>
+      <svg id="svgLayer-tcAcute" class="phase-svg-layer">
+        <defs>
+          <marker id="arrow-red-tcAcute"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b6b"/></marker>
+          <marker id="arrow-blue-tcAcute"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4d8fff"/></marker>
+          <marker id="arrow-teal-tcAcute"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3dcf8a"/></marker>
+          <marker id="arrow-purple-tcAcute" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc"/></marker>
+        </defs>
+      </svg>
+      <div id="canvas-tcAcute" class="phase-canvas"></div>
+    </div>
+  </div>
+
+  <!-- 記述問題パネル（下段・横断） -->
+  <div class="compare-qa-panel" id="tcQaPanel">
+    <div class="compare-qa-inner">
+      <div class="compare-qa-block">
+        <label class="compare-qa-label">
+          問6． あなたが作成した復旧期の理想マップと急性期の理想マップを比較し、急性期と復旧期では、組織全体として支援体制の中心がどのように変化したか説明せよ。（100字以内）
+        </label>
+        <textarea id="tcQ6Answer" rows="2"
+          placeholder="例）急性期は…を中心とした体制であったが、復旧期では…が中心となる体制へと…"
+          maxlength="100"></textarea>
+        <div class="char-count"><span id="tcQ6CharCount">0</span> / 100 字</div>
+        <div class="compare-qa-btn-row">
+          <button id="btnFromTransitionToRecoveryCompare" class="btn-primary">復旧期 比較・分析へ進む →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /phase-transitionCompare -->
+
+<!-- ===== PHASE 8 (now Phase 8): 比較・分析（復旧期） ===== -->
 <div id="phase-recoveryCompare" class="phase-view">
 
   <!-- 左カラム：学習者の復旧期理想マップ -->
@@ -629,7 +693,7 @@
     <div class="compare-qa-inner">
       <div class="compare-qa-block">
         <label class="compare-qa-label">
-          問6-2． 復旧期の理想マップと実際マップを比較し、最も重要と思う構造的差異を1つ挙げて説明せよ。（100字以内）
+          問7． 復旧期の理想マップと実際マップを比較し、最も重要と思う構造的差異を1つ挙げて説明せよ。（100字以内）
         </label>
         <textarea id="rcQ6Answer" rows="2"
           placeholder="例）理想マップでは…が存在するが、実際マップでは…"></textarea>
@@ -637,7 +701,7 @@
       </div>
       <div class="compare-qa-block">
         <label class="compare-qa-label">
-          問7． 問6-2で指摘した差異が生じた理由について、ICS原則のうちどの違反かを選択し、急性期との継続性の観点から説明せよ。（200字以内）
+          問8． 問7で指摘した差異が生じた理由について、ICS原則のうちどの違反かを選択し、急性期との継続性の観点から説明せよ。（200字以内）
         </label>
         <div class="ics-radio-group" id="rcQ7RadioGroup">
           <label class="ics-radio-item">
@@ -681,13 +745,13 @@
     <div class="sb-block">
       <div class="scenario-badge">復旧期 対応検証</div>
       <div style="font-size:13px;line-height:1.6;margin-top:8px;color:#fff;">
-        対応検証記録の抜粋を読んだ上で問8・問9に回答してください。
+        対応検証記録の抜粋を読んだ上で問9・問10に回答してください。
       </div>
     </div>
     <div class="sb-block">
       <div class="sb-title">💡 あなたが選択したICS原則</div>
       <div style="font-size:12px;color:var(--text-dim);line-height:1.6;">
-        問7で選んだ原則が右の抜粋のどの事例に対応するか確認してください。
+        問8で選んだ原則が右の抜粋のどの事例に対応するか確認してください。
       </div>
       <div id="rrSelectedPrinciple" style="margin-top:8px;"></div>
     </div>

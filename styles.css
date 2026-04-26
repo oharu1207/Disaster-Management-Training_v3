@@ -1198,11 +1198,13 @@ textarea { resize: vertical; min-height: 70px; }
    — #phase-2 と同じグリッド構成を使い回す
    ================================================================ */
 
-#phase-recoveryCompare {
+#phase-recoveryCompare,
+#phase-transitionCompare {
   display: none;
   grid-template-rows: 1fr auto;
   grid-template-columns: 1fr 1fr;
   height: calc(100vh - 54px);
   overflow: hidden;
 }
-#phase-recoveryCompare.active { display: grid; }
+#phase-recoveryCompare.active,
+#phase-transitionCompare.active { display: grid; }

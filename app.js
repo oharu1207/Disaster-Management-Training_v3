@@ -30,15 +30,16 @@
   // DOM 上の .phase-view の並び順やインデックスには依存しない。
   // ================================================================
   const PHASE = {
-    ORIENTATION:      0,   // オリエンテーション
-    ACUTE_MAP:        1,   // マップ構築（急性期）
-    ACUTE_COMPARE:    2,   // 比較・分析（急性期）
-    ACUTE_RECORD:     3,   // 対応検証記録レビュー（急性期）
-    RECOVERY_PREP:    4,   // 復旧期準備
-    RECOVERY_MAP:     5,   // 復旧期マップ
-    RECOVERY_COMPARE: 6,   // 比較・分析（復旧期）
-    RECOVERY_RECORD:  7,   // 対応検証記録（復旧期）
-    SEQUENCE:         8,   // シーケンス図構築
+    ORIENTATION:        0,   // オリエンテーション
+    ACUTE_MAP:          1,   // マップ構築（急性期）
+    ACUTE_COMPARE:      2,   // 比較・分析（急性期）
+    ACUTE_RECORD:       3,   // 対応検証記録レビュー（急性期）
+    RECOVERY_PREP:      4,   // 復旧期準備
+    RECOVERY_MAP:       5,   // 復旧期マップ
+    TRANSITION_COMPARE: 6,   // [NEW] 急性期・復旧期構造比較
+    RECOVERY_COMPARE:   7,   // [CHANGED] 6 → 7
+    RECOVERY_RECORD:    8,   // [CHANGED] 7 → 8
+    SEQUENCE:           9,   // [CHANGED] 8 → 9
   };
 
   const STORAGE_KEY            = "ics-learning-system-v1";
@@ -48,15 +49,16 @@
   // DOM 順ではなく id で直接参照するため、並び替えに強い。
   // [CHANGED] キー（数値）を PHASE 定数に合わせて更新。値（DOM id 文字列）は変更しない。
   const PHASE_VIEW_ID = {
-    [PHASE.ORIENTATION]:      "phase-0",
-    [PHASE.ACUTE_MAP]:        "phase-1",
-    [PHASE.ACUTE_COMPARE]:    "phase-2",
-    [PHASE.ACUTE_RECORD]:     "phase-acuteRecord",
-    [PHASE.RECOVERY_PREP]:    "phase-5",
-    [PHASE.RECOVERY_MAP]:     "phase-6",
-    [PHASE.RECOVERY_COMPARE]: "phase-recoveryCompare",
-    [PHASE.RECOVERY_RECORD]:  "phase-recoveryRecord",
-    [PHASE.SEQUENCE]:         "phase-3",
+    [PHASE.ORIENTATION]:        "phase-0",
+    [PHASE.ACUTE_MAP]:          "phase-1",
+    [PHASE.ACUTE_COMPARE]:      "phase-2",
+    [PHASE.ACUTE_RECORD]:       "phase-acuteRecord",
+    [PHASE.RECOVERY_PREP]:      "phase-5",
+    [PHASE.RECOVERY_MAP]:       "phase-6",
+    [PHASE.TRANSITION_COMPARE]: "phase-transitionCompare",  // [NEW]
+    [PHASE.RECOVERY_COMPARE]:   "phase-recoveryCompare",
+    [PHASE.RECOVERY_RECORD]:    "phase-recoveryRecord",
+    [PHASE.SEQUENCE]:           "phase-3",
   };
 
   // === ノード一覧（Excelノート_.xlsx より） ===
@@ -239,14 +241,14 @@
       {
         id: "q6",
         kind: "textarea",
-        label: "問6． 復旧期の理想マップと実際マップを比較し、最も重要と思う構造的差異を1つ挙げて説明せよ。（100字以内）",
+        label: "問7． 復旧期の理想マップと実際マップを比較し、最も重要と思う構造的差異を1つ挙げて説明せよ。（100字以内）",
         placeholder: "例）理想マップでは…が存在するが、実際マップでは…",
         maxLength: 100,
       },
       {
         id: "q7",
         kind: "textarea",
-        label: "問7． 問6で指摘した差異が生じた理由について、ICS原則のうちどの違反かを選択し、急性期との継続性の観点から説明せよ。（200字以内）",
+        label: "問8． 問7で指摘した差異が生じた理由について、ICS原則のうちどの違反かを選択し、急性期との継続性の観点から説明せよ。（200字以内）",
         placeholder: "例）急性期では…であったが、復旧期には…",
         maxLength: 200,
       }
@@ -284,14 +286,14 @@
       {
         id: "q8",
         kind: "singleChoice",
-        label: "問8． 問7で指摘したICS原則違反は，復旧期対応検証記録の何番と対応するか1つ示せ。",
+        label: "問9． 問8で指摘したICS原則違反は，復旧期対応検証記録の何番と対応するか1つ示せ。",
         optionsSource: "excerpts",
         required: true
       },
       {
         id: "q9",
         kind: "textarea",
-        label: "問9． 問6・問7での指摘を踏まえつつ、復旧期の組織構造上の問題が対応失敗をどのように引き起こしたか説明せよ。（200字以内）",
+        label: "問10． 問7・問8での指摘を踏まえつつ、復旧期の組織構造上の問題が対応失敗をどのように引き起こしたか説明せよ。（200字以内）",
         placeholder: "例）復旧期には…という構造的問題があったため、…という失敗が生じた。",
         maxLength: 200,
         required: true
@@ -382,9 +384,10 @@
     // answers.q1, q2 は現行フローでは未使用だが、importJSON v3 互換で復元先として保持。
     p6:       { nodes:[], edges:[], answers:{q1:"",q2:""}, log:[],
                 selectedNodeId:null, selectedEdgeId:null },
-    acuteRecord:     { answers: { q4: "", q5: "" } },
-    recoveryCompare: { answers: { q6: "", q7: "", q7sel: "" } },
-    recoveryRecord:  { answers: { q8: "", q9: "" } },
+    acuteRecord:       { answers: { q4: "", q5: "" } },
+    transitionCompare: { answers: { q6: "" } },  // [NEW] 急性期・復旧期構造比較
+    recoveryCompare:   { answers: { q6: "", q7: "", q7sel: "" } },  // 内部キーは q6/q7 を保持
+    recoveryRecord:    { answers: { q8: "", q9: "" } },  // 内部キーは q8/q9 を保持
   };
 
   function savePhaseData(key) {
@@ -478,9 +481,10 @@
     if (phaseData.p6.nodes.length > 0)       return true;
     if (phaseData.p6.edges.length > 0)       return true;
     if (hasString(phaseData.acute.answers))           return true;
-    if (hasString(phaseData.recoveryCompare?.answers)) return true;
-    if (hasString(phaseData.acuteRecord?.answers))     return true;
-    if (hasString(phaseData.recoveryRecord?.answers))  return true;
+    if (hasString(phaseData.transitionCompare?.answers)) return true;  // [NEW]
+    if (hasString(phaseData.recoveryCompare?.answers))   return true;
+    if (hasString(phaseData.acuteRecord?.answers))       return true;
+    if (hasString(phaseData.recoveryRecord?.answers))    return true;
     if ((window.phase5Data?.removals?.length ?? 0) > 0) return true;
     return false;
   }
@@ -674,6 +678,71 @@
       return;
     }
 
+    // ── 急性期・復旧期構造比較 ──────────────────────────────────────────── [NEW]
+    if (p === PHASE.TRANSITION_COMPARE) {
+      if (phaseData.p6.nodes.length === 0) {
+        showToast("先に復旧期マップを作成してください", 3000);
+        state.phase = prevPhase;
+        activatePhaseView(prevPhase);
+        updatePhaseSteps(prevPhase);
+        return;
+      }
+      BENEFICIARY_LABELS = PHASE6_BENEFICIARY_LABELS;
+      requestAnimationFrame(() => {
+        // 左カラム：学習者の復旧期マップ（⑧と同様）
+        renderReadOnlyMap(
+          phaseData.p6.nodes,
+          phaseData.p6.edges,
+          $("canvas-tcRecovery"),
+          $("svgLayer-tcRecovery"),
+          $("canvasWrap-tcRecovery"),
+          $("canvasStat-tcRecovery"),
+          "-tcRecovery",
+          null, true,
+          () => clearHighlightRO($("canvas-tcAcute"), $("svgLayer-tcAcute"))
+        );
+        // 右カラム：急性期理想マップ（ideal_map_acute.json）
+        const tcAcuteCanvas = $("canvas-tcAcute");
+        if (mapLoadStatus.idealAcute === "ready") {
+          renderReadOnlyMap(
+            window.idealMapAcute.nodes,
+            window.idealMapAcute.edges,
+            tcAcuteCanvas,
+            $("svgLayer-tcAcute"),
+            $("canvasWrap-tcAcute"),
+            $("canvasStat-tcAcute"),
+            "-tcAcute",
+            null, true,
+            () => clearHighlightRO($("canvas-tcRecovery"), $("svgLayer-tcRecovery"))
+          );
+        } else if (mapLoadStatus.idealAcute === "error") {
+          if (tcAcuteCanvas) tcAcuteCanvas.innerHTML =
+            '<div style="color:var(--red);padding:20px;font-size:14px;">⚠ 急性期マップの読み込みに失敗しました</div>';
+        } else {
+          if (tcAcuteCanvas) tcAcuteCanvas.innerHTML =
+            '<div style="color:var(--text-dim);padding:20px;font-size:14px;">読み込み中…</div>';
+        }
+      });
+      // 回答の復元と入力ハンドラ登録
+      const tcAns = phaseData.transitionCompare.answers;
+      const tcQ6el = $("tcQ6Answer");
+      const tcQ6cc = $("tcQ6CharCount");
+      if (tcQ6el) {
+        tcQ6el.value = tcAns.q6 || "";
+        if (tcQ6cc) tcQ6cc.textContent = (tcAns.q6 || "").length;
+        const freshTc = tcQ6el.cloneNode(true);
+        freshTc.value = tcQ6el.value;
+        tcQ6el.replaceWith(freshTc);
+        freshTc.addEventListener("input", () => {
+          phaseData.transitionCompare.answers.q6 = freshTc.value;
+          if (tcQ6cc) tcQ6cc.textContent = freshTc.value.length;
+          debouncedSave();
+        });
+      }
+      showToast("ノードをダブルクリックすると接続関係をハイライトできます", 3500);
+      return;
+    }
+
     // ── 復旧期比較・分析 ─────────────────────────────────────────────────── [ADDED]
     if (p === PHASE.RECOVERY_COMPARE) {
       if (phaseData.p6.nodes.length === 0) {
@@ -774,7 +843,7 @@
       }
       renderRecoveryRecordView();
       restoreRecoveryRecordAnswers();
-      renderSelectedPrinciple("rrSelectedPrinciple", phaseData.recoveryCompare.answers.q7sel, "問7で原則を選択すると表示されます");
+      renderSelectedPrinciple("rrSelectedPrinciple", phaseData.recoveryCompare.answers.q7sel, "問8で原則を選択すると表示されます");
       return;
     }
 
@@ -1624,7 +1693,7 @@
     if (activePhaseKey && !MAP_PHASE_CONFIG[state.phase]?.isReadOnly)
       savePhaseData(activePhaseKey);
     return {
-      version: 6, // [CHANGED] 5 → 6（phase5Data.policyRationale 追加）
+      version: 7, // [CHANGED] 6 → 7（transitionCompare 追加 + 問番号体系再整理）
       exportedAt: new Date().toISOString(),
       scenarioId: SCENARIO.id,
       acute: {
@@ -1642,6 +1711,9 @@
       phase5Data: window.phase5Data,
       acuteRecord: {
         answers: phaseData.acuteRecord.answers,
+      },
+      transitionCompare: {                           // [NEW]
+        answers: phaseData.transitionCompare.answers,
       },
       recoveryCompare: {
         answers: phaseData.recoveryCompare.answers,
@@ -1686,7 +1758,7 @@
           const obj = JSON.parse(fr.result);
           let hasConflict = false;
 
-          if ((obj.version === 6 || obj.version === 5 || obj.version === 4 || obj.version === 3) && obj.acute && obj.recovery) { // v6/v5/v4/v3
+          if ((obj.version === 7 || obj.version === 6 || obj.version === 5 || obj.version === 4 || obj.version === 3) && obj.acute && obj.recovery) { // v7/v6/v5/v4/v3
             // v3/v4: 全フェーズを復元
             const loadPhase = (src) => ({
               nodes: (src.nodes || []).map(n => ({ layerId: null, layerReason: "", isInitial: false, ...n })),
@@ -1717,6 +1789,12 @@
               answers: {
                 q8: obj.recoveryRecord?.answers?.q8 || "",
                 q9: obj.recoveryRecord?.answers?.q9 || "",
+              }
+            };
+            // transitionCompare の復元（v7 に存在、v6 以前は空で補完）
+            phaseData.transitionCompare = {
+              answers: {
+                q6: obj.transitionCompare?.answers?.q6 || "",
               }
             };
             // phase5Data の復元（同一ラベルのノードを補完）
@@ -1763,10 +1841,11 @@
             });
             phaseData.acute    = loadPhaseV2(obj.acute);
             phaseData.recovery = loadPhaseV2(obj.recovery);
-            // v2 には acuteRecord / recoveryCompare / recoveryRecord がないため空で補完
-            phaseData.acuteRecord     = { answers: { q4: "", q5: "" } };
-            phaseData.recoveryCompare = { answers: { q6: "", q7: "", q7sel: "" } };
-            phaseData.recoveryRecord  = { answers: { q8: "", q9: "" } };
+            // v2 には acuteRecord / recoveryCompare / recoveryRecord / transitionCompare がないため空で補完
+            phaseData.acuteRecord       = { answers: { q4: "", q5: "" } };
+            phaseData.transitionCompare = { answers: { q6: "" } };
+            phaseData.recoveryCompare   = { answers: { q6: "", q7: "", q7sel: "" } };
+            phaseData.recoveryRecord    = { answers: { q8: "", q9: "" } };
             if (obj.phase5Data?.removals) {
               const restoredRemovals = [];
               const seenLabels = new Set();
@@ -1803,10 +1882,11 @@
               log: obj.operationLog || [],
               selectedNodeId: null, selectedEdgeId: null,
             };
-            // v1 には acuteRecord / recoveryCompare / recoveryRecord がないため空で補完
-            phaseData.acuteRecord     = { answers: { q4: "", q5: "" } };
-            phaseData.recoveryCompare = { answers: { q6: "", q7: "", q7sel: "" } };
-            phaseData.recoveryRecord  = { answers: { q8: "", q9: "" } };
+            // v1 には acuteRecord / recoveryCompare / recoveryRecord / transitionCompare がないため空で補完
+            phaseData.acuteRecord       = { answers: { q4: "", q5: "" } };
+            phaseData.transitionCompare = { answers: { q6: "" } };
+            phaseData.recoveryCompare   = { answers: { q6: "", q7: "", q7sel: "" } };
+            phaseData.recoveryRecord    = { answers: { q8: "", q9: "" } };
             if (validateEdgeConflicts(phaseData.acute.edges)) hasConflict = true;
           } else {
             throw new Error();
@@ -1843,7 +1923,15 @@
       renderAcuteRecordView();   // フォームを再描画してリセット状態に戻す
       return;
     }
-    // 復旧期比較・分析：問6・問7 の回答をクリア
+    // 急性期・復旧期構造比較：問6 の回答をクリア [NEW]
+    if (state.phase === PHASE.TRANSITION_COMPARE) {
+      if (!confirm("構造比較の回答をリセットしますか？")) return;
+      phaseData.transitionCompare.answers = { q6: "" };
+      const ta = $("tcQ6Answer"); if (ta) ta.value = "";
+      const cc = $("tcQ6CharCount"); if (cc) cc.textContent = "0";
+      return;
+    }
+    // 復旧期比較・分析：問7・問8 の回答をクリア
     if (state.phase === PHASE.RECOVERY_COMPARE) {
       if (!confirm("復旧期比較・分析の回答をリセットしますか？")) return;
       phaseData.recoveryCompare.answers = { q6: "", q7: "", q7sel: "" };
@@ -1854,16 +1942,16 @@
       document.querySelectorAll('input[name="rcQ7principle"]').forEach(r => { r.checked = false; });
       return;
     }
-    // 復旧期対応検証記録：問8・問9 の回答をクリア
+    // 復旧期対応検証記録：問9・問10 の回答をクリア
     if (state.phase === PHASE.RECOVERY_RECORD) {
-      if (!confirm("問8・問9 の回答をリセットしますか？")) return;
+      if (!confirm("問9・問10 の回答をリセットしますか？")) return;
       phaseData.recoveryRecord.answers = { q8: "", q9: "" };
       renderRecoveryRecordView();
       return;
     }
     // 復旧期準備：削除候補リストのみクリア
     if (state.phase === PHASE.RECOVERY_PREP) {
-      if (!confirm("削除候補の選択と判断方針をすべてリセットしますか？")) return;
+      if (!confirm("削除候補の選択をすべてリセットしますか？")) return;
       window.phase5Data.removals = [];
       window.phase5Data.policyRationale = "";  // [ADDED]
       invalidatePhase6();
@@ -2123,7 +2211,6 @@
       toggleRemovalCandidate
     );
     renderRemovalList();
-    initPolicyRationaleInput();
     updatePhase6Btn();
   }
 
@@ -2543,11 +2630,11 @@
         fresh.addEventListener("click", () => {
           const { q8, q9 } = phaseData.recoveryRecord.answers;
           if (!q8) {
-            showToast("問8で対応検証記録の番号を選択してください", 3000);
+            showToast("問9で対応検証記録の番号を選択してください", 3000);
             return;
           }
           if (!q9) {
-            if (!confirm("問9が未入力です。このまま進みますか？")) return;
+            if (!confirm("問10が未入力です。このまま進みますか？")) return;
           }
           switchPhase(PHASE.SEQUENCE);
         });
@@ -2688,14 +2775,24 @@
     });
 
     // 「対応検証記録（復旧期）へ進む」ボタン（問6 入力チェック付き）
+    // Phase 6 → TRANSITION_COMPARE [NEW]
+    $("btnFromP6ToTransition")?.addEventListener("click", () => {
+      switchPhase(PHASE.TRANSITION_COMPARE);
+    });
+
+    // TRANSITION_COMPARE → RECOVERY_COMPARE [NEW]
+    $("btnFromTransitionToRecoveryCompare")?.addEventListener("click", () => {
+      switchPhase(PHASE.RECOVERY_COMPARE);
+    });
+
     $("btnToRecoveryRecord")?.addEventListener("click", () => {
       const { q6, q7 } = phaseData.recoveryCompare.answers;
       if (!q6) {
-        showToast("問6で構造的差異を入力してください", 3000);
+        showToast("問7で構造的差異を入力してください", 3000);
         return;
       }
       if (!q7) {
-        if (!confirm("問7 が未入力です。このまま進みますか？")) return;
+        if (!confirm("問8 が未入力です。このまま進みますか？")) return;
       }
       switchPhase(PHASE.RECOVERY_RECORD);
     });
