@@ -742,6 +742,28 @@
         updatePhaseSteps(prevPhase);
         return;
       }
+      const tcUnsetNodes = phaseData.p6.nodes.filter(n => n.layerId === null);
+      if (tcUnsetNodes.length > 0) {
+        showToast("レイヤーが設定されていない組織名があります。灰色のノードをドラッグして、適切なレイヤーに配置してください。", 4000);
+        logOp("VALIDATION_ERROR", {
+          type: "RECOVERY_LAYER_UNSET", attemptedPhase: p,
+          nodeIds: tcUnsetNodes.map(n => n.id), labels: tcUnsetNodes.map(n => n.label)
+        });
+        const p6Canvas = document.getElementById("canvas-p6");
+        if (p6Canvas) {
+          tcUnsetNodes.forEach(n => {
+            const el = p6Canvas.querySelector(`.node[data-id="${n.id}"]`);
+            if (el) {
+              el.classList.add("layer-unset-error");
+              setTimeout(() => el.classList.remove("layer-unset-error"), 2500);
+            }
+          });
+        }
+        state.phase = prevPhase;
+        activatePhaseView(prevPhase);
+        updatePhaseSteps(prevPhase);
+        return;
+      }
       BENEFICIARY_LABELS = PHASE6_BENEFICIARY_LABELS;
       requestAnimationFrame(() => {
         // 左カラム：学習者の復旧期マップ（⑧と同様）
