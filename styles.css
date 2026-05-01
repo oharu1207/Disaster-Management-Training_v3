@@ -1193,6 +1193,48 @@ textarea { resize: vertical; min-height: 70px; }
   border-color: var(--red) !important;
 }
 
+/* --- 「該当なし」ラジオ選択肢 --- */
+.ics-radio-item-na {
+  border-style: dashed;
+  opacity: 0.85;
+}
+.ics-radio-item-na:has(input:checked) {
+  border-color: var(--text-muted);
+  background: rgba(160,160,180,0.10);
+  border-style: solid;
+  opacity: 1;
+}
+.ics-radio-item-na:has(input:checked) .ics-radio-label {
+  color: var(--text-muted);
+}
+.ics-radio-item-na:has(input:checked) .ics-radio-sub {
+  color: var(--text-muted);
+}
+
+/* --- スキップされた設問ブロック --- */
+.ar-question-skipped {
+  opacity: 0.6;
+  background: var(--bg3);
+  border-style: dashed;
+  pointer-events: none;
+}
+.ar-skip-notice {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 4px 0;
+}
+
+/* --- 「該当なし」原則チップ --- */
+.ar-principle-chip-na {
+  background: rgba(160,160,180,0.10);
+  border-color: rgba(160,160,180,0.40);
+}
+.ar-principle-chip-na .ar-principle-ja {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
 /* ================================================================
    PHASE.RECOVERY_COMPARE (Phase 7): 比較・分析（復旧期）
    — #phase-2 と同じグリッド構成を使い回す

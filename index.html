@@ -343,7 +343,7 @@
       </div>
       <div class="compare-qa-block">
         <label class="compare-qa-label">
-          問3．	問2で指摘した構造的差異は、ICS原則のうちどの違反か選択し，選んだ理由を1文で述べよ．（100字以内）
+          問3．	問2で指摘した構造的差異は、ICS 3原則（指揮一元化・統制範囲・コミュニケーション）のうちどの違反か選択し，選んだ理由を1文で述べよ．（100字以内）
         </label>
         <div class="ics-radio-group" id="p3q2RadioGroup">
           <label class="ics-radio-item">
@@ -351,24 +351,20 @@
             <span class="ics-radio-label">Unity of Command <span class="ics-radio-sub">指揮一元化</span></span>
           </label>
           <label class="ics-radio-item">
-            <input type="radio" name="p3q2principle" value="Unified Command">
-            <span class="ics-radio-label">Unified Command <span class="ics-radio-sub">統合指揮</span></span>
-          </label>
-          <label class="ics-radio-item">
             <input type="radio" name="p3q2principle" value="Span of Control">
             <span class="ics-radio-label">Span of Control <span class="ics-radio-sub">統制範囲</span></span>
-          </label>
-          <label class="ics-radio-item">
-            <input type="radio" name="p3q2principle" value="Modular Organization">
-            <span class="ics-radio-label">Modular Organization <span class="ics-radio-sub">組立型組織</span></span>
           </label>
           <label class="ics-radio-item">
             <input type="radio" name="p3q2principle" value="Communications">
             <span class="ics-radio-label">Communications <span class="ics-radio-sub">コミュニケーション</span></span>
           </label>
+          <label class="ics-radio-item ics-radio-item-na">
+            <input type="radio" name="p3q2principle" value="該当なし">
+            <span class="ics-radio-label">該当なし <span class="ics-radio-sub">3原則のいずれにも該当しない</span></span>
+          </label>
         </div>
         <textarea id="p3q2Answer" rows="2"
-          placeholder="例）…の構造はICSの…の原則に…"></textarea>
+          placeholder="例）…の構造はICSの…の原則に違反している。（「該当なし」を選んだ場合は、3原則に当たらない理由を述べよ）"></textarea>
         <div class="char-count"><span id="p3q2CharCount">0</span> / 100 字</div>
         <div class="compare-qa-btn-row">
           <button id="btnToAcuteRecord" class="btn-primary">問4・5へ進む →</button>
@@ -386,7 +382,7 @@
   <div class="map-sidebar ar-sidebar">
     <div class="sb-block">
       <div class="scenario-badge">急性期 対応検証</div>
-      <div style="font-size:13px;line-height:1.6;margin-top:8px;color:#fff;">
+      <div id="arSidebarInstruction" style="font-size:13px;line-height:1.6;margin-top:8px;color:#fff;">
         対応検証記録の抜粋を読んだ上で問4・問5に回答してください。
       </div>
     </div>
@@ -701,7 +697,7 @@
       </div>
       <div class="compare-qa-block">
         <label class="compare-qa-label">
-          問8． 問7で指摘した差異が生じた理由について、ICS原則のうちどの違反かを選択し、急性期との継続性の観点から説明せよ。（200字以内）
+          問8．	問7で指摘した差異が生じた理由について、ICS 3原則（指揮一元化・統制範囲・コミュニケーション）のうちどの違反かを選択し、急性期との継続性の観点から説明せよ。（200字以内）
         </label>
         <div class="ics-radio-group" id="rcQ7RadioGroup">
           <label class="ics-radio-item">
@@ -709,24 +705,20 @@
             <span class="ics-radio-label">Unity of Command <span class="ics-radio-sub">指揮一元化</span></span>
           </label>
           <label class="ics-radio-item">
-            <input type="radio" name="rcQ7principle" value="Unified Command">
-            <span class="ics-radio-label">Unified Command <span class="ics-radio-sub">統合指揮</span></span>
-          </label>
-          <label class="ics-radio-item">
             <input type="radio" name="rcQ7principle" value="Span of Control">
             <span class="ics-radio-label">Span of Control <span class="ics-radio-sub">統制範囲</span></span>
-          </label>
-          <label class="ics-radio-item">
-            <input type="radio" name="rcQ7principle" value="Modular Organization">
-            <span class="ics-radio-label">Modular Organization <span class="ics-radio-sub">組立型組織</span></span>
           </label>
           <label class="ics-radio-item">
             <input type="radio" name="rcQ7principle" value="Communications">
             <span class="ics-radio-label">Communications <span class="ics-radio-sub">コミュニケーション</span></span>
           </label>
+          <label class="ics-radio-item ics-radio-item-na">
+            <input type="radio" name="rcQ7principle" value="該当なし">
+            <span class="ics-radio-label">該当なし <span class="ics-radio-sub">3原則のいずれにも該当しない</span></span>
+          </label>
         </div>
         <textarea id="rcQ7Answer" rows="2"
-          placeholder="例）急性期では…であったが、復旧期には…"></textarea>
+          placeholder="例）急性期では…であったが、復旧期には…（「該当なし」を選んだ場合は、3原則に当たらない理由を述べよ）"></textarea>
         <div class="char-count"><span id="rcQ7CharCount">0</span> / 200 字</div>
         <div class="compare-qa-btn-row">
           <button id="btnToRecoveryRecord" class="btn-primary">対応検証記録へ進む →</button>
@@ -744,7 +736,7 @@
   <div class="map-sidebar ar-sidebar">
     <div class="sb-block">
       <div class="scenario-badge">復旧期 対応検証</div>
-      <div style="font-size:13px;line-height:1.6;margin-top:8px;color:#fff;">
+      <div id="rrSidebarInstruction" style="font-size:13px;line-height:1.6;margin-top:8px;color:#fff;">
         対応検証記録の抜粋を読んだ上で問9・問10に回答してください。
       </div>
     </div>

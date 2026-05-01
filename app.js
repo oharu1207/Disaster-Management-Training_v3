@@ -225,7 +225,7 @@
       {
         id: "q5",
         kind: "textarea",
-        label: "問5． 問2・問3での指摘を踏まえつつ、あなたの考える組織構造上の問題が対応失敗をどのように引き起こしたか説明せよ。",
+        label: "問5．\t問2・問3での指摘を踏まえつつ、あなたの考える組織構造上の問題が対応失敗をどのように引き起こしたか説明せよ。問3で選んだ原則に限らず、他の構造的要因や複数原則の相互作用に言及してもよい。（200字以内）",
         placeholder: "例）保健所が…という構造的問題があったため、…という失敗が生じた。",
         maxLength: 200,
         required: true
@@ -293,7 +293,7 @@
       {
         id: "q9",
         kind: "textarea",
-        label: "問10． 問7・問8での指摘を踏まえつつ、復旧期の組織構造上の問題が対応失敗をどのように引き起こしたか説明せよ。（200字以内）",
+        label: "問10．\t問7・問8での指摘を踏まえつつ、復旧期の組織構造上の問題が対応失敗をどのように引き起こしたか説明せよ。問8で選んだ原則に限らず、他の構造的要因や複数原則の相互作用に言及してもよい。（200字以内）",
         placeholder: "例）復旧期には…という構造的問題があったため、…という失敗が生じた。",
         maxLength: 200,
         required: true
@@ -729,6 +729,12 @@
       renderAcuteRecordView();
       restoreAcuteRecordAnswers();
       renderSelectedPrinciple("arSelectedPrinciple", phaseData.acute.answers.p3q2sel, "問3で原則を選択すると表示されます");
+      const arInstr = $("arSidebarInstruction");
+      if (arInstr) {
+        arInstr.textContent = phaseData.acute.answers.p3q2sel === "該当なし"
+          ? "問3で「該当なし」を選択したため、問4はスキップされます。問5に回答してください。"
+          : "対応検証記録の抜粋を読んだ上で問4・問5に回答してください。";
+      }
       return;
     }
 
@@ -951,6 +957,12 @@
       renderRecoveryRecordView();
       restoreRecoveryRecordAnswers();
       renderSelectedPrinciple("rrSelectedPrinciple", phaseData.recoveryCompare.answers.q7sel, "問8で原則を選択すると表示されます");
+      const rrInstr = $("rrSidebarInstruction");
+      if (rrInstr) {
+        rrInstr.textContent = phaseData.recoveryCompare.answers.q7sel === "該当なし"
+          ? "問7で「該当なし」を選択したため、問9はスキップされます。問10に回答してください。"
+          : "対応検証記録の抜粋を読んだ上で問9・問10に回答してください。";
+      }
       return;
     }
 
@@ -2528,11 +2540,10 @@
   // ICS原則 選択表示ヘルパー
   // ================================================================
   const ICS_PRINCIPLE_JA = {
-    "Unity of Command":     "指揮一元化",
-    "Unified Command":      "統合指揮",
-    "Span of Control":      "統制範囲",
-    "Modular Organization": "組立型組織",
-    "Communications":       "コミュニケーション",
+    "Unity of Command": "指揮一元化",
+    "Span of Control":  "統制範囲",
+    "Communications":   "コミュニケーション",
+    "該当なし":          "3原則のいずれにも該当しない",
   };
 
   function renderSelectedPrinciple(elementId, value, fallbackMsg) {
@@ -2540,6 +2551,14 @@
     if (!el) return;
     if (!value) {
       el.innerHTML = `<span style="font-size:11px;color:var(--text-muted);">${esc(fallbackMsg || "（未選択）")}</span>`;
+      return;
+    }
+    if (value === "該当なし") {
+      el.innerHTML = `
+        <div class="ar-principle-chip ar-principle-chip-na">
+          <span class="ar-principle-ja">3原則のいずれにも該当しない</span>
+        </div>
+      `;
       return;
     }
     const ja = ICS_PRINCIPLE_JA[value] || "";
@@ -2606,6 +2625,12 @@
     if (!excerptList || !questionArea) return;
 
     const { excerpts, questions } = ACUTE_RECORD_CONTENT;
+    const skippedQ4 = phaseData.acute.answers.p3q2sel === "該当なし";
+    if (skippedQ4 && phaseData.acuteRecord.answers.q4 !== "") {
+      phaseData.acuteRecord.answers.q4 = "";
+      saveToLocalStorage();
+    }
+    if (skippedQ4) logOp("Q4_SKIPPED", { reason: "p3q2sel=該当なし" });
 
     // (a) 抜粋エリア描画
     excerptList.innerHTML = excerpts.map(ex => `
@@ -2617,23 +2642,32 @@
 
     // (b) 設問エリア描画
     questionArea.innerHTML = questions.map(q => {
-      if (q.kind === "singleChoice") return renderSingleChoiceQuestion(q, excerpts);
-      if (q.kind === "textarea")     return renderTextareaQuestion(q);
+      if (q.kind === "singleChoice") {
+        if (skippedQ4) return `
+          <div class="ar-question-block ar-question-skipped" id="arQBlock-${esc(q.id)}">
+            <div class="compare-qa-label">${esc(q.label)}</div>
+            <div class="ar-skip-notice">問3で「該当なし」を選択したため、この設問はスキップされます。</div>
+          </div>`;
+        return renderSingleChoiceQuestion(q, excerpts);
+      }
+      if (q.kind === "textarea") return renderTextareaQuestion(q);
       return "";
     }).join("");
 
     // (c) イベント attach — q4 ラジオ
-    questionArea.querySelectorAll('input[name="arQ4"]').forEach(radio => {
-      radio.addEventListener("change", () => {
-        phaseData.acuteRecord.answers.q4 = radio.value;
-        // 抜粋カードのハイライト連動
-        excerptList.querySelectorAll(".ar-excerpt-card").forEach(card => {
-          card.classList.toggle("selected", card.dataset.id === radio.value);
+    if (!skippedQ4) {
+      questionArea.querySelectorAll('input[name="arQ4"]').forEach(radio => {
+        radio.addEventListener("change", () => {
+          phaseData.acuteRecord.answers.q4 = radio.value;
+          // 抜粋カードのハイライト連動
+          excerptList.querySelectorAll(".ar-excerpt-card").forEach(card => {
+            card.classList.toggle("selected", card.dataset.id === radio.value);
+          });
+          logOp("ANSWER_SELECT", { questionId: "acuteRecord.q4", value: radio.value });
+          saveToLocalStorage();
         });
-        logOp("ANSWER_SELECT", { questionId: "acuteRecord.q4", value: radio.value });
-        saveToLocalStorage();
       });
-    });
+    }
 
     // (c) イベント attach — q5 テキストエリア（文字数カウント付き）
     const q5ta = $("arQ5Answer");
@@ -2686,7 +2720,7 @@
       btnToRecoveryPrep.replaceWith(fresh);
       fresh.addEventListener("click", () => {
         const { q4, q5 } = phaseData.acuteRecord.answers;
-        if (!q4) {
+        if (!skippedQ4 && !q4) {
           showToast("問4で対応検証記録の番号を選択してください", 3000);
           return;
         }
@@ -2742,6 +2776,12 @@
     if (!excerptList || !questionArea) return;
 
     const { excerpts, questions } = RECOVERY_RECORD_CONTENT;
+    const skippedQ8 = phaseData.recoveryCompare.answers.q7sel === "該当なし";
+    if (skippedQ8 && phaseData.recoveryRecord.answers.q8 !== "") {
+      phaseData.recoveryRecord.answers.q8 = "";
+      saveToLocalStorage();
+    }
+    if (skippedQ8) logOp("Q9_SKIPPED", { reason: "q7sel=該当なし" });
 
     // (a) 抜粋エリア描画
     excerptList.innerHTML = excerpts.map(ex => `
@@ -2754,6 +2794,11 @@
     // (b) 設問エリア描画
     questionArea.innerHTML = questions.map(q => {
       if (q.kind === "singleChoice") {
+        if (skippedQ8) return `
+          <div class="ar-question-block ar-question-skipped" id="rrQBlock-${esc(q.id)}">
+            <div class="compare-qa-label">${esc(q.label)}</div>
+            <div class="ar-skip-notice">問7で「該当なし」を選択したため、この設問はスキップされます。</div>
+          </div>`;
         const options = excerpts.map(ex => `
           <label class="ics-radio-item">
             <input type="radio" name="rrQ8" value="${esc(ex.id)}">
@@ -2786,16 +2831,18 @@
     }).join("");
 
     // (c) イベント attach — q8 ラジオ
-    questionArea.querySelectorAll('input[name="rrQ8"]').forEach(radio => {
-      radio.addEventListener("change", () => {
-        phaseData.recoveryRecord.answers.q8 = radio.value;
-        excerptList.querySelectorAll(".ar-excerpt-card").forEach(card => {
-          card.classList.toggle("selected", card.dataset.id === radio.value);
+    if (!skippedQ8) {
+      questionArea.querySelectorAll('input[name="rrQ8"]').forEach(radio => {
+        radio.addEventListener("change", () => {
+          phaseData.recoveryRecord.answers.q8 = radio.value;
+          excerptList.querySelectorAll(".ar-excerpt-card").forEach(card => {
+            card.classList.toggle("selected", card.dataset.id === radio.value);
+          });
+          logOp("ANSWER_SELECT", { questionId: "recoveryRecord.q8", value: radio.value });
+          saveToLocalStorage();
         });
-        logOp("ANSWER_SELECT", { questionId: "recoveryRecord.q8", value: radio.value });
-        saveToLocalStorage();
       });
-    });
+    }
 
     // (c) イベント attach — q9 テキストエリア
     const q9ta = $("rrQ9Answer");
@@ -2847,7 +2894,7 @@
         btnToSeq.replaceWith(fresh);
         fresh.addEventListener("click", () => {
           const { q8, q9 } = phaseData.recoveryRecord.answers;
-          if (!q8) {
+          if (!skippedQ8 && !q8) {
             showToast("問9で対応検証記録の番号を選択してください", 3000);
             return;
           }
