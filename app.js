@@ -212,6 +212,11 @@
       {
         id: "5",
         text: "県庁本部で、県庁と支援団体間だけで決められていた被災地支援活動などがあった。そういった活動の中には、保健所が現場ですでに取り組んでいた活動もあり、二重になってしまうこともあった。"
+      },
+      {
+        id: "6",
+        text: "（未実装：後日追加予定）",
+        disabled: true
       }
     ],
     questions: [
@@ -2579,19 +2584,11 @@
    * @param {Array}  excerpts - ACUTE_RECORD_CONTENT.excerpts
    * @returns {string} HTML 文字列
    */
-  function renderSingleChoiceQuestion(q, excerpts) {
-    const options = excerpts.map(ex => `
-      <label class="ics-radio-item">
-        <input type="radio" name="arQ4" value="${esc(ex.id)}">
-        <span class="ics-radio-label">${esc(ex.id)}</span>
-      </label>
-    `).join("");
+  function renderSingleChoiceQuestion(q) {
     return `
       <div class="ar-question-block" id="arQBlock-${esc(q.id)}">
-        <div class="compare-qa-label">${esc(q.label)}</div>
-        <div class="ics-radio-group" id="arQ4RadioGroup">
-          ${options}
-        </div>
+        <div class="compare-qa-label" id="arQ4Label">${esc(q.label)}</div>
+        <div class="ar-question-hint">下の記録文をクリックして1つ選択してください。</div>
       </div>
     `;
   }
@@ -2632,13 +2629,24 @@
     }
     if (skippedQ4) logOp("Q4_SKIPPED", { reason: "p3q2sel=該当なし" });
 
-    // (a) 抜粋エリア描画
-    excerptList.innerHTML = excerpts.map(ex => `
-      <div class="ar-excerpt-card" data-id="${esc(ex.id)}" id="arCard-${esc(ex.id)}">
-        <span class="ar-excerpt-num">${esc(ex.id)}</span>
-        <div class="ar-excerpt-text">${esc(ex.text)}</div>
-      </div>
-    `).join("");
+    // (a) 抜粋エリア描画（カード本体がラジオグループとして機能する）
+    excerptList.setAttribute("role", "radiogroup");
+    excerptList.setAttribute("aria-labelledby", "arQ4Label");
+    excerptList.innerHTML = excerpts.map(ex => {
+      const disabled = ex.disabled === true;
+      return `
+        <div class="ar-excerpt-card"
+             data-id="${esc(ex.id)}"
+             id="arCard-${esc(ex.id)}"
+             role="radio"
+             tabindex="${disabled ? "-1" : "0"}"
+             aria-checked="false"
+             ${disabled ? 'aria-disabled="true"' : ""}>
+          <span class="ar-excerpt-num">${esc(ex.id)}</span>
+          <div class="ar-excerpt-text">${esc(ex.text)}</div>
+        </div>
+      `;
+    }).join("");
 
     // (b) 設問エリア描画
     questionArea.innerHTML = questions.map(q => {
@@ -2648,23 +2656,31 @@
             <div class="compare-qa-label">${esc(q.label)}</div>
             <div class="ar-skip-notice">問3で「該当なし」を選択したため、この設問はスキップされます。</div>
           </div>`;
-        return renderSingleChoiceQuestion(q, excerpts);
+        return renderSingleChoiceQuestion(q);
       }
       if (q.kind === "textarea") return renderTextareaQuestion(q);
       return "";
     }).join("");
 
-    // (c) イベント attach — q4 ラジオ
+    // (c) イベント attach — カードクリック／キーボード選択
     if (!skippedQ4) {
-      questionArea.querySelectorAll('input[name="arQ4"]').forEach(radio => {
-        radio.addEventListener("change", () => {
-          phaseData.acuteRecord.answers.q4 = radio.value;
-          // 抜粋カードのハイライト連動
-          excerptList.querySelectorAll(".ar-excerpt-card").forEach(card => {
-            card.classList.toggle("selected", card.dataset.id === radio.value);
-          });
-          logOp("ANSWER_SELECT", { questionId: "acuteRecord.q4", value: radio.value });
-          saveToLocalStorage();
+      const handleSelect = ex => {
+        if (ex.disabled) return;
+        phaseData.acuteRecord.answers.q4 = ex.id;
+        excerptList.querySelectorAll(".ar-excerpt-card").forEach(c => {
+          const sel = c.dataset.id === ex.id;
+          c.classList.toggle("selected", sel);
+          c.setAttribute("aria-checked", sel ? "true" : "false");
+        });
+        logOp("ANSWER_SELECT", { questionId: "acuteRecord.q4", value: ex.id });
+        saveToLocalStorage();
+      };
+      excerpts.forEach(ex => {
+        const cardEl = $(`arCard-${ex.id}`);
+        if (!cardEl) return;
+        cardEl.addEventListener("click", () => handleSelect(ex));
+        cardEl.addEventListener("keydown", e => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSelect(ex); }
         });
       });
     }
@@ -2742,14 +2758,11 @@
 
     // q4 復元
     if (q4) {
-      const radio = document.querySelector(`input[name="arQ4"][value="${q4}"]`);
-      if (radio) {
-        radio.checked = true;
-        // カードハイライト
-        excerptList?.querySelectorAll(".ar-excerpt-card").forEach(card => {
-          card.classList.toggle("selected", card.dataset.id === q4);
-        });
-      }
+      excerptList?.querySelectorAll(".ar-excerpt-card").forEach(card => {
+        const sel = card.dataset.id === q4;
+        card.classList.toggle("selected", sel);
+        card.setAttribute("aria-checked", sel ? "true" : "false");
+      });
     }
 
     // q5 復元
